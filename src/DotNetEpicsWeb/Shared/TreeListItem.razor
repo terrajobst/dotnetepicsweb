@@ -1,0 +1,83 @@
+﻿@{
+    var nodes = Nodes.Where(n => Filter(n)).ToList();
+    var index = 0;
+
+    while (index < nodes.Count)
+    {
+        var node = nodes[index];
+        if (Skip(node))
+        {
+            nodes.RemoveAt(index);
+            nodes.InsertRange(index, node.Children.Where(c => Filter(c)));
+        }
+        else
+        {
+            index++;
+        }
+    }
+}
+
+@if (nodes.Any())
+{
+    <ul class="tree">
+        @foreach (var node in nodes)
+        {
+            <li>
+                @{
+                    var issueClass = IsIndirectlyVisible(node) ? "muted" : "";
+                }
+                <div class="gh-issue @issueClass d-flex flex-row">
+                    <div class="gh-issue-kind-header @node.Issue.Kind.ToString().ToLower()" />
+                    <div>
+                        <div>
+                            <a class="gh-issue-title" href="@node.Issue.Url" target="_blank">@node.Issue.Title</a>
+                            <span>
+                                @foreach (var label in node.Issue.Labels)
+                                {
+                                    <span class="gh-label"
+                                          style="background: @("#" + label.BackgroundColor); color: @label.ForegroundColor">@label.Name</span>
+                                    }
+                            </span>
+                        </div>
+                        <div class="gh-details-cell">
+                            @if (node.Issue.ProjectStatus != null)
+                            {
+                                <span class="gh-project-status">@node.Issue.ProjectStatus.Column for @node.Issue.ProjectStatus.ProjectName</span>
+                            }
+
+                            @node.Issue.DetailText
+
+                            @if (node.Issue.Milestone != null)
+                            {
+                                <span class="ml-2 mr-1 oi oi-signpost text-muted" aria-hidden="true"></span>@node.Issue.Milestone
+                            }
+
+                            @if (node.Issue.Assignees.Any())
+                            {
+                                var assigneeList = string.Join(", ", node.Issue.Assignees);
+                                <span class="ml-2 mr-1 oi oi-person text-muted" aria-hidden="true"></span>@assigneeList
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <TreeListItem Nodes="@node.Children" Filter="@Filter" Skip="@Skip" IsIndirectlyVisible="@IsIndirectlyVisible" />
+            </li>
+        }
+    </ul>
+}
+
+@code {
+    [Parameter]
+    public IReadOnlyList<GitHubIssueNode> Nodes { get; set; }
+
+    [Parameter]
+    public Predicate<GitHubIssueNode> Filter { get; set; }
+
+    [Parameter]
+    public Predicate<GitHubIssueNode> Skip { get; set; }
+
+    [Parameter]
+    public Predicate<GitHubIssueNode> IsIndirectlyVisible { get; set; }
+
+}
