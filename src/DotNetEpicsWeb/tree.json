@@ -7,14 +7,14 @@
         "CreatedBy": "samsp-msft",
         "IsClosed": false,
         "Title": ".NET is recognized as a compelling framework for building cloud native apps",
-        "DescriptionMarkdown": "(placeholder)\r\nToday, .NET is seen as a stack for enterprises building LOB applications. \u201C.NET is for people who work at banks\u201D is not uncommon feedback in our customer interviews. We plan to change that by building great fundamentals and investing in OSS ecosystems that give us a platform to reach new customer bases. At the same time our existing enterprise customers want to become more Cloud Native, and we need to flatten the learning curve and barriers to adoption.\r\n\r\n\r\nScenario Areas\r\n\r\n- [ ] Improve development experience for multi-app solutions\r\n- [ ] .NET Apps can depend on containers in Dev\r\n- [ ] Ship an extensible reverse proxy https://github.com/microsoft/reverse-proxy/issues/480\r\n- [ ] Simplified API experience for Web API apps\r\n- [ ] Optimizations for Constrained Environments \r\n- [ ] Libraries to interop with common cloud native components/services\r\n",
+        "DescriptionMarkdown": "(placeholder)\r\nToday, .NET is seen as a stack for enterprises building LOB applications. \u201C.NET is for people who work at banks\u201D is not uncommon feedback in our customer interviews. We plan to change that by building great fundamentals and investing in OSS ecosystems that give us a platform to reach new customer bases. At the same time our existing enterprise customers want to become more Cloud Native, and we need to flatten the learning curve and barriers to adoption.\r\n\r\n\r\nScenario Areas\r\n\r\n- [ ] Improve development experience for multi-app solutions\r\n- [ ] .NET Apps can depend on containers in Dev\r\n- [ ] Ship an extensible/customizable reverse proxy performant enough for cloud scale workloads https://github.com/microsoft/reverse-proxy/issues/480\r\n- [ ] Simplified API experience for Web API apps\r\n- [ ] Optimizations for Constrained Environments \r\n- [ ] Libraries to interop with common cloud native components/services\r\n",
         "Milestone": null,
         "Assignees": [
           "glennc"
         ],
         "Labels": [
           {
-            "Name": "Epic",
+            "Name": "Theme",
             "BackgroundColor": "800080"
           }
         ],
@@ -31,8 +31,8 @@
             "CreatedAt": "2020-10-20T00:06:06+00:00",
             "CreatedBy": "samsp-msft",
             "IsClosed": false,
-            "Title": "Ship an extensible reverse proxy",
-            "DescriptionMarkdown": "(Planning item)\r\nAs a cloud native infrastructure/service developer (cohort 3), I want a reverse proxy solution that is customizable to my needs and performant enough for cloud scale workloads.\r\n\r\n\u003Ctodo: pull in items from project board\u003E\r\n",
+            "Title": "Experience: Ship an extensible/customizable reverse proxy performant enough for cloud scale workloads",
+            "DescriptionMarkdown": "As a cloud native infrastructure/service developer (cohort 3), I want a reverse proxy solution that is customizable to my needs and performant enough for cloud scale workloads.\r\n\r\nThis includes the following user stories:\r\n\r\nConfiguration\r\n  - [x] Proxy supports static config files, with hot reload for handling changes #9 \r\n  - [x] Proxy supports dynamic configuration pulling from other sources #8\r\n    - [ ] Service fabric integration #257\r\n    - [ ] Kubernetes integration #200\r\n - [ ] Routes can be fully dynamic and discovered on a per request basis for hyper scale hosting  #46\r\n\r\nRouting\r\n- [ ] Proxy can front multiple sites and route based on SNI/Host #14 \r\n- [x] Proxy should enable routing based on header values #405\r\n- [ ] Proxy should have active health checks to confirm the state of destinations #228\r\n- [x] Proxy has session affinity #45 \r\n- [ ] Proxy can divert routes to support A/B testing, service rollout etc #126\r\n- [x] Proxy supports multiple algorithms for load balancing across destinations #58\r\n- [x] Proxy supports authentication / authorization for specific routes #122\r\n- [ ] Proxy can deliver static files directly #187 \r\n\r\nProxying\r\n- [x] Url can be transformed for destinations #207\r\n- [x] Requests and responses headers can be transformed #21 \r\n- [x] Http Methods can be transformed (eg POST to PUT) #445\r\n- [ ] Outbound http connections to destinations are configurable #282 \r\n- [x] Proxy adds standard headers related to request forwarding #13\r\n- [ ] Proxy can be used in a hosted datacenter environment with limitations such as SNAT #62\r\n- [ ] Support for Lets Encrypt for TLS termination #110\r\n- [ ] Proxy can handle gRPC traffic including streaming #118\r\n- [x] Proxy component can be used stand-alone for advanced scenarios #408  \r\n\r\nDiagnostics\r\n- [ ] Proxy supplies metrics for monitoring performance #61\r\n- [ ] Proxy supplies logs for with pertinent  info for each stage of the request #115\r\n- [ ] Proxy has an API for determining its health #125\r\n\r\nGeneral\r\n- [ ] Proxy is hardened so it can directly face the internet #16\r\n- [ ] Proxy has cloud scale performance, and is benchmarked in the lab #51  \r\n- [ ] Proxy has documentation #484\r\n- [ ] Customer can add middleware to customize the proxy functionality such as routing, header manipulation #114\r\n- [x] support for .NET 3.1 \u0026 5 #159\r\n- [ ] Support for back pressure #290\r\n\r\nPackaging\r\n- [x] Proxy can be consumed as a library so it can be readily extended and customized #143\r\n- [ ] Proxy is supplied as a project template for dotnet new #77\r\n- [ ] Proxy is supplied as a pre-built exe with a configuration file #261 \r\n- [ ] Proxy is supplied as a pre-built docker image #247 \r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n",
             "Milestone": null,
             "Assignees": [],
             "Labels": [
@@ -41,13 +41,1223 @@
                 "BackgroundColor": "5454c9"
               }
             ],
-            "Kind": 1,
+            "Kind": 3,
             "ProjectStatus": {
               "ProjectName": ".NET 6.0",
-              "Column": "Proposed"
+              "Column": "In progress"
             }
           },
-          "Children": []
+          "Children": [
+            {
+              "Issue": {
+                "Id": "microsoft/reverse-proxy#9",
+                "CreatedAt": "2020-03-12T16:25:29+00:00",
+                "CreatedBy": "anurse",
+                "IsClosed": true,
+                "Title": "Proxy supports static config files, with hot reload for handling changes",
+                "DescriptionMarkdown": "Config based proxies are common and we\u0027ll need to support at least basic proxy scenarios from config. Here are some initial considerations:\r\n- Define routes based on host and/or path\r\n- A restart should not be needed to pick up config changes\r\n- You should be able to augment a route with code/middleware. Kestrel does something similar using named endpoints.\r\n- List multiple back-ends per route for load balancing\r\n- Configure a load balancing strategy",
+                "Milestone": "1.0.0-preview1",
+                "Assignees": [
+                  "Tratcher"
+                ],
+                "Labels": [
+                  {
+                    "Name": "Type: Enhancement",
+                    "BackgroundColor": "0075ca"
+                  },
+                  {
+                    "Name": "User Story",
+                    "BackgroundColor": "f9f06d"
+                  }
+                ],
+                "Kind": 2,
+                "ProjectStatus": null
+              },
+              "Children": []
+            },
+            {
+              "Issue": {
+                "Id": "microsoft/reverse-proxy#8",
+                "CreatedAt": "2020-03-12T16:24:45+00:00",
+                "CreatedBy": "anurse",
+                "IsClosed": true,
+                "Title": "Proxy supports dynamic configuration pulling from other sources",
+                "DescriptionMarkdown": "There are 3 ways I can see routes being defined for a proxy:\r\n**a)** In config via a config file, changeable at runtime - this is what most proxies do today\r\n**b)** Statically defined in code - setting up static endpoints similar to the sample [startup.cs](https://github.com/dotnet/proxy/blob/60300714acb69cd6a7c3122c69dd7ccf517e5cea/src/sample/Startup.cs#L42-L44)\r\n**c)** Dynamically created by code. This seems to be what most of the Azure partners need. At startup, and periodically the code will need to query a backend to fetch both the Endpoints to listen to, and where each of those should be routed.\r\n_[added from discussion below]_\r\n**d)** When there are too many routes to load them all, we need to be able to query a database per request to load and cache routes. From our research, more Azure partners do this than C.\r\n\r\nThis last bucket is where we need to shine and differentiate ourselves from the competition.\r\nIt will need to account for:\r\n- Listening on new IP Addresses / ports\r\n- SNI and being able to dynamically lookup a cert based on the client hello\r\n- route based on the hierarchy of the URI path \u0026 query string\r\n\r\nFor some apps, they may need to do a DB lookup to discover the cert/route based on the URL being passed - so will need to have a cache and fallback mechanism.\r\n\r\nPerformance would dictate you probably need optimized structures like a trie, that I suspect are behind the existing routing tables. Either we need APIs to be able to dynamically edit the tables, and/or create and replace the tables, or be able to use the same concepts from custom app code for the proxy.\r\n",
+                "Milestone": "1.0.0-preview4",
+                "Assignees": [
+                  "Tratcher",
+                  "alnikola"
+                ],
+                "Labels": [
+                  {
+                    "Name": "Partner Blocking: Island Gateway",
+                    "BackgroundColor": "094d6b"
+                  },
+                  {
+                    "Name": "Type: Enhancement",
+                    "BackgroundColor": "0075ca"
+                  },
+                  {
+                    "Name": "User Story",
+                    "BackgroundColor": "f9f06d"
+                  }
+                ],
+                "Kind": 2,
+                "ProjectStatus": null
+              },
+              "Children": []
+            },
+            {
+              "Issue": {
+                "Id": "microsoft/reverse-proxy#257",
+                "CreatedAt": "2020-06-19T22:43:15+00:00",
+                "CreatedBy": "davidni",
+                "IsClosed": false,
+                "Title": "Service Fabric integration (dynamic discovery)",
+                "DescriptionMarkdown": "## Introduction\r\n\r\nAdds \u0060Microsoft.ReverseProxy.ServiceFabricIntegration\u0060 which implements dynamic discovery of Service Fabric services. The general architecture takes inspiration from [Traefik\u0027s Service Fabric integration](https://docs.traefik.io/v1.7/configuration/backends/servicefabric/), and is designed for easy and friction-free onboarding of multiple Service Fabric services operating behind YARP. Running multiple instances of YARP in the same cluster is possible, and an eventual consistency model helps avoid the need for any external storage except for the runtime Service Fabric queries used to dynamically discover services in the cluster.\r\n\r\nA Service Fabric service that wants to leverage YARP simply needs to add an \u0060\u003CExtension\u003E\u0060 element in their \u0060ServiceManifest\u0060, for example (see complete example further below):\r\n\r\n\u0060\u0060\u0060xml\r\n\u003CExtensions\u003E\r\n  \u003CExtension Name=\u0022YARP\u0022\u003E\r\n    \u003CLabels xmlns=\u0022http://schemas.microsoft.com/2015/03/fabact-no-schema\u0022\u003E\r\n      \u003CLabel Key=\u0022YARP.Enable\u0022\u003Etrue\u003C/Label\u003E\r\n      \u003CLabel Key=\u0022YARP.Routes.route1.Hosts\u0022\u003Eexample.com\u003C/Label\u003E\r\n    \u003C/Labels\u003E\r\n  \u003C/Extension\u003E\r\n\u003C/Extensions\u003E\r\n\u0060\u0060\u0060\r\n\r\n\r\n## Functional overview\r\nThis works by periodically querying Service Fabric for all applications in a Service Fabric cluster. For each application, we enumerate all services. For each service, we extract its _labels_ and, if the service has opted in to use YARP (\u0060YARP.Enable=true\u0060). If the service that has opted in to use YARP, we then enumerate all partitions, and all instances/replicas within each partition.\r\n\r\n\r\n### Service Fabric concepts mappings to YARP\r\n\r\nService Fabric terminology|YARP terminology\r\n-|-\r\nCluster|--\r\nApplication|--\r\nService (e.g. \u0060fabric:/App1/Svc2\u0060)|Cluster (ClusterId=ServiceName)\r\nInstance / replica|Destination (Address=instance\u0027 or replica\u0027s endpoint)\r\n\u0060YARP.Routes.\u003CrouteName\u003E.*\u0060 in ServiceManifest|ProxyRoute (id=ServiceName\u002BrouteName, Match=Hosts,Path extracted from the labels)\r\n\r\n\r\n### Dynamic configurability\r\nLabels defined in the Service Manifest support the following scenarios:\r\n* Arbitrary key / value pair. Only keys understood by us are honored, and unknown keys are ignored\r\n* Application parameter reference. If the label value is of the form \u0060[appParamName]\u0060, its value will be replaced at runtime with the value of the application parameter with the same name defined for the application the service belongs to\r\n* Naming Service overrides. If label \u0060YARP.EnableDynamicOverrides\u0060 is specified as \u0060true\u0060, we will also query Service Fabric Naming Service to discover any [named properties](https://docs.microsoft.com/en-us/rest/api/servicefabric/sfclient-index-property-management). Any _properties_ found for the service being enumerated take precedence over values specified in ServiceManifest. This functionality is opt-in, and disabled by default.\r\n\r\n\r\n### Designed for high availability\r\n\r\nWe keep a cache of the last discovery results obtained from Service Fabric. If at any point, for whatever reason, we are not able to retrieve an updated view of the cluster, we will continue to operate with last-known-good data. The cache is kept in memory, but could be extended to support permanent storage on disk to also survive reboots.\r\n\r\n\r\n### Designed for use by large teams\r\nThis integration is designed to support tens of Service Fabric services hosted behind YARP, and it provides additional features to help owners of those teams self-service their devops requirements relating to YARP. When we successfully discovered a service, we emit a [Service Fabric health report](https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-health-introduction) against the discovered service. If any config errors are encountered, a Warning health report is issued, which makes it easy for the service owners to observe the errors on Service Fabric Explorer and / or telemetry. This closes the loop and makes it easy for a service in Service Fabric to confirm that its configurations are being honored and to detect any issues.\r\n\r\n\r\n### Complete ServiceManifest example:\r\n\r\n\u0060\u0060\u0060xml\r\n\u003CServiceManifest Name=\u0022Service1Pkg\u0022 Version=\u00221.0.0\u0022 xmlns=\u0022http://schemas.microsoft.com/2011/01/fabric\u0022\u003E\r\n  \u003CServiceTypes\u003E\r\n    \u003CStatelessServiceType ServiceTypeName=\u0022Service1Type\u0022 \u003E\r\n      \u003CExtensions\u003E\r\n        \u003CExtension Name=\u0022YARP\u0022\u003E\r\n          \u003CLabels xmlns=\u0022http://schemas.microsoft.com/2015/03/fabact-no-schema\u0022\u003E\r\n            \u003CLabel Key=\u0022YARP.Enable\u0022\u003Etrue\u003C/Label\u003E\r\n            \u003CLabel Key=\u0022YARP.Routes.route1.Hosts\u0022\u003Eexample.com\u003C/Label\u003E\r\n            \u003C!-- Optional: enable health probes --\u003E\r\n            \u003CLabel Key=\u0027YARP.Backend.Healthcheck.Enabled\u0027\u003Etrue\u003C/Label\u003E\r\n            \u003CLabel Key=\u0027YARP.Backend.Healthcheck.Path\u0027\u003Eapi/health\u003C/Label\u003E\r\n            \u003CLabel Key=\u0027YARP.Backend.Healthcheck.Timeout\u0027\u003E30\u003C/Label\u003E\r\n            \u003CLabel Key=\u0027YARP.Backend.Healthcheck.Interval\u0027\u003E10\u003C/Label\u003E\r\n          \u003C/Labels\u003E\r\n        \u003C/Extension\u003E\r\n      \u003C/Extensions\u003E\r\n    \u003C/StatelessServiceType\u003E\r\n  \u003C/ServiceTypes\u003E\r\n\r\n  \u003C!-- ... --\u003E\r\n\u003C/ServiceManifest\u003E\r\n\u0060\u0060\u0060\r\n\r\n\r\n## Remaining work:\r\n\r\n* [x] \u0060ServiceDiscoveryConfigApplier\u0060 needs to be cleaned up and wired up. Without this, the Service Fabric integration code will not be invoked by YARP. The implementation of \u0060ServiceDiscoveryConfigApplier\u0060 in this PR is _meant to_ (but does not achieve that in its current state) support multiple service discovery mechanisms and to allow them to be specified by config.\r\n* [x] Organize and rename labels\r\n* [x] Add sample Service Fabric projects to exercise everything E2E\r\n",
+                "Milestone": null,
+                "Assignees": [],
+                "Labels": [
+                  {
+                    "Name": "Partner Blocking: Island Gateway",
+                    "BackgroundColor": "094d6b"
+                  },
+                  {
+                    "Name": "User Story",
+                    "BackgroundColor": "f9f06d"
+                  }
+                ],
+                "Kind": 2,
+                "ProjectStatus": null
+              },
+              "Children": []
+            },
+            {
+              "Issue": {
+                "Id": "microsoft/reverse-proxy#200",
+                "CreatedAt": "2020-05-22T23:35:12+00:00",
+                "CreatedBy": "galvesribeiro",
+                "IsClosed": false,
+                "Title": "Kubernetes Ingress Controller",
+                "DescriptionMarkdown": "Hello folks!\r\n\r\nFirst of all, great work! Congratz for the first preview release! It is indeed something .Net Community was lagging behind and had for too long to deal with clumsy things like nginx.\r\n\r\nSo, I\u0027m coming to a point where I\u0027d like to make a POC with YARP for a controlled small set of microservices in Kubernetes and that comes to a need to make it an ingestion controller.\r\n\r\nWith that in mind, I would like to ask if the Kube integration is something you guys plan to have on this repo, on some other under MSFT umbrella, or if it is something that the community will have to implemente for their own needs.\r\n\r\nIf it is something MSFT will (or already is) develop, ok, all we have todo is wait. If that is something that community will have to build, is that something that would be acceptable on this repo as a PR? If we should go to this PR, I\u0027de like to use this issue to discuss the approach we should take to contribute it.\r\n\r\nThanks! Keep it going!",
+                "Milestone": "1.0.0",
+                "Assignees": [],
+                "Labels": [
+                  {
+                    "Name": "Type: Enhancement",
+                    "BackgroundColor": "0075ca"
+                  },
+                  {
+                    "Name": "User Story",
+                    "BackgroundColor": "f9f06d"
+                  }
+                ],
+                "Kind": 2,
+                "ProjectStatus": null
+              },
+              "Children": []
+            },
+            {
+              "Issue": {
+                "Id": "microsoft/reverse-proxy#46",
+                "CreatedAt": "2020-04-09T22:16:36+00:00",
+                "CreatedBy": "Tratcher",
+                "IsClosed": false,
+                "Title": "Routes can be fully dynamic and discovered on a per request basis for hyper scale hosting",
+                "DescriptionMarkdown": "The current proxy routing design assumes all route data is available up front and can be loaded atomically into the route table. The EndpointDataSource routing model assumes this as well.\r\n\r\nFor more dynamically-configured services, we probably don\u0027t want to fetch the entire route table from the db, but instead have a pull and cache for each hostname model.\r\n\r\nHow can we lazy-load route, backend, and endpoint data on a per request basis?\r\n\r\nAssume we\u0027re working with a discrete key like Host, not a complicated best-match scenario like Path, and little or no wildcard support (maybe wildcard subdomains but only for specific depths?).\r\n\r\n@davidni is this a scenario you\u0027d evaluated?\r\n\r\n@rynowak can such a system work within routing, co-exist side by side routing, or would it completely replace routing?",
+                "Milestone": "1.0.0",
+                "Assignees": [],
+                "Labels": [
+                  {
+                    "Name": "Type: Enhancement",
+                    "BackgroundColor": "0075ca"
+                  },
+                  {
+                    "Name": "User Story",
+                    "BackgroundColor": "f9f06d"
+                  }
+                ],
+                "Kind": 2,
+                "ProjectStatus": null
+              },
+              "Children": []
+            },
+            {
+              "Issue": {
+                "Id": "microsoft/reverse-proxy#14",
+                "CreatedAt": "2020-03-12T16:30:17+00:00",
+                "CreatedBy": "anurse",
+                "IsClosed": false,
+                "Title": " Proxy can front multiple sites and route based on SNI/Host ",
+                "DescriptionMarkdown": "A proxy will often want to route based on the host. It\u0027s possible today but it\u0027s clunky.\r\nhttps://github.com/dotnet/aspnetcore/issues/19354",
+                "Milestone": "Backlog",
+                "Assignees": [],
+                "Labels": [
+                  {
+                    "Name": "Type: Enhancement",
+                    "BackgroundColor": "0075ca"
+                  },
+                  {
+                    "Name": "User Story",
+                    "BackgroundColor": "f9f06d"
+                  },
+                  {
+                    "Name": "tenet-performance",
+                    "BackgroundColor": "c14376"
+                  }
+                ],
+                "Kind": 2,
+                "ProjectStatus": null
+              },
+              "Children": []
+            },
+            {
+              "Issue": {
+                "Id": "microsoft/reverse-proxy#405",
+                "CreatedAt": "2020-09-08T17:22:46+00:00",
+                "CreatedBy": "Tratcher",
+                "IsClosed": true,
+                "Title": "Header based routing",
+                "DescriptionMarkdown": "Multiple partners have asked for header based routing. I\u0027ll ask them to give examples below. @davidni has an implementation in Island Gateway and had been working on this as an AspNetCore 5 feature but it wasn\u0027t done in time (https://github.com/dotnet/aspnetcore/pull/23594). The plan is to port Island Gateway\u0027s work to YARP so it works on 3.1 and 5.0 and then contribute it back to AspNetCore in 6.0.",
+                "Milestone": "1.0.0-preview6",
+                "Assignees": [
+                  "Tratcher"
+                ],
+                "Labels": [
+                  {
+                    "Name": "Partner Blocking: Island Gateway",
+                    "BackgroundColor": "094d6b"
+                  },
+                  {
+                    "Name": "Type: Enhancement",
+                    "BackgroundColor": "0075ca"
+                  },
+                  {
+                    "Name": "User Story",
+                    "BackgroundColor": "f9f06d"
+                  }
+                ],
+                "Kind": 2,
+                "ProjectStatus": null
+              },
+              "Children": []
+            },
+            {
+              "Issue": {
+                "Id": "microsoft/reverse-proxy#228",
+                "CreatedAt": "2020-06-04T20:17:10+00:00",
+                "CreatedBy": "Tratcher",
+                "IsClosed": false,
+                "Title": "Proxy should have active health checks to confirm the state of destinations",
+                "DescriptionMarkdown": "We have the IHealthProbeWorker and associated infrastructure, but it\u0027s all internal and nobody ever starts it.\r\n\r\nThis was forked from the original partner team code before health checks were completely implemented. Some missing pieces:\r\n- An IHostedService that resolves the IHealthProbeWorker and starts and stops it when needed. \r\n- DI extensions for registering the health services.\r\n\r\n@davidni \r\n\r\n\r\n",
+                "Milestone": "1.0.0-preview7",
+                "Assignees": [
+                  "alnikola"
+                ],
+                "Labels": [
+                  {
+                    "Name": "Partner Blocking: Island Gateway",
+                    "BackgroundColor": "094d6b"
+                  },
+                  {
+                    "Name": "Type: Bug",
+                    "BackgroundColor": "0075ca"
+                  },
+                  {
+                    "Name": "User Story",
+                    "BackgroundColor": "f9f06d"
+                  }
+                ],
+                "Kind": 2,
+                "ProjectStatus": null
+              },
+              "Children": []
+            },
+            {
+              "Issue": {
+                "Id": "microsoft/reverse-proxy#45",
+                "CreatedAt": "2020-04-08T18:43:40+00:00",
+                "CreatedBy": "anurse",
+                "IsClosed": true,
+                "Title": "Session Affinity",
+                "DescriptionMarkdown": "We should support session affinity as a native feature in the proxy. It\u0027s effectively a load balancer directive. Some attribute of the incoming request is used as a key to identify which backend to route to.\r\n\r\nAffinity logic needs to run:\r\n* Before load balancing, to check the affinity \u0022stamp\u0022 and select a single destination (i.e. one of the servers within a backend) (if possible)\r\n* After load balancing, to stamp the selected destination into a cookie, if enabled.\r\n\r\nIt also may need to be able to re-trigger load balancing (in the failure modes below).\r\n\r\nSupported \u0022modes\u0022 (please do suggest others!):\r\n* Cookie\r\n\t* A request with no incoming \u0022stamp\u0022 is assigned to a destination by normal load balancing policy\r\n\t* The return response is stamped with a Cookie containing the destination ID, cryptographically signed by a key trusted by all proxy instances (DataProtection!)\r\n\t* On future requests, we validate the stamp and select the specific destination for routing\r\n\t* If that destination is no longer in the active set of destinations, we \u0022fail\u0022 (see failure modes)\r\n* 5-tuple (\u0060Source IP\u0060, \u0060Source Port\u0060, \u0060Dest IP\u0060, \u0060Dest Port\u0060, \u0060Protocol\u0060)\r\n\t* Hash the 5-tuple values and use it to identify a destination.\r\n\t* If that destination is no longer in the active set of destinations, we \u0022fail\u0022 (see failure modes)\r\n* Header value\r\n\t* Hash some header value and use it to identify a destination\r\n\t* Useful for auth-token based affinity (used in Azure SignalR, for example)\r\n* ~~Crazy idea: magic SignalR mode?~~ We should track this separately, just wanted to see if anyone had C O O L thoughts here.\r\n\t* It could be cool to have native support for session affinity for SignalR connections.\r\n\t* There\u0027s a connection ID in the initial \u0060/negotiate\u0060 response, which is also present in the query string of all future requests, which we could use for affinity.\r\n\t* This could be very useful for applications which don\u0027t generally need affinity, but also use SignalR (which requires affinity).\r\n\t* Could possibly be generalized\r\n\r\nFailure modes\r\n* If the session affinity system identifies a target destination which is no longer routable, a configurable failure response should be used\r\n* Possible responses\r\n\t* Re-affinitize to one of the other destinations (i.e. re-route and stamp the new backend)\r\n\t* Return a 503 (since the target destination is no longer active)\r\n\r\nThese are mostly just my rando thoughts. I\u0027m interested in @davidni \u0027s thoughts, as well as the team\u0027s (@Tratcher @halter73)",
+                "Milestone": "1.0.0-preview2",
+                "Assignees": [
+                  "alnikola"
+                ],
+                "Labels": [
+                  {
+                    "Name": "Type: Enhancement",
+                    "BackgroundColor": "0075ca"
+                  },
+                  {
+                    "Name": "User Story",
+                    "BackgroundColor": "f9f06d"
+                  }
+                ],
+                "Kind": 2,
+                "ProjectStatus": null
+              },
+              "Children": []
+            },
+            {
+              "Issue": {
+                "Id": "microsoft/reverse-proxy#126",
+                "CreatedAt": "2020-04-28T23:28:58+00:00",
+                "CreatedBy": "Tratcher",
+                "IsClosed": false,
+                "Title": "Proxy can divert routes to support A/B testing, service rollout etc",
+                "DescriptionMarkdown": "A/B testing is a common scenario for proxies, letting services incrementally upgrade/experiment using live traffic.\r\n\r\nHow does a service decide which requests to route to which test group?\r\n- Assuming all requests are stateless you could decide this randomly on a per-request basis.\r\n- For a stateful service you\u0027d want to do a random assignment and then use affinization (https://github.com/microsoft/reverse-proxy/issues/45).\r\n- A service may also decide to statically affinitize based on known groups like tenants (e.g. move small customers before big ones).\r\n\r\nInitial theory:\r\n- This is a separate feature from load balancing. Within a load balancing set we assume all servers are equally able to handle a request aside from considerations of health and load. You\u0027d select a test group and then load balance within that group.\r\n- This should take advantage of the routing layer. For something like tenant based affinity that information may already be part of the route definition.\r\n- Alternatively we could put it into the route config (ProxyRoute), allowing it to specify multiple backends and an assignment strategy.\r\n- This should be compatible with retry mechanisms to allow failing over to the other test group.",
+                "Milestone": "1.0.0",
+                "Assignees": [],
+                "Labels": [
+                  {
+                    "Name": "Partner Blocking: E-Core3",
+                    "BackgroundColor": "6a12e5"
+                  },
+                  {
+                    "Name": "Type: Idea",
+                    "BackgroundColor": "0075ca"
+                  },
+                  {
+                    "Name": "User Story",
+                    "BackgroundColor": "f9f06d"
+                  }
+                ],
+                "Kind": 2,
+                "ProjectStatus": null
+              },
+              "Children": []
+            },
+            {
+              "Issue": {
+                "Id": "microsoft/reverse-proxy#58",
+                "CreatedAt": "2020-04-15T18:04:24+00:00",
+                "CreatedBy": "samsp-msft",
+                "IsClosed": true,
+                "Title": "Load balancing algorithms",
+                "DescriptionMarkdown": "Complete the set of common load balancing schemes\r\n- [x] Round Robin #72\r\n- [x] Random #73 \r\n- [x] Least loaded of 2 random #75\r\n* ~~First healthy endpoint~~ (already implemented)",
+                "Milestone": null,
+                "Assignees": [],
+                "Labels": [
+                  {
+                    "Name": "Type: Enhancement",
+                    "BackgroundColor": "0075ca"
+                  },
+                  {
+                    "Name": "User Story",
+                    "BackgroundColor": "f9f06d"
+                  }
+                ],
+                "Kind": 2,
+                "ProjectStatus": null
+              },
+              "Children": [
+                {
+                  "Issue": {
+                    "Id": "microsoft/reverse-proxy#72",
+                    "CreatedAt": "2020-04-20T22:09:50+00:00",
+                    "CreatedBy": "anurse",
+                    "IsClosed": true,
+                    "Title": "Implement Round-Robin Load Balancing",
+                    "DescriptionMarkdown": "Load balance by taking the \u0022next\u0022 backend in the list for each incoming request. We wrap around to the start of the list when we run out of backends.\r\n\r\nSince requests will likely be highly-concurrent, there\u0027s some complexity here in how the state is maintained. Also, since backends can change, we\u0027ll need to consider how this algorithm behaves in that case. Naively, this would be a simple atomic counter that the load balancer does an atomic increment-and-return, then modulus by the number of backends to figure out which backend to use.",
+                    "Milestone": "1.0.0-preview1",
+                    "Assignees": [
+                      "Tratcher",
+                      "samsp-msft"
+                    ],
+                    "Labels": [
+                      {
+                        "Name": "Type: Enhancement",
+                        "BackgroundColor": "0075ca"
+                      }
+                    ],
+                    "Kind": 3,
+                    "ProjectStatus": null
+                  },
+                  "Children": []
+                },
+                {
+                  "Issue": {
+                    "Id": "microsoft/reverse-proxy#73",
+                    "CreatedAt": "2020-04-20T22:15:28+00:00",
+                    "CreatedBy": "anurse",
+                    "IsClosed": true,
+                    "Title": "Implement Random Load-Balancing",
+                    "DescriptionMarkdown": "This is one of the simplest load-balancers. Select a random backend from the set of healthy backends and route to it. It can be surprisingly effective, so it\u0027s a useful algorithm to have. It\u0027s also trivial to implement so it gives us a way to exercise our abstractions.",
+                    "Milestone": "1.0.0-preview1",
+                    "Assignees": [
+                      "Tratcher"
+                    ],
+                    "Labels": [
+                      {
+                        "Name": "Type: Enhancement",
+                        "BackgroundColor": "0075ca"
+                      }
+                    ],
+                    "Kind": 3,
+                    "ProjectStatus": null
+                  },
+                  "Children": []
+                },
+                {
+                  "Issue": {
+                    "Id": "microsoft/reverse-proxy#75",
+                    "CreatedAt": "2020-04-20T22:29:31+00:00",
+                    "CreatedBy": "anurse",
+                    "IsClosed": true,
+                    "Title": "\u0022The Power of Two Choices\u0022 Load-Balancing Algorithm",
+                    "DescriptionMarkdown": "This falls somewhere between Random (#73) and Least-Requests (#74). It tends to be easier to implement across a cluster of proxies.\r\n\r\nGiven that load-balancers don\u0027t share state about the load to each backend (this would be very costly), a proxy instance is making it\u0027s decision based on the number of outstanding requests **it** has to the backends, and not the number of requests **all** instances have. This means that often multiple proxy instances can see the same nodes as under-utilized and send a storm of requests to it (if the incoming traffic is randomly balanced, as tends to be the case).\r\n\r\nThe \u0022Power of Two Choices\u0022 model (discussed in some sources below) adds a degree of randomness by first selecting two random backends and **then** making a \u0022least-outstanding-requests\u0022 decision between those two. This helps to prevent these storms of traffic. This doesn\u0027t generally perform better than Least Requests/Connections in a single-node proxy deployment, but it can be better than Random in situations where each node doesn\u0027t have perfect knowledge of the load\r\n\r\n#### Sources\r\n* [NGINX and the \u201CPower of Two Choices\u201D Load-Balancing Algorithm](https://www.nginx.com/blog/nginx-power-of-two-choices-load-balancing-algorithm/)\r\n* [Test Driving \u201CPower of Two Random Choices\u201D Load Balancing](https://www.haproxy.com/blog/power-of-two-load-balancing/)\r\n* [Michael Mitzenmacher. 2001. The Power of Two Choices in Randomized Load Balancing. IEEE Trans. Parallel Distrib. Syst. 12, 10 (October 2001), 1094\u20131104. DOI:https://doi.org/10.1109/71.963420](https://www.eecs.harvard.edu/~michaelm/postscripts/tpds2001.pdf)",
+                    "Milestone": "1.0.0-preview1",
+                    "Assignees": [],
+                    "Labels": [
+                      {
+                        "Name": "Type: Idea",
+                        "BackgroundColor": "0075ca"
+                      }
+                    ],
+                    "Kind": 3,
+                    "ProjectStatus": null
+                  },
+                  "Children": []
+                }
+              ]
+            },
+            {
+              "Issue": {
+                "Id": "microsoft/reverse-proxy#122",
+                "CreatedAt": "2020-04-28T21:37:07+00:00",
+                "CreatedBy": "Tratcher",
+                "IsClosed": true,
+                "Title": " Proxy supports authentication / authorization for specific routes",
+                "DescriptionMarkdown": "When defining proxy routes we should be able to specify Authorization criteria for that route and avoid proxying requests until that criteria is met.\r\n\r\nThis will need some support to be specified from config (probably by specifying the name of an authz policy that\u0027s configured in code), but it should also be configurable when using other data sources.",
+                "Milestone": "1.0.0-preview3",
+                "Assignees": [
+                  "Tratcher"
+                ],
+                "Labels": [
+                  {
+                    "Name": "Type: Enhancement",
+                    "BackgroundColor": "0075ca"
+                  },
+                  {
+                    "Name": "User Story",
+                    "BackgroundColor": "f9f06d"
+                  }
+                ],
+                "Kind": 2,
+                "ProjectStatus": null
+              },
+              "Children": []
+            },
+            {
+              "Issue": {
+                "Id": "microsoft/reverse-proxy#187",
+                "CreatedAt": "2020-05-22T08:40:21+00:00",
+                "CreatedBy": "expcat",
+                "IsClosed": false,
+                "Title": "Proxy can deliver static files directly",
+                "DescriptionMarkdown": "### What should we add or change to make your life better?\r\nSupport to configure static file resources.\r\n### Why is this important to you?\r\nAvoid using Nginx on the front end.\r\n\r\nThis is doable today if you customize the pipeline to include static files, but needs a configuration option for a stand-alone exe",
+                "Milestone": "1.0.0",
+                "Assignees": [],
+                "Labels": [
+                  {
+                    "Name": "Deployment cookbook",
+                    "BackgroundColor": "e5da04"
+                  },
+                  {
+                    "Name": "Type: Enhancement",
+                    "BackgroundColor": "0075ca"
+                  },
+                  {
+                    "Name": "User Story",
+                    "BackgroundColor": "f9f06d"
+                  }
+                ],
+                "Kind": 2,
+                "ProjectStatus": null
+              },
+              "Children": []
+            },
+            {
+              "Issue": {
+                "Id": "microsoft/reverse-proxy#207",
+                "CreatedAt": "2020-05-26T18:52:08+00:00",
+                "CreatedBy": "jmezach",
+                "IsClosed": true,
+                "Title": "Url can be transformed for destinations",
+                "DescriptionMarkdown": "I\u0027ve been looking into YARP to see if it can be used as an API gateway. We currently have one based on the [Ocelot](https://github.com/ThreeMammals/Ocelot) library but since it seems that might be deprecated in favor of YARP I figured I could take a look and see if I can achieve the same thing.\r\n\r\nOne of the things I\u0027m able to do with Ocelot and which I haven\u0027t been able to achieve with YARP yet is the ability to rewrite the downstream request path. For example, let\u0027s say that I want to proxy the upstream URL https://somewhere.example.com/someapi/\u003Cthe-rest\u003E to the downstream URL https://localhost:5003/\u003Cthe-rest\u003E.\r\n\r\nI would expect this to work, however currently I\u0027m seeing request to https://localhost:5003/someapi/\u003Cthe-rest\u003E instead. Here\u0027s the config I\u0027m using:\r\n\r\n\u0060\u0060\u0060json\r\n\u0022ReverseProxy\u0022: {\r\n  \u0022Routes\u0022: [\r\n    {\r\n      \u0022RouteId\u0022: \u0022someapi\u0022,\r\n      \u0022BackendId\u0022: \u0022EchoService\u0022,\r\n      \u0022Match\u0022: {\r\n        \u0022Methods\u0022: [ \u0022GET\u0022, \u0022POST\u0022 ],\r\n        \u0022Host\u0022: \u0022somewhere.example.com\u0022,\r\n        \u0022Path\u0022: \u0022/someapi/{**catchall}\u0022\r\n      }\r\n    }\r\n  ],\r\n  \u0022Backends\u0022: {\r\n    \u0022EchoService\u0022: {\r\n      \u0022LoadBalancing\u0022: {\r\n        \u0022Mode\u0022: \u0022Random\u0022\r\n      },\r\n      \u0022Destinations\u0022: {\r\n        \u0022backend_destination1\u0022: {\r\n          \u0022Address\u0022: \u0022https://localhost:5003/\u0022\r\n        }\r\n      }\r\n    }\r\n  }\r\n},\r\n\u0060\u0060\u0060\r\n\r\nIs this something that\u0027s supported, or planned to be supported?",
+                "Milestone": null,
+                "Assignees": [],
+                "Labels": [
+                  {
+                    "Name": "Type: Discussion",
+                    "BackgroundColor": "0075ca"
+                  },
+                  {
+                    "Name": "User Story",
+                    "BackgroundColor": "f9f06d"
+                  }
+                ],
+                "Kind": 2,
+                "ProjectStatus": null
+              },
+              "Children": []
+            },
+            {
+              "Issue": {
+                "Id": "microsoft/reverse-proxy#21",
+                "CreatedAt": "2020-03-19T19:11:38+00:00",
+                "CreatedBy": "davidni",
+                "IsClosed": true,
+                "Title": "Config-based request and response transformation",
+                "DescriptionMarkdown": "In Island Gateway we implemented the notion of \u0060Transformations\u0060, which takes inspiration from Traefik\u0027s middlewares (though we\u0027re not calling them middlewares for obvious reasons). See e.g. [Traefik\u0027s StripPrefix](https://docs.traefik.io/middlewares/stripprefix/).\r\n\r\nA user can specify e.g. \u0060Transformations=StripPrefix(\u0027/api\u0027), AddPrefix(\u0027/v2\u0027)\u0060, which results in the listed processing steps being applied sequentially at runtime.\r\n\r\nThe ability to specify simple transformations like these through config is a requirement for us.\r\n\r\nExample of a route using transformations:\r\n\u0060\u0060\u0060\r\nRule            = Host(\u0027example.com\u0027) \u0026\u0026 Path(\u0027/myservice/{**catchall}\u0027)\r\nTransformations = StripPrefix(\u0027/myservice\u0027)\r\n\u0060\u0060\u0060\r\n\r\n(this is a feature we already implemented in Island Gateway, filing here as requested to track)",
+                "Milestone": "1.0.0-preview2",
+                "Assignees": [
+                  "Tratcher"
+                ],
+                "Labels": [
+                  {
+                    "Name": "Type: Enhancement",
+                    "BackgroundColor": "0075ca"
+                  }
+                ],
+                "Kind": 3,
+                "ProjectStatus": null
+              },
+              "Children": []
+            },
+            {
+              "Issue": {
+                "Id": "microsoft/reverse-proxy#445",
+                "CreatedAt": "2020-09-28T15:37:55+00:00",
+                "CreatedBy": "Tratcher",
+                "IsClosed": true,
+                "Title": "Implement method transforms",
+                "DescriptionMarkdown": "https://github.com/microsoft/reverse-proxy/discussions/444\r\nSome servers only accept basic HTTP methods like GET and POST, not PUT or DELETE. Implement request method transforms like PUT -\u003E POST.\r\n- It would look a lot like the [PathSet](https://microsoft.github.io/reverse-proxy/articles/transforms.html#pathset) transform.\r\n- Derive from [RequestParamtersTransform](https://github.com/microsoft/reverse-proxy/blob/b48d6950a69e3fccb3b17e09bd64dcb0cfdcb926/src/ReverseProxy/Service/RuntimeModel/Transforms/RequestParametersTransform.cs).\r\n- Modify [RequestParametersTransformContext.Method](https://github.com/microsoft/reverse-proxy/blob/b48d6950a69e3fccb3b17e09bd64dcb0cfdcb926/src/ReverseProxy/Service/RuntimeModel/Transforms/RequestParametersTransformContext.cs#L27)\r\n\r\nRelated: Consider support for the X-Http-Method-Override header to preserve the original method. This would have to be a separate transform since headers are processed seperately.",
+                "Milestone": "1.0.0-preview6",
+                "Assignees": [],
+                "Labels": [
+                  {
+                    "Name": "Type: Idea",
+                    "BackgroundColor": "0075ca"
+                  },
+                  {
+                    "Name": "User Story",
+                    "BackgroundColor": "f9f06d"
+                  },
+                  {
+                    "Name": "help wanted",
+                    "BackgroundColor": "9bf47a"
+                  }
+                ],
+                "Kind": 2,
+                "ProjectStatus": null
+              },
+              "Children": []
+            },
+            {
+              "Issue": {
+                "Id": "microsoft/reverse-proxy#282",
+                "CreatedAt": "2020-07-01T23:55:21+00:00",
+                "CreatedBy": "samsp-msft",
+                "IsClosed": false,
+                "Title": "Outbound http connections to destinations are configurable ",
+                "DescriptionMarkdown": "https://github.com/dotnet/runtime/issues/987",
+                "Milestone": "1.0.0",
+                "Assignees": [
+                  "ManickaP"
+                ],
+                "Labels": [
+                  {
+                    "Name": ".NET runtime schedule",
+                    "BackgroundColor": "db7fc7"
+                  },
+                  {
+                    "Name": "Partner Blocking: Collab Services",
+                    "BackgroundColor": "6a12e5"
+                  },
+                  {
+                    "Name": "Type: Tracking",
+                    "BackgroundColor": "0075ca"
+                  }
+                ],
+                "Kind": 3,
+                "ProjectStatus": null
+              },
+              "Children": []
+            },
+            {
+              "Issue": {
+                "Id": "microsoft/reverse-proxy#13",
+                "CreatedAt": "2020-03-12T16:29:46+00:00",
+                "CreatedBy": "anurse",
+                "IsClosed": true,
+                "Title": "Proxy adds standard headers related to request forwarding",
+                "DescriptionMarkdown": "* X-Forwarded-Proto\r\n* X-Forwarded-Host\r\n* X-Forwarded-For\r\n* X-Client-Cert\r\n* Forwarded (yes, there\u0027s a chicken-and-egg problem but I see no reason we can\u0027t break that cycle by implementing it).",
+                "Milestone": "1.0.0-preview2",
+                "Assignees": [
+                  "Tratcher"
+                ],
+                "Labels": [
+                  {
+                    "Name": "Type: Enhancement",
+                    "BackgroundColor": "0075ca"
+                  },
+                  {
+                    "Name": "User Story",
+                    "BackgroundColor": "f9f06d"
+                  }
+                ],
+                "Kind": 2,
+                "ProjectStatus": null
+              },
+              "Children": []
+            },
+            {
+              "Issue": {
+                "Id": "microsoft/reverse-proxy#62",
+                "CreatedAt": "2020-04-15T18:21:30+00:00",
+                "CreatedBy": "scalablecory",
+                "IsClosed": false,
+                "Title": "Proxy can be used in a hosted datacenter environment with limitations such as SNAT",
+                "DescriptionMarkdown": "Customers behind certain firewalls or load balancers, such as Azure\u0027s SNAT, have a limit on the number of connections they can make per ip/port endpoint.\r\n\r\n\u0060HttpClient\u0060 has a \u0060MaxConnectionsPerServer\u0060 setting, but the limit is not actually applied per-server, but rather per-pool, with each pool being partitioned by a number of connection properties:\r\n- Kind, describing the type of connection (HTTP, HTTPS, Proxied HTTPS, etc.)\r\n- Host, the hostname in the request URI.\r\n- Port, the port in the request URI.\r\n- SslHostName, the SNI value associated with the connection (might be hostname from URI, might be Host header)\r\n- ProxyUri, the proxy that is being used to transport the connection.\r\n- Identity, the user the connection was authenticated over.\r\n\r\nIt is unreasonable to apply a meaningful SNAT limit on top of \u0060HttpClient\u0060 because the client will pool connections and does not expose connection lifetime events to the user.",
+                "Milestone": "1.0.0",
+                "Assignees": [
+                  "scalablecory"
+                ],
+                "Labels": [
+                  {
+                    "Name": "User Story",
+                    "BackgroundColor": "f9f06d"
+                  }
+                ],
+                "Kind": 2,
+                "ProjectStatus": null
+              },
+              "Children": []
+            },
+            {
+              "Issue": {
+                "Id": "microsoft/reverse-proxy#110",
+                "CreatedAt": "2020-04-27T08:25:55+00:00",
+                "CreatedBy": "RehanSaeed",
+                "IsClosed": false,
+                "Title": "Support for Lets Encrypt for TLS termination",
+                "DescriptionMarkdown": "### What should we add or change to make your life better?\r\n\r\nMost reverse proxies out there support Lets Encrypt. @natemcmaster runs https://github.com/natemcmaster/LetsEncrypt which is trying to add LetsEncrypt support to ASP.NET Core. Please help him finish, so it can also be used on this project.\r\n\r\n### Why is this important to you?\r\n\r\nA reverse proxy without TLS termination is not very useful. Lets Encrypt is a great choice for TLS, being free, secure and automated.",
+                "Milestone": "1.0.0",
+                "Assignees": [],
+                "Labels": [
+                  {
+                    "Name": "Type: Idea",
+                    "BackgroundColor": "0075ca"
+                  }
+                ],
+                "Kind": 3,
+                "ProjectStatus": null
+              },
+              "Children": []
+            },
+            {
+              "Issue": {
+                "Id": "microsoft/reverse-proxy#118",
+                "CreatedAt": "2020-04-27T22:25:04+00:00",
+                "CreatedBy": "davidni",
+                "IsClosed": false,
+                "Title": "Proxy can handle gRPC traffic including streaming",
+                "DescriptionMarkdown": "Streaming requests (e.g. duplex gRPC request) require special handling by YARP (at a minimum, e.g. remove minimum request data rate enforcement).\r\n\r\nToday we check for gRPC content type, but this is both too broad (not all gRPC requests require streaming semantics) as well as too narrow (other protocols than gRPC on top of HTTP/2 could also require streaming semantics).\r\n\r\nSome proposals were discussed  in https://github.com/microsoft/reverse-proxy/pull/80#discussion_r416156407",
+                "Milestone": "1.0.0",
+                "Assignees": [],
+                "Labels": [
+                  {
+                    "Name": "Type: Discussion",
+                    "BackgroundColor": "0075ca"
+                  },
+                  {
+                    "Name": "User Story",
+                    "BackgroundColor": "f9f06d"
+                  }
+                ],
+                "Kind": 2,
+                "ProjectStatus": null
+              },
+              "Children": []
+            },
+            {
+              "Issue": {
+                "Id": "microsoft/reverse-proxy#408",
+                "CreatedAt": "2020-09-09T17:30:11+00:00",
+                "CreatedBy": "Tratcher",
+                "IsClosed": true,
+                "Title": "Proxy component can be used stand-alone for advanced scenarios",
+                "DescriptionMarkdown": "Many users have very basic needs from a proxy. They don\u0027t need load balancing, affinity, or even routing, or they address those concerns in their own way. What these users really need is the code from [HttpProxy](https://github.com/microsoft/reverse-proxy/blob/c1d65e944d2205c2d442d45785e7875bd87c0fde/src/ReverseProxy/Service/Proxy/HttpProxy.cs) that manages the transition between HttpContext and HttpRequestMessage. They want to call this from their own controller or middleware to forward specific requests to specific destinations.\r\n\r\nConsider directly exposing HttpProxy (or a more targeted API) for these use cases.",
+                "Milestone": "1.0.0-preview6",
+                "Assignees": [],
+                "Labels": [
+                  {
+                    "Name": "Partner Blocking: Collab Services",
+                    "BackgroundColor": "6a12e5"
+                  },
+                  {
+                    "Name": "Type: Idea",
+                    "BackgroundColor": "0075ca"
+                  },
+                  {
+                    "Name": "User Story",
+                    "BackgroundColor": "f9f06d"
+                  }
+                ],
+                "Kind": 2,
+                "ProjectStatus": null
+              },
+              "Children": []
+            },
+            {
+              "Issue": {
+                "Id": "microsoft/reverse-proxy#61",
+                "CreatedAt": "2020-04-15T18:12:41+00:00",
+                "CreatedBy": "samsp-msft",
+                "IsClosed": false,
+                "Title": "Proxy supplies metrics for monitoring performance",
+                "DescriptionMarkdown": "Collect metrics for all stages of the proxy processing, including outbound http requests",
+                "Milestone": "1.0.0-preview7",
+                "Assignees": [
+                  "MihaZupan"
+                ],
+                "Labels": [
+                  {
+                    "Name": ".NET runtime schedule",
+                    "BackgroundColor": "db7fc7"
+                  },
+                  {
+                    "Name": "ASP.NET Schedule",
+                    "BackgroundColor": "db7fc7"
+                  },
+                  {
+                    "Name": "Partner Blocking: Island Gateway",
+                    "BackgroundColor": "094d6b"
+                  },
+                  {
+                    "Name": "Type: Enhancement",
+                    "BackgroundColor": "0075ca"
+                  }
+                ],
+                "Kind": 3,
+                "ProjectStatus": null
+              },
+              "Children": []
+            },
+            {
+              "Issue": {
+                "Id": "microsoft/reverse-proxy#115",
+                "CreatedAt": "2020-04-27T17:24:56+00:00",
+                "CreatedBy": "Tratcher",
+                "IsClosed": false,
+                "Title": "Proxy supplies logs for with pertinent  info for each stage of the request ",
+                "DescriptionMarkdown": "https://github.com/microsoft/reverse-proxy/blob/00c4e7c77059b7c4a9912a4c89c9a05026d55628/src/ReverseProxy.Core/Middleware/LoadBalancingMiddleware.cs#L47-L49\r\n\r\nUsing the IOperationLogger allocates a closure per call per request. We need to re-think how to write these start/stop/failed logs.",
+                "Milestone": "1.0.0-preview7",
+                "Assignees": [
+                  "MihaZupan"
+                ],
+                "Labels": [
+                  {
+                    "Name": "Type: Bug",
+                    "BackgroundColor": "0075ca"
+                  },
+                  {
+                    "Name": "User Story",
+                    "BackgroundColor": "f9f06d"
+                  }
+                ],
+                "Kind": 2,
+                "ProjectStatus": null
+              },
+              "Children": []
+            },
+            {
+              "Issue": {
+                "Id": "microsoft/reverse-proxy#125",
+                "CreatedAt": "2020-04-28T21:40:57+00:00",
+                "CreatedBy": "samsp-msft",
+                "IsClosed": false,
+                "Title": "Proxy has an API for determining its health",
+                "DescriptionMarkdown": "### What should we add or change to make your life better?\r\nAdd an API that can be used to collect statistics and state of the proxy. This would also have events for lifetime so that app code can know when the proxy is shutting down.\r\n### Why is this important to you?\r\nIt provides a foundational piece of infrastructure for solving:\r\n#23 part c - API for app code to shutdown the proxy\r\n#124 - REST or gRPC API for remote access to proxy status\r\n#123 - Dashboard for proxy config \u0026 status",
+                "Milestone": "1.0.0",
+                "Assignees": [],
+                "Labels": [
+                  {
+                    "Name": "Type: Enhancement",
+                    "BackgroundColor": "0075ca"
+                  },
+                  {
+                    "Name": "User Story",
+                    "BackgroundColor": "f9f06d"
+                  }
+                ],
+                "Kind": 2,
+                "ProjectStatus": null
+              },
+              "Children": []
+            },
+            {
+              "Issue": {
+                "Id": "microsoft/reverse-proxy#16",
+                "CreatedAt": "2020-03-12T16:31:03+00:00",
+                "CreatedBy": "anurse",
+                "IsClosed": false,
+                "Title": " Proxy is hardened so it can directly face the internet ",
+                "DescriptionMarkdown": "We expect several features to be add-ins that plug in as connection middleware. Add a connection middleware to the sample in this repo.\r\n\r\nHere\u0027s one example from Http2:\r\nhttps://github.com/dotnet/aspnetcore/blob/09bb7b4ca5a4fbde0283c294c35fac8b485c0074/src/Servers/Kestrel/samples/Http2SampleApp/Program.cs#L41-L54\r\n\r\nOther things we expect to need to plug into here:\r\n- Sniff SNI and rate limit\r\n- Rate limit SSL handshakes by IP\r\n\r\nWe don\u0027t have to write those components as part of this task, just demonstrate that a connection middleware has access to the necessary inputs and controls (e.g. IPs, sniffing the data stream, drop connections, etc.).\r\n\r\nSpecifically, this involves being able to filter connections based on information contained in the ClientHello TLS frame. Examples include:\r\n- Cipher Suite selection\r\n- Protocol Version\r\n- Server Name Indication (SNI)\r\n- Application-Level Protocol Negotiation (ALPN; used for HTTP/2 and HTTP/3)",
+                "Milestone": "1.0.0",
+                "Assignees": [],
+                "Labels": [
+                  {
+                    "Name": "Type: Enhancement",
+                    "BackgroundColor": "0075ca"
+                  },
+                  {
+                    "Name": "User Story",
+                    "BackgroundColor": "f9f06d"
+                  }
+                ],
+                "Kind": 2,
+                "ProjectStatus": null
+              },
+              "Children": []
+            },
+            {
+              "Issue": {
+                "Id": "microsoft/reverse-proxy#51",
+                "CreatedAt": "2020-04-15T17:41:30+00:00",
+                "CreatedBy": "samsp-msft",
+                "IsClosed": false,
+                "Title": "Proxy has cloud scale performance, and is benchmarked in the lab",
+                "DescriptionMarkdown": "Ongoing effort to analyze perf of the proxy.\r\n\r\n- [ ] Add micro benchmarks #223 \r\n- [ ] Add more benchmark scenarios #222 \r\n- [ ] Poor performance and errors when proxying https #355 \r\n- [ ] Profile Memory #221",
+                "Milestone": "1.0.0",
+                "Assignees": [],
+                "Labels": [
+                  {
+                    "Name": "Type: Task",
+                    "BackgroundColor": "0075ca"
+                  },
+                  {
+                    "Name": "User Story",
+                    "BackgroundColor": "f9f06d"
+                  }
+                ],
+                "Kind": 2,
+                "ProjectStatus": null
+              },
+              "Children": [
+                {
+                  "Issue": {
+                    "Id": "microsoft/reverse-proxy#223",
+                    "CreatedAt": "2020-06-02T19:17:26+00:00",
+                    "CreatedBy": "halter73",
+                    "IsClosed": false,
+                    "Title": "Add microbenchmarks",
+                    "DescriptionMarkdown": "We should add microbenchmarks for key methods like ProxyInvokerMiddleware.Invoke(), LoadBalancingMiddleware.Invoke(), LoadBalancer.PickDestination(), etc. using https://github.com/dotnet/BenchmarkDotNet.\r\n\r\nThis provides a benefit over end-to-end benchmarks since microbenchmarks can more reliably measure smaller performance gains or losses in the components they measure which can add up over time.",
+                    "Milestone": "1.0.0",
+                    "Assignees": [
+                      "halter73"
+                    ],
+                    "Labels": [
+                      {
+                        "Name": "Type: Task",
+                        "BackgroundColor": "0075ca"
+                      }
+                    ],
+                    "Kind": 3,
+                    "ProjectStatus": null
+                  },
+                  "Children": []
+                },
+                {
+                  "Issue": {
+                    "Id": "microsoft/reverse-proxy#222",
+                    "CreatedAt": "2020-06-02T19:08:52+00:00",
+                    "CreatedBy": "halter73",
+                    "IsClosed": false,
+                    "Title": "Add more benchmark scenarios",
+                    "DescriptionMarkdown": "This is a follow up to https://github.com/microsoft/reverse-proxy/issues/40.\r\n\r\nThere are countless proxy scenarios and variations that can be benchmarked, but currently our proxy benchmarks only capture the following scenario:\r\n\r\n- Using unencrypted connections and making HTTP/1.1 GET requests to both the proxy and backend\r\n\r\nThis scenario varies by response body size: 10B, 100B, 1KB, 10KB, 100KB plaintext responses are currently tested. Limiting response body sizes to just 32KB and 255KB should reduce the total number of scenarios allowing us to add more interesting scenarios without creating information overload.\r\n\r\nThe next proxy benchmark scenarios we plan to add are:\r\n\r\n- Using TLS connections and making HTTP/2 GET requests to both the proxy and backend\r\n- Using TLS connections and making HTTP/1.1 GET requests to both the proxy and backend\r\n- Using unencrypted connections and making HTTP/1.1 POST requests to both the proxy and backend\r\n\r\nAfter those scenarios are completed. Here are even more scenarios we can consider.\r\n\r\n- Logging completely disabled\r\n- Requests with bodies\r\n- Variations on headers\r\n  - Large request headers\r\n  - Large response headers\r\n  - Request/Response header transformation\r\n- gRPC through the rpoxy\r\n  - gRPC streaming\r\n\r\n",
+                    "Milestone": "1.0.0",
+                    "Assignees": [
+                      "halter73"
+                    ],
+                    "Labels": [
+                      {
+                        "Name": "Type: Task",
+                        "BackgroundColor": "0075ca"
+                      }
+                    ],
+                    "Kind": 3,
+                    "ProjectStatus": null
+                  },
+                  "Children": []
+                },
+                {
+                  "Issue": {
+                    "Id": "microsoft/reverse-proxy#355",
+                    "CreatedAt": "2020-07-31T14:37:17+00:00",
+                    "CreatedBy": "jmezach",
+                    "IsClosed": false,
+                    "Title": "Poor performance and errors when proxying to https",
+                    "DescriptionMarkdown": "### Describe the bug\r\nI\u0027ve been running some benchmarks on my local machine for my API gateway that is currently using Ocelot, but that I\u0027m in the process of migrating to YARP. To perform the benchmarks I\u0027ve been using [Crank](https://github.com/dotnet/crank) from the .NET team, which is awesome by the way.\r\n\r\nWhat I\u0027ve seen so far is that if the downstream service I\u0027m proxying to is using HTTP, YARP is much faster than Ocelot. For example, here are the results for my current gateway using Ocelot:\r\n\r\n\u0060\u0060\u0060\r\nFirst Request (ms):   850\r\nRequests:             18,068\r\nBad responses:        0\r\nMean latency (us):    214,006\r\nMax latency (us):     499,452\r\nRequests/sec:         1,181\r\nRequests/sec (max):   7,272\r\n\u0060\u0060\u0060\r\n\r\nWhile these are the results for a similar scenario, but using YARP:\r\n\r\n\u0060\u0060\u0060\r\nFirst Request (ms):   1,205\r\nRequests:             48,984\r\nBad responses:        0\r\nMean latency (us):    78,480\r\nMax latency (us):     2,128,675\r\nRequests/sec:         3,258\r\nRequests/sec (max):   13,420\r\n\u0060\u0060\u0060\r\n\r\nThose are not too shabby, although the max latency for YARP is interesting. Do note that my Ocelot based gateway is running on .NET Core 3.1, while my YARP gateway is running on .NET 5 Preview 7.\r\n\r\nHowever, when I ran the same benchmark with the gateway proxying to the downstream service using HTTPS, I\u0027m seeing very different results:\r\n\r\n**Ocelot:**\r\n\u0060\u0060\u0060\r\nFirst Request (ms):   1,088\r\nRequests:             12,819\r\nBad responses:        0\r\nMean latency (us):    301,467\r\nMax latency (us):     3,571,386\r\nRequests/sec:         839\r\nRequests/sec (max):   7,944\r\n\u0060\u0060\u0060\r\n\r\n**YARP:**\r\n\u0060\u0060\u0060\r\nFirst Request (ms):   1,631\r\nRequests:             527\r\nBad responses:        515\r\nMean latency (us):    9,021,413\r\nMax latency (us):     10,132,335\r\nRequests/sec:         18\r\nRequests/sec (max):   6,587\r\n\u0060\u0060\u0060\r\n\r\nObviously the number of bad responses triggered me, so I\u0027ve looked into the logs to see if I can figure out what\u0027s going wrong. I see a lot of these exceptions:\r\n\r\n\u0060\u0060\u0060\r\n[04:31:02.965] System.OperationCanceledException: The operation was canceled.\r\n[04:31:02.965]    at System.Threading.CancellationToken.ThrowOperationCanceledException()\r\n[04:31:02.965]    at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)\r\n[04:31:02.965]    at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.GetResult(Int16 token)\r\n[04:31:02.965]    at System.Net.Security.SslStream.\u003CFillHandshakeBufferAsync\u003Eg__InternalFillHandshakeBufferAsync|180_0[TIOAdapter](TIOAdapter adap, ValueTask\u00601 task, Int32 minSize)\r\n[04:31:02.965]    at System.Net.Security.SslStream.ReceiveBlobAsync[TIOAdapter](TIOAdapter adapter)\r\n[04:31:02.965]    at System.Net.Security.SslStream.ForceAuthenticationAsync[TIOAdapter](TIOAdapter adapter, Boolean receiveFirst, Byte[] reAuthenticationData, Boolean isApm)\r\n[04:31:02.965]    at System.Net.Http.ConnectHelper.EstablishSslConnectionAsyncCore(Stream stream, SslClientAuthenticationOptions sslOptions, CancellationToken cancellationToken)\r\n[04:31:02.965]    at System.Net.Http.HttpConnectionPool.ConnectAsync(HttpRequestMessage request, Boolean allowHttp2, CancellationToken cancellationToken)\r\n[04:31:02.965]    at System.Net.Http.HttpConnectionPool.CreateHttp11ConnectionAsync(HttpRequestMessage request, CancellationToken cancellationToken)\r\n[04:31:02.965]    at System.Net.Http.HttpConnectionPool.GetHttpConnectionAsync(HttpRequestMessage request, CancellationToken cancellationToken)\r\n[04:31:02.965]    at System.Net.Http.HttpConnectionPool.SendWithRetryAsync(HttpRequestMessage request, Boolean doRequestAuth, CancellationToken cancellationToken)\r\n[04:31:02.965]    at Microsoft.ReverseProxy.Service.Proxy.HttpProxy.NormalProxyAsync(HttpContext context, HttpRequestMessage upstreamRequest, Transforms transforms, HttpMessageInvoker httpClient, ProxyTelemetryContext proxyTelemetryContext, CancellationToken shortCancellation, CancellationToken longCancellation)\r\n[04:31:02.965]    at Microsoft.ReverseProxy.Telemetry.TextOperationLogger\u00601.ExecuteAsync(String operationName, Func\u00601 action)\r\n[04:31:02.965]    at Microsoft.ReverseProxy.Middleware.ProxyInvokerMiddleware.Invoke(HttpContext context)\r\n[04:31:02.965]    at Microsoft.AspNetCore.Routing.EndpointMiddleware.\u003CInvoke\u003Eg__AwaitRequestTask|6_0(Endpoint endpoint, Task requestTask, ILogger logger)\r\n[04:31:02.965]    at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)\r\n[04:31:02.965]    at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddleware.Invoke(HttpContext context)\r\n\u0060\u0060\u0060\r\n\r\nThat looks like it is somehow not able to complete the SSL handshake with the downstream service, but my Ocelot based gateway doesn\u0027t have that same problem and both are going to the exact same service. That service is running on ASP.NET Core 3.1 by the way.\r\n\r\n### To Reproduce\r\n\u003C!--\r\nWhat steps can we follow to reproduce the issue?\r\n\r\n\r\nGot Exceptions? Include both the message and the stack trace\r\n--\u003E\r\n\r\nSo far I\u0027ve followed the basic guide for setting up a reverse proxy with YARP. I\u0027m using the following configuration:\r\n\r\n\u0060\u0060\u0060json\r\n\u0022ReverseProxy\u0022: {\r\n  \u0022Routes\u0022: [\r\n    {\r\n        \u0022RouteId\u0022: \u0022realization\u0022,\r\n        \u0022ClusterId\u0022: \u0022EchoService\u0022,\r\n        \u0022Match\u0022: {\r\n          \u0022Methods\u0022: [ \u0022GET\u0022, \u0022POST\u0022 ],\r\n          \u0022Hosts\u0022: [ \u0022localhost\u0022 ],\r\n          \u0022Path\u0022: \u0022/realization/{*remainder}\u0022\r\n        },\r\n        \u0022Transforms\u0022: [\r\n            { \u0022PathSet\u0022: \u0022/api/values\u0022 }\r\n        ]\r\n     }\r\n  ],\r\n  \u0022Clusters\u0022: {\r\n    {\r\n      \u0022EchoService\u0022: {\r\n        \u0022LoadBalancing\u0022: {\r\n          \u0022Mode\u0022: \u0022Random\u0022\r\n        },\r\n        \u0022Destinations\u0022: {\r\n          \u0022backend_destination1\u0022: {\r\n            \u0022Address\u0022: \u0022https://localhost:5003/\u0022\r\n          }\r\n        }\r\n   }\r\n}\r\n  }\r\n}\r\n\u0060\u0060\u0060\r\n\r\nChanging \u0060backend_destination1\u0060\u0027s \u0060Address\u0060 to \u0060http://localhost:5002/\u0060 fixes the issue.\r\n\r\n### Further technical details\r\n\r\n- Include the version of the packages you are using: **1.0.0-preview.3**\r\n- The platform (Linux/macOS/Windows): macOS",
+                    "Milestone": "1.0.0",
+                    "Assignees": [],
+                    "Labels": [
+                      {
+                        "Name": "Triage: Info Needed",
+                        "BackgroundColor": "db64cb"
+                      },
+                      {
+                        "Name": "Type: Bug",
+                        "BackgroundColor": "0075ca"
+                      },
+                      {
+                        "Name": "tenet-performance",
+                        "BackgroundColor": "c14376"
+                      }
+                    ],
+                    "Kind": 3,
+                    "ProjectStatus": null
+                  },
+                  "Children": []
+                },
+                {
+                  "Issue": {
+                    "Id": "microsoft/reverse-proxy#221",
+                    "CreatedAt": "2020-06-02T18:47:17+00:00",
+                    "CreatedBy": "halter73",
+                    "IsClosed": false,
+                    "Title": "Capture memory profile and eliminate unnecessary allocations",
+                    "DescriptionMarkdown": "We should look at our primary scenarios, perhaps those defined for our TE-style benchmarks https://github.com/microsoft/reverse-proxy/issues/40, and capture a memory profile so we can eliminate unnecessary allocations and improve performance.",
+                    "Milestone": "1.0.0",
+                    "Assignees": [
+                      "halter73"
+                    ],
+                    "Labels": [
+                      {
+                        "Name": "Type: Task",
+                        "BackgroundColor": "0075ca"
+                      },
+                      {
+                        "Name": "tenet-performance",
+                        "BackgroundColor": "c14376"
+                      }
+                    ],
+                    "Kind": 3,
+                    "ProjectStatus": null
+                  },
+                  "Children": []
+                }
+              ]
+            },
+            {
+              "Issue": {
+                "Id": "microsoft/reverse-proxy#484",
+                "CreatedAt": "2020-10-21T20:58:26+00:00",
+                "CreatedBy": "samsp-msft",
+                "IsClosed": false,
+                "Title": "Documentation",
+                "DescriptionMarkdown": "This is a collective tracking of what is needed for documentation.\r\n\r\n- [ ]  How to customize YARP with pipleine modules #452, #114 \r\n- [ ] Authentication #416 \r\n- [ ] Configuring https #305 \r\n- [ ] configuration #183",
+                "Milestone": null,
+                "Assignees": [],
+                "Labels": [
+                  {
+                    "Name": "User Story",
+                    "BackgroundColor": "f9f06d"
+                  }
+                ],
+                "Kind": 2,
+                "ProjectStatus": null
+              },
+              "Children": [
+                {
+                  "Issue": {
+                    "Id": "microsoft/reverse-proxy#452",
+                    "CreatedAt": "2020-10-02T21:12:50+00:00",
+                    "CreatedBy": "samsp-msft",
+                    "IsClosed": false,
+                    "Title": "Sample/Doc for pipeline module(s)",
+                    "DescriptionMarkdown": "Most of the questions we get for \u0022how do I?\u0022 with the proxy can be solved with a custom middleware component. Although we have a samples folder - that is more of a scratch pad for the teams internal experiments - it is not documentation for what you can do and how you should do it as a middleware component. For example, can you create new destinations on the fly, can you lookup the destinations for a backend cluster and swap those in.\r\n\r\nThis should cover:\r\n\r\n* What properties existing pipeline stages operate on, and write out -\u003E so that you know where to insert your module\r\n* Reading from config\r\n* Modifying destinations for a request\r\n* Reading and modifying headers before the request is sent to destination\r\n* Reading and modifying headers before the response is sent to the client\r\n\r\n ",
+                    "Milestone": "1.0.0",
+                    "Assignees": [],
+                    "Labels": [
+                      {
+                        "Name": "Deployment cookbook",
+                        "BackgroundColor": "e5da04"
+                      },
+                      {
+                        "Name": "Type: Documentation",
+                        "BackgroundColor": "0075ca"
+                      }
+                    ],
+                    "Kind": 3,
+                    "ProjectStatus": null
+                  },
+                  "Children": []
+                },
+                {
+                  "Issue": {
+                    "Id": "microsoft/reverse-proxy#416",
+                    "CreatedAt": "2020-09-14T19:04:15+00:00",
+                    "CreatedBy": "crismsx",
+                    "IsClosed": false,
+                    "Title": "Documentation for swapping authentication types",
+                    "DescriptionMarkdown": "A common scenario I\u0027m running into is to proxy a request for the sole reason of swapping the authentication token. \r\n\r\nIn particular, the use case involves the swapping of 2 OAuth2 tokens. The client has access to one IdentityServer and the resource server to a different IdentityServer. The proxy in between is the only component that has access to both IdentityServers and is able to swap the access tokens. The swap should work only for specific (configured) routes.\r\n\r\nConsider adding documentation that covers this authentication scenario.\r\n\r\n\r\n\r\n",
+                    "Milestone": "1.0.0",
+                    "Assignees": [],
+                    "Labels": [
+                      {
+                        "Name": "Deployment cookbook",
+                        "BackgroundColor": "e5da04"
+                      },
+                      {
+                        "Name": "Type: Documentation",
+                        "BackgroundColor": "0075ca"
+                      }
+                    ],
+                    "Kind": 3,
+                    "ProjectStatus": null
+                  },
+                  "Children": []
+                },
+                {
+                  "Issue": {
+                    "Id": "microsoft/reverse-proxy#305",
+                    "CreatedAt": "2020-07-07T05:05:45+00:00",
+                    "CreatedBy": "Tratcher",
+                    "IsClosed": false,
+                    "Title": "Docs for HTTPS scenarios",
+                    "DescriptionMarkdown": "I\u0027m aggregating some notes here from a variety of issues, questions, discussions, etc. around the HTTPS/TLS capabilities of YARP. These should eventually be written up into a doc.\r\n\r\nGeneral:\r\n- Inbound and outbound TLS are independent.\r\n- TLS offloading = inbound HTTPS and outbound HTTP\r\n- No tunneling support\r\n\r\nInbound\r\n- server specific, link to docs for each, summarize capabilities, more details for kestrel as it has more extensibility\r\n- SNI\r\n- hot cert swapping (via SNI callback)\r\n- TLS versions\r\n- perfect score TLS config\r\n- let\u0027s encrypt\r\n- log/filter protocols after handshake\r\n- advanced protocol filters before handshake\r\n\r\nOutbound\r\n- HTTPS enabled by specifying it in the destination server address\r\n- uses the destination address host name by default. You\u0027ll get a TLS error if it\u0027s expecting the original host\r\n- There\u0027s a transform rule to use the original host, or header transform to use an arbitrary host.\r\n- needs valid certs\r\n- customize HttpClient settings (not yet, https://github.com/microsoft/reverse-proxy/issues/137)",
+                    "Milestone": "1.0.0",
+                    "Assignees": [],
+                    "Labels": [
+                      {
+                        "Name": "Deployment cookbook",
+                        "BackgroundColor": "e5da04"
+                      },
+                      {
+                        "Name": "Type: Documentation",
+                        "BackgroundColor": "0075ca"
+                      },
+                      {
+                        "Name": "Type: Idea",
+                        "BackgroundColor": "0075ca"
+                      }
+                    ],
+                    "Kind": 3,
+                    "ProjectStatus": null
+                  },
+                  "Children": []
+                },
+                {
+                  "Issue": {
+                    "Id": "microsoft/reverse-proxy#183",
+                    "CreatedAt": "2020-05-22T00:19:07+00:00",
+                    "CreatedBy": "Tratcher",
+                    "IsClosed": false,
+                    "Title": "Doc server configurations",
+                    "DescriptionMarkdown": "Doc that YARP is supported on all AspNetCore servers. Link to the setup docs for each server. All of these servers provide SSL termination.\n\nHighlight advanced scenario we plan to support though kestrel like early connection interception.\n\nhttps://twitter.com/demisbellot/status/1263606633239904257?s=19",
+                    "Milestone": "1.0.0",
+                    "Assignees": [],
+                    "Labels": [
+                      {
+                        "Name": "Deployment cookbook",
+                        "BackgroundColor": "e5da04"
+                      },
+                      {
+                        "Name": "Type: Documentation",
+                        "BackgroundColor": "0075ca"
+                      }
+                    ],
+                    "Kind": 3,
+                    "ProjectStatus": null
+                  },
+                  "Children": []
+                }
+              ]
+            },
+            {
+              "Issue": {
+                "Id": "microsoft/reverse-proxy#114",
+                "CreatedAt": "2020-04-27T17:05:51+00:00",
+                "CreatedBy": "ryudice",
+                "IsClosed": false,
+                "Title": "Proxy can be customized with middleware to enable advanced scenarios",
+                "DescriptionMarkdown": "### What should we add or change to make your life better?\r\nFrom looking at the source code I can see that you can add custom middlewares to the reverse proxy pipeline but I dont see any documentation outlining how to do it.\r\n### Why is this important to you?\r\nI think many of the people looking at the project is because they need to do some customization at the pipeline level and they want to avoid having to do it in another language like Lua in the case of Kong. Having this documentation would be very useful.",
+                "Milestone": "1.0.0",
+                "Assignees": [],
+                "Labels": [
+                  {
+                    "Name": "Type: Documentation",
+                    "BackgroundColor": "0075ca"
+                  },
+                  {
+                    "Name": "Type: Idea",
+                    "BackgroundColor": "0075ca"
+                  },
+                  {
+                    "Name": "User Story",
+                    "BackgroundColor": "f9f06d"
+                  }
+                ],
+                "Kind": 2,
+                "ProjectStatus": null
+              },
+              "Children": []
+            },
+            {
+              "Issue": {
+                "Id": "microsoft/reverse-proxy#159",
+                "CreatedAt": "2020-05-12T23:28:55+00:00",
+                "CreatedBy": "Tratcher",
+                "IsClosed": true,
+                "Title": "Cross target .NET 5.0 and 3.1",
+                "DescriptionMarkdown": "Multiple partners have said that they will be able to adopt YARP sooner if we provide a netcoreapp3.1 target. We can cross target the package and light up new functionality. We\u0027ll want to have a doc tracking things that won\u0027t work on 3.1.",
+                "Milestone": "1.0.0-preview1",
+                "Assignees": [
+                  "Tratcher"
+                ],
+                "Labels": [
+                  {
+                    "Name": "Type: Enhancement",
+                    "BackgroundColor": "0075ca"
+                  },
+                  {
+                    "Name": "User Story",
+                    "BackgroundColor": "f9f06d"
+                  }
+                ],
+                "Kind": 2,
+                "ProjectStatus": null
+              },
+              "Children": []
+            },
+            {
+              "Issue": {
+                "Id": "microsoft/reverse-proxy#290",
+                "CreatedAt": "2020-07-02T16:37:42+00:00",
+                "CreatedBy": "samsp-msft",
+                "IsClosed": false,
+                "Title": "Implement back pressure in kestrel for incoming connections",
+                "DescriptionMarkdown": "https://github.com/dotnet/aspnetcore/issues/13295",
+                "Milestone": "1.0.0",
+                "Assignees": [],
+                "Labels": [
+                  {
+                    "Name": "ASP.NET Schedule",
+                    "BackgroundColor": "db7fc7"
+                  },
+                  {
+                    "Name": "Type: Tracking",
+                    "BackgroundColor": "0075ca"
+                  },
+                  {
+                    "Name": "User Story",
+                    "BackgroundColor": "f9f06d"
+                  }
+                ],
+                "Kind": 2,
+                "ProjectStatus": null
+              },
+              "Children": []
+            },
+            {
+              "Issue": {
+                "Id": "microsoft/reverse-proxy#143",
+                "CreatedAt": "2020-05-07T20:38:35+00:00",
+                "CreatedBy": "karelz",
+                "IsClosed": true,
+                "Title": "Ship Preview1 nuget package",
+                "DescriptionMarkdown": "Ship the nuget package\r\nCreate steps how-to - learn from @anurse",
+                "Milestone": "1.0.0-preview1",
+                "Assignees": [
+                  "anurse",
+                  "karelz"
+                ],
+                "Labels": [],
+                "Kind": 3,
+                "ProjectStatus": null
+              },
+              "Children": []
+            },
+            {
+              "Issue": {
+                "Id": "microsoft/reverse-proxy#77",
+                "CreatedAt": "2020-04-21T18:05:04+00:00",
+                "CreatedBy": "anurse",
+                "IsClosed": false,
+                "Title": "Proxy is supplied as a project template for dotnet new",
+                "DescriptionMarkdown": "We believe one delivery mechanism for the proxy (perhaps the main one) is a \u0060dotnet new\u0060 template. We should have what we need to create one, so let\u2019s add it to this repo and start producing it in our builds.",
+                "Milestone": "1.0.0",
+                "Assignees": [],
+                "Labels": [
+                  {
+                    "Name": "Type: Enhancement",
+                    "BackgroundColor": "0075ca"
+                  },
+                  {
+                    "Name": "User Story",
+                    "BackgroundColor": "f9f06d"
+                  }
+                ],
+                "Kind": 2,
+                "ProjectStatus": null
+              },
+              "Children": []
+            },
+            {
+              "Issue": {
+                "Id": "microsoft/reverse-proxy#261",
+                "CreatedAt": "2020-06-23T18:34:23+00:00",
+                "CreatedBy": "samsp-msft",
+                "IsClosed": false,
+                "Title": "Create a standalone exe for YARP",
+                "DescriptionMarkdown": "The original issue #247 got hijacked as a request for docker, so forking this as an issue for creating an exe.\r\n\r\n\u003E We\u0027ve proposed shipping YARP in three formats:\r\n\u003E \r\n\u003E * A library - https://www.nuget.org/packages/Microsoft.ReverseProxy/\r\n\u003E * A template - #77\r\n\u003E * A pre-built application exe (this issue)\r\n\u003E \r\n\u003E The pre-built app should:\r\n\u003E \r\n\u003E * Read from a config file\r\n\u003E * Cover basic scenarios\r\n\u003E * Support a variety of platforms\r\n\u003E \r\n\u003E # Scenarios\r\n\u003E * Config based routes, clusters, \u0026 backends\r\n\u003E * Remote route config? E.g. load from a database, service fabric, k8?\r\n\u003E * Dashboards?  #123\r\n\u003E * Health checks for the proxy itself.\r\n\u003E * Static files? #187\r\n\u003E * Auth?\r\n\u003E * Multi-instance?\r\n\u003E   \r\n\u003E   * Data protection (Session Affinity)\r\n\u003E * Single-file exe with linking: #7\r\n\u003E * Config UI? #184\r\n\u003E \r\n\u003E # Config\r\n\u003E The library already supports loading routes from a config file. However, an app will need to expose additional config for the scenarios described above.\r\n\u003E \r\n\u003E # Platforms\r\n\u003E * Windows, Mac, Linux\r\n\u003E * Builds for both runtime dependent and standalone (servicing?)\r\n\u003E \r\n\u003E # Acquisition\r\n\u003E * Microsoft download center?",
+                "Milestone": "1.0.0",
+                "Assignees": [],
+                "Labels": [
+                  {
+                    "Name": "Type: Idea",
+                    "BackgroundColor": "0075ca"
+                  },
+                  {
+                    "Name": "User Story",
+                    "BackgroundColor": "f9f06d"
+                  }
+                ],
+                "Kind": 2,
+                "ProjectStatus": null
+              },
+              "Children": []
+            },
+            {
+              "Issue": {
+                "Id": "microsoft/reverse-proxy#247",
+                "CreatedAt": "2020-06-16T19:13:22+00:00",
+                "CreatedBy": "Tratcher",
+                "IsClosed": false,
+                "Title": "Create a proxy docker image",
+                "DescriptionMarkdown": "We\u0027ve proposed shipping YARP in three formats:\r\n- A library - https://www.nuget.org/packages/Microsoft.ReverseProxy/\r\n- A template - https://github.com/microsoft/reverse-proxy/issues/77\r\n- A pre-built application exe #261\r\n- A docker image (this issue)\r\n\r\nThe pre-built app should:\r\n- Read from a config file\r\n- Cover basic scenarios\r\n- Support a variety of platforms\r\n\r\n# Scenarios\r\n- Config based routes, clusters, \u0026 backends\r\n- Remote route config? E.g. load from a database, service fabric, k8?\r\n- Dashboards?  https://github.com/microsoft/reverse-proxy/issues/123\r\n- Health checks for the proxy itself.\r\n- Static files? https://github.com/microsoft/reverse-proxy/issues/187\r\n- Auth?\r\n- Multi-instance?\r\n  - Data protection (Session Affinity)\r\n- Single-file exe with linking: https://github.com/microsoft/reverse-proxy/issues/7\r\n- Config UI? https://github.com/microsoft/reverse-proxy/issues/184\r\n\r\n# Config\r\nThe library already supports loading routes from a config file. However, an app will need to expose additional config for the scenarios described above.\r\n\r\n# Platforms\r\n- Windows, Mac, Linux\r\n- Builds for both runtime dependent and standalone (servicing?)\r\n\r\n# Acquisition\r\n- Microsoft download center?",
+                "Milestone": "1.0.0",
+                "Assignees": [],
+                "Labels": [
+                  {
+                    "Name": "Type: Idea",
+                    "BackgroundColor": "0075ca"
+                  },
+                  {
+                    "Name": "User Story",
+                    "BackgroundColor": "f9f06d"
+                  }
+                ],
+                "Kind": 2,
+                "ProjectStatus": null
+              },
+              "Children": []
+            }
+          ]
         }
       ]
     },
@@ -65,7 +1275,7 @@
         ],
         "Labels": [
           {
-            "Name": "Epic",
+            "Name": "Theme",
             "BackgroundColor": "800080"
           }
         ],
@@ -82,14 +1292,14 @@
             "CreatedAt": "2020-10-16T21:25:31+00:00",
             "CreatedBy": "samsp-msft",
             "IsClosed": false,
-            "Title": "Make .NET a good choice for environments that require single file and AOT",
+            "Title": "Experience: Make .NET a good choice for environments that require single file and AOT",
             "DescriptionMarkdown": "# Why\r\n.NET 5 introduced more incremental improvements for applications to realize faster startup times and smaller exe sizes using single file and app trimming. As we look ahead on how we continue to make .NET a compelling platform for developers to build their modern apps on, we need to continue to evolve the platform by building on top of what .NET 5 has brought to the ecosystem. AOT in particular, is an area where we need to start to make more investments, which will likely span across several upcoming releases of .NET. Many developers want a specific solution when they refer to \u201CAOT.\u201D They want a solution that has the following characteristics: extremely fast startup, no IL present (for size and obfuscation reasons), a JIT is (at most) optional, and binary size is as small as it can be. We use the term \u201Cnative AOT\u201D to describe that point on the AOT spectrum. The single file solution we have in .NET 5.0 doesn\u2019t satisfy this definition of AOT. It\u2019s a big step forward, but it isn\u2019t \u201Cnative AOT.\u201D\r\n\r\nA recent [Native AOT community survey](https://github.com/dotnet/runtime/issues/41522), showed us that there\u2019s more of a need to officially support native AOT in .NET. 52% of our survey respondents (n=1,344) told us that they would like to write more projects in .NET (but can\u2019t) or have written .NET projects in a different environment (Rust and Go) because of missing native AOT options.\r\n\r\n# Summary\r\nThis objective describes the continued investment and evolution in the features and integration of single file, trimming, and source generators (to name just a few). Many of these areas are complimentary to each other such that a characteristic of source generators for example is that it can help remove major barriers to linker-based and AOT (ahead-of-time) compilation optimizations.\r\n\r\nMany of these areas will require ecosystem and library authors to participate in as well (i.e. trimming) and we will need to build specific tooling to enable these features to be utilized in libraries and will need an outreach program for them as well. We\u2019ve also identified that many of the top NuGet packages people make heavy use of reflection to discover types at runtime. Incorporating these packages is essential for most .NET apps, so the \u201Clinkability\u201D and ability for your code to make use of AOT compiler optimizations is greatly affected. We\u2019re looking forward to working with our wonderful OSS community to see how these packages could use source generators and improve the overall .NET ecosystem.\r\n\r\n# User Stories\r\n\r\n- [ ] Start the journey to enable Native AOT in runtimelabs https://github.com/dotnet/runtimelab/issues/248\r\n- [ ] Developers can confidently generate single file apps that work for the supported target platforms #43540\r\n- [ ] Annotate more .NET libraries (trimming) and guidance for library authors #43543\r\n- [ ] Expand .NET WebAssembly Capabilities\r\n- [ ] Support assembly load context throughout the product #43544\r\n- [ ] Source generators continue to assist with runtime and framework features #43545",
             "Milestone": null,
             "Assignees": [],
             "Labels": [
               {
-                "Name": "Experience",
-                "BackgroundColor": "3BB9FF"
+                "Name": "Epic",
+                "BackgroundColor": "c6415a"
               },
               {
                 "Name": "area-Meta",
@@ -114,7 +1324,7 @@
                 "CreatedBy": "samsp-msft",
                 "IsClosed": false,
                 "Title": "Start the journey to enable Native AOT in runtimelabs",
-                "DescriptionMarkdown": "The demand for native AOT is growing, and not having a solution will drive customers to other platforms such as Rust \u0026 GoLang. A trend that we are seeing across the industry is that for security reasons hosting environments are setting requirements that code pages need to be read-only which prevent the JIT-ing model which is core to .NET code execution. \r\n\r\nWe cannot afford to ignore the native AOT scenario, nor can we go dark and wait for a complete implementation. We need to evolve this area in Runtime Labs, and grow the capabilities to support additional work loads, with the expectation that it will not be for everyone - .NET needs to have both JIT and AOT capabilities to enable the broadest cross-section of solutions. This high level section sets our intention to invest in native AOT scenarios and more definition from the teams will be needed to define our phased approach over the next few .NET releases.\r\n\r\n# Work Items\r\n\r\n- [ ] Developer experience\r\n  - [ ] Developers have a way to tell IDE that they are targeting Native AOT \r\n  - [ ] Developers should be shown errors/warnings for AOT incompatible code during development\r\n  - [ ] Inner loop experience for AOT projects\r\n- [ ] Framework annotations - shared with Trimming\r\n  - [ ] Additional annotations for Native AOT specific problem areas\r\n- [ ] Blazor Experience\r\n",
+                "DescriptionMarkdown": "We have seen a surge of interest in statically linked binaries with minimal dependencies in recent years. This is a reversal of a multi-decade trend to deliver dependencies as shared libraries. The benefits to deployment and the ability to optimize a single app outweigh the benefits of sharing for certain types of workloads. The gain is most significant for workloads with a high number of deployed instances: cloud infrastructure, hyper-scale services, popular apps or games. The number of apps of this type is relatively small, but they are highly visible, impactful, and often cost a lot of money to operate (savings can be meaningful).\r\n\r\nEmerging programming environments (e.g. Go, Rust) tend to be designed for this form factor. Established programming environments are catching up on this trend to be relevant for this highly visible segment, for example Java Graal, Dart, Kotlin/Native.\r\n\r\nVarious implementations of .NET (Xamarin, Unity, .NET Native) have demonstrated that .NET is well suited to native AOT in terms of fundamentals, however, there are tools experience and ecosystem challenges that currently prevent .NET from being a great general purpose solution. We intend to start addressing these issues with this project. It is very likely that the first set of improvements will have rough edges that may prevent adoption for some developers. We will use feedback to determine which experience issues to prioritize. We are also not comitting to any particular end point for this project, at this time.\r\n\r\nThis high level section sets our intention to invest in native AOT scenarios and more definition from the teams will be needed to define our phased approach over the next few .NET releases.\r\n\r\n# Work Items\r\n\r\n- [ ] Developer experience\r\n  - [ ] Developers have a way to tell IDE that they are targeting Native AOT \r\n  - [ ] Developers should be shown errors/warnings for AOT incompatible code during development\r\n  - [ ] Inner loop experience for AOT projects\r\n- [ ] Framework annotations - shared with Trimming\r\n  - [ ] Additional annotations for Native AOT specific problem areas\r\n- [ ] Blazor Experience\r\n",
                 "Milestone": null,
                 "Assignees": [
                   "richlander",
@@ -156,7 +1366,7 @@
                 "Labels": [
                   {
                     "Name": "User Story",
-                    "BackgroundColor": "FFA500"
+                    "BackgroundColor": "0e8a16"
                   },
                   {
                     "Name": "area-Meta",
@@ -181,7 +1391,7 @@
                     "CreatedBy": "agocke",
                     "IsClosed": false,
                     "Title": "Superhost for Windows \u0026 Mac",
-                    "DescriptionMarkdown": "All native runtime libraries should be statically linked into a single file host for Windows \u0026 Mac.\r\n\r\n- [ ] Link \u0060clrjit\u0060 and \u0060coreclr\u0060 #43072 \r\n- [ ] Debugging support",
+                    "DescriptionMarkdown": "All native runtime libraries should be statically linked into a single file host for Windows \u0026 Mac.\r\n\r\n- [X] Make \u0060clrjit\u0060 and \u0060coreclr\u0060 friendlier to static linking on multiple platforms. #43423\r\n- [ ] Statically link \u0060clrjit\u0060 and \u0060coreclr\u0060 into singlefile host #43072 \r\n- [ ] Link native libraries in a way that is multiplatform friendly. #41299\r\n- [ ] Statically link native libraries on Windows, OSX and other platforms that we test/support. #43699\r\n- [ ] Move build of hosts to clr partition. #43700\r\n (not a requirement but will make things simpler going forward, hard to do though before we do the above)\r\n- [ ] Debugging support",
                     "Milestone": "6.0.0",
                     "Assignees": [],
                     "Labels": [
@@ -200,6 +1410,31 @@
                   "Children": [
                     {
                       "Issue": {
+                        "Id": "dotnet/runtime#43423",
+                        "CreatedAt": "2020-10-14T21:51:13+00:00",
+                        "CreatedBy": "VSadov",
+                        "IsClosed": true,
+                        "Title": "Reducing DllMain responsibilities, so that singlefile would not need it",
+                        "DescriptionMarkdown": "- Removed CoreDllMain.\r\nIt just initializes CRT and GS cookie in the same way it would happen by itself.  \r\nComments imply that this was needed because of certain static constructors. Looks like nothing requires this any more.\r\n\r\n- Switched thread detachment handling in EE to be off a \u0060thread_local\u0060 object destructor \r\nThis is a cross-platform way that works regardless of .dll or .exe scenario and thus preferable.\r\n\r\n- Refactor DLL_PROCESS_ATTACH so it would do only Dll-specific work (saving module handles)\r\nOther initialization was moved to \u0060EEStartupHelper\u0060 where it runs regardless of platform or whether it is .dll/.exe scenario\r\n\r\ncontributes towards:#43072",
+                        "Milestone": null,
+                        "Assignees": [],
+                        "Labels": [
+                          {
+                            "Name": "area-Infrastructure-coreclr",
+                            "BackgroundColor": "d4c5f9"
+                          },
+                          {
+                            "Name": "auto-merge",
+                            "BackgroundColor": "159818"
+                          }
+                        ],
+                        "Kind": 3,
+                        "ProjectStatus": null
+                      },
+                      "Children": []
+                    },
+                    {
+                      "Issue": {
                         "Id": "dotnet/runtime#43072",
                         "CreatedAt": "2020-10-06T01:19:33+00:00",
                         "CreatedBy": "agocke",
@@ -214,6 +1449,77 @@
                           {
                             "Name": "area-Single-File",
                             "BackgroundColor": "d4c5f9"
+                          }
+                        ],
+                        "Kind": 3,
+                        "ProjectStatus": null
+                      },
+                      "Children": []
+                    },
+                    {
+                      "Issue": {
+                        "Id": "dotnet/runtime#41299",
+                        "CreatedAt": "2020-08-24T22:47:11+00:00",
+                        "CreatedBy": "VSadov",
+                        "IsClosed": false,
+                        "Title": "Improving and unifying handling of native Libraries code in embedded/singlefile scenarios",
+                        "DescriptionMarkdown": "### Improving handling of native Libraries code in embedded/singlefile scenarios\r\n\r\nFor reasons that vary .Net libraries rely on nontrivial amount of native code. The native code is factored into a few well-known native dynamic-link libraries (.dll, .so, etc). As an example we have 4 libraries like this on Linux \u2013 \u0022libSystem.Native\u0022, \u0022libSystem.IO.Compression.Native\u0022, \u0022libSystem.Net.Security.Native\u0022, \u0022libSystem.Security.Cryptography.Native.OpenSsl\u0022. The number of libraries varies depending on platform.\r\n\r\nThis is a very simple model which has its own advantages. In particular there is no need for coreclr to have any special knowledge about these libraries.\r\n\r\nWhere this becomes inconvenient and fragile is when we want to package the native libraries differently - for example as a part of a single file host. To handle such requirement in the current implementation we produce static libraries for the native code and link that into coreclr/host. Since the native dlls are not longer around in this configuration, coreclr intercepts loading of these libraries and redirects to the containing host binary.\r\n\r\nThere is a number of issues:\r\n-\tSince coreclr and libraries are built separately, there is a possibility of a mismatch that could make them incompatible. (i.e. Debug vs. Release, different versions of libc, new/free operator mismatch ...)\r\n-\tIntercepting and redirecting the load happens in PAL layer. This is a problem when the same must be done on Windows.\r\n-\tAccessing the native methods via regular PInvokes requires that the native host re-exports the methods. That easily runs into platform or linker dependent behaviors regarding re-exporting of library functions from final executables.\r\n\r\n**Proposal:**\r\n\r\n-\tBuild native libraries as a part of CoreClr build.\r\nThe source files should still be located under Libraries partition, so that they can be shared in source form with Mono, for example.\r\n\r\n-\tThe \u201Cembedded\u201D case builds native libraries as a part of coreclr binary, thus bypassing the explicit lib files.\r\n\r\n-\tThe \u0022embedded\u0022 case recognizes well-known libraries as a special case of [QCall](https://github.com/dotnet/runtime/blob/master/docs/design/coreclr/botr/corelib.md#calling-from-managed-to-native-code) and dispatches calls to the embedded implementations.\r\nExample: \u201ClibSystem.Native\u201D would normally be a name of the native library to load, but in \u201Cembedded\u201D case, the DLLEXPORT methods of libSystem.Native would be registered in the runtime similarly to QCall and \u201ClibSystem.Native\u201D would be recognized as  another QCall variety.\r\nQCall mechanism here allows us to \u201Cshim\u201D the location of native methods while not changing the managed code that calls them.\r\n\r\n-\tThe QCall registration table for the native calls will be automatically generated by scanning managed libraries.\r\n\r\n\r\n**Some unresolved details:**\r\n-\tIf managed callers are built after coreclr, we would need to reconcile how to do the QCall generation before coreclr builds.\r\n-\tShould the generation of QCall entries be a part of the build (producing a temporary source file) or a dev-time step (the file is explicitly generated and stored in Git).\r\n",
+                        "Milestone": "6.0.0",
+                        "Assignees": [
+                          "VSadov"
+                        ],
+                        "Labels": [
+                          {
+                            "Name": "area-Infrastructure-coreclr",
+                            "BackgroundColor": "d4c5f9"
+                          }
+                        ],
+                        "Kind": 3,
+                        "ProjectStatus": null
+                      },
+                      "Children": []
+                    },
+                    {
+                      "Issue": {
+                        "Id": "dotnet/runtime#43699",
+                        "CreatedAt": "2020-10-21T18:25:55+00:00",
+                        "CreatedBy": "VSadov",
+                        "IsClosed": false,
+                        "Title": "Statically link native libraries into singlfilehost on OSX and Windows",
+                        "DescriptionMarkdown": "Currently we only support this on Linux.\r\nWe should extend the support to other supported/tested platforms.\r\n\r\nPrerequisite:#41299",
+                        "Milestone": null,
+                        "Assignees": [
+                          "VSadov"
+                        ],
+                        "Labels": [
+                          {
+                            "Name": "area-Single-File",
+                            "BackgroundColor": "d4c5f9"
+                          }
+                        ],
+                        "Kind": 3,
+                        "ProjectStatus": null
+                      },
+                      "Children": []
+                    },
+                    {
+                      "Issue": {
+                        "Id": "dotnet/runtime#43700",
+                        "CreatedAt": "2020-10-21T18:35:04+00:00",
+                        "CreatedBy": "VSadov",
+                        "IsClosed": false,
+                        "Title": "Hosts, in particular statically linked ones should be built in clr partition.",
+                        "DescriptionMarkdown": "It is so happened that hosts are built in Installer.\r\n\r\nThis is not a problem for hosts that refer to native libraries dynamically. However when they need to statically link a number of components (coreclr, jit, libs), building them all in the same partition would simplify the logistics of the build and will make it easer to assure mutual compatibility of the parts.\r\n\r\nIt is hard to arrange this move while we pivk native libraries form libs partition, but once #43699 is implemented we should move static host to clr partition.\r\nThis will have to include:\r\n- moving/writing appropriate tests\r\n- most likely moving other hosts as well.",
+                        "Milestone": null,
+                        "Assignees": [],
+                        "Labels": [
+                          {
+                            "Name": "area-Infrastructure-coreclr",
+                            "BackgroundColor": "d4c5f9"
+                          },
+                          {
+                            "Name": "untriaged",
+                            "BackgroundColor": "fbca04"
                           }
                         ],
                         "Kind": 3,
@@ -241,7 +1547,7 @@
                 "Labels": [
                   {
                     "Name": "User Story",
-                    "BackgroundColor": "FFA500"
+                    "BackgroundColor": "0e8a16"
                   },
                   {
                     "Name": "area-Meta",
@@ -276,7 +1582,7 @@
                 "Labels": [
                   {
                     "Name": "User Story",
-                    "BackgroundColor": "FFA500"
+                    "BackgroundColor": "0e8a16"
                   },
                   {
                     "Name": "area-Meta",
@@ -311,7 +1617,7 @@
                 "Labels": [
                   {
                     "Name": "User Story",
-                    "BackgroundColor": "FFA500"
+                    "BackgroundColor": "0e8a16"
                   },
                   {
                     "Name": "area-Meta",
@@ -338,7 +1644,7 @@
             "CreatedAt": "2020-10-19T22:54:17+00:00",
             "CreatedBy": "cathysull",
             "IsClosed": false,
-            "Title": "Deliver on the remaining .NET Core customer promises from .NET 5",
+            "Title": "Experience: Deliver on the remaining .NET Core customer promises from .NET 5",
             "DescriptionMarkdown": "# Why\r\nIn .NET 5, many factors contributed to the fact that some features were developed in one area, and were not always supported across the entire stack or for all workloads. While many of these features are dialable, investing in finishing these promises will both help .NET developers to better adopt these platform features as we continue to evolve the .NET platform. \r\n\r\n# Summary\r\nFinishing the remaining promises from .NET 5 includes features that support cross-cutting platform enablement and ensure that we have a more complete end-to-end experience in the .NET platform. Many of these features will require more definition and scoping during .NET 6 planning beyond what is described in the User Stories below.\r\n\r\n# User Stories\r\n\r\n- [ ] Expand platform compat annotations to cover more configurations https://github.com/dotnet/runtime/issues/43616\r\n- [ ] Support more Analyzers \u0026 Code Fixers https://github.com/dotnet/runtime/issues/43617\r\n- [ ] Complete Nullable annotations for more of the framework https://github.com/dotnet/runtime/issues/43619\r\n- [ ] Expanding Linker tooling in VS\r\n- [ ] Finish System.Text.Json https://github.com/dotnet/runtime/issues/43620\r\n- [ ] Support HTTP3 in .NET 6 https://github.com/dotnet/runtime/issues/43546",
             "Milestone": null,
             "Assignees": [
@@ -346,8 +1652,8 @@
             ],
             "Labels": [
               {
-                "Name": "Experience",
-                "BackgroundColor": "3BB9FF"
+                "Name": "Epic",
+                "BackgroundColor": "c6415a"
               }
             ],
             "Kind": 1,
@@ -372,7 +1678,7 @@
                 "Labels": [
                   {
                     "Name": "User Story",
-                    "BackgroundColor": "FFA500"
+                    "BackgroundColor": "0e8a16"
                   },
                   {
                     "Name": "area-Meta",
@@ -406,7 +1712,7 @@
                 "Labels": [
                   {
                     "Name": "User Story",
-                    "BackgroundColor": "FFA500"
+                    "BackgroundColor": "0e8a16"
                   },
                   {
                     "Name": "area-Meta",
@@ -432,7 +1738,7 @@
                 "CreatedBy": "cathysull",
                 "IsClosed": false,
                 "Title": "Complete Nullable annotations for more of the framework",
-                "DescriptionMarkdown": "In .NET 5, 94% of Microsoft.NetCore.App has been completed, which is the lowest layer in the shared framework and represents the set of APIs that are referenced by default by all applications types. We\u2019ll work to get this number to 100% and we intend to maintain 100% coverage into the future.\r\n\r\nWhat\u2019s still missing are the higher layers (WPF, WinForms, ASP.NET Core) as well as the out-of-band packages (such as EFCore and several out-of-band packages from dotnet/runtime, as well as assemblies that aren\u0027t in netcoreapp but are included with aspnetcoreapp). While each is likely to be too big to be completed in .NET 6, we will start planning and making inroads for the rest of the stack and decide if we are comfortable introducing new libraries which may have no nullable annotations (e.g. mobile SDKs/Forms for .NET 6). An MVP (minimum viable product) for this, we believe (and will test) that any new libraries are annotated, moving forward nullable reference types are just part of the language, and when you decide the data type of some method parameter or return value, it\u0027s just one of the things you need to factor in, just as we need to factor in new types added in the libraries, new language features around optional parameters or params arguments and such things.\r\n\r\n# Work Items\r\n\r\n- [ ] TBD",
+                "DescriptionMarkdown": "In .NET 5, 94% of Microsoft.NetCore.App has been completed, which is the lowest layer in the shared framework and represents the set of APIs that are referenced by default by all applications types. We\u2019ll work to get this number to 100% and we intend to maintain 100% coverage into the future.\r\n\r\nWhat\u2019s still missing are the higher layers (WPF, WinForms, ASP.NET Core) as well as the out-of-band packages (such as EFCore and several out-of-band packages from dotnet/runtime, as well as assemblies that aren\u0027t in netcoreapp but are included with aspnetcoreapp). While each is likely to be too big to be completed in .NET 6, we will start planning and making inroads for the rest of the stack and decide if we are comfortable introducing new libraries which may have no nullable annotations (e.g. mobile SDKs/Forms for .NET 6). An MVP (minimum viable product) for this, we believe (and will test) that any new libraries are annotated, moving forward nullable reference types are just part of the language, and when you decide the data type of some method parameter or return value, it\u0027s just one of the things you need to factor in, just as we need to factor in new types added in the libraries, new language features around optional parameters or params arguments and such things.\r\n\r\n# Work Items\r\n\r\n- [ ] [Annotate remainder of .NET Core assemblies for nullable reference types](https://github.com/dotnet/runtime/issues/41720)\r\n- [ ] [Turn Nullable on for new projects](https://github.com/dotnet/sdk/issues/14272)",
                 "Milestone": null,
                 "Assignees": [
                   "terrajobst"
@@ -440,7 +1746,7 @@
                 "Labels": [
                   {
                     "Name": "User Story",
-                    "BackgroundColor": "FFA500"
+                    "BackgroundColor": "0e8a16"
                   },
                   {
                     "Name": "area-Meta",
@@ -457,7 +1763,59 @@
                   "Column": "Proposed"
                 }
               },
-              "Children": []
+              "Children": [
+                {
+                  "Issue": {
+                    "Id": "dotnet/runtime#41720",
+                    "CreatedAt": "2020-09-02T00:20:15+00:00",
+                    "CreatedBy": "jeffhandley",
+                    "IsClosed": false,
+                    "Title": "Annotate remainder of .NET Core assemblies for nullable reference types",
+                    "DescriptionMarkdown": "Across .NET Core 3.0 and .NET 5.0, we annotated 94% of the \u0060netcoreapp\u0060 assemblies for nullable reference types.  In .NET 6.0, we plan to annotate the remaining 6% of that surface area and continue through other assemblies built from the dotnet/runtime repo.\r\n\r\nThis issue represents the assemblies previously tracked in #2339 that did not get completed in .NET 5.0. Following the same practices we used in .NET 5.0, we will:\r\n\r\n* Submit individual PRs, one for each assembly. Each PR should include changes to both the src and the ref. Each PR should contain only changes related to the nullable annotations/attributes, no other changes.\r\n* PRs can be merged once the annotations have been appropriately reviewed in PR.\r\n\r\n*In .NET 5.0, as was tracked in #2339, we completed groups 1-8, most of group 9, all of group 10, and some items in groups 11 and 12*\r\n\r\n#### Group 9 ####\r\n- [ ] System.ComponentModel.TypeConverter (in progress by @safern)\r\n- [ ] Finish System.Data.Common (i.e. APIs depending on TypeConverter)\r\n\r\n#### Group 11 (not part of netcoreapp but reference netcoreapp) ####\r\n- [ ] System.DirectoryServices\r\n- [ ] System.Diagnostics.EventLog\r\n- [ ] System.DirectoryServices.Protocols\r\n- [ ] System.Security.Permissions\r\n- [ ] System.Windows.Extensions\r\n\r\n#### Group 12 (built from dotnet/runtime but not in netcoreapp and reference netstandard) ####\r\nWith netstandard not annotated, we will need to be cognizant of the fact that all dependencies will be viewed as oblivious:\r\n- [ ] System.CodeDom =\u003E netstandard\r\n- [ ] System.ComponentModel.Composition.Registration =\u003E netstandard, System.Reflection.Context\r\n- [ ] System.Composition.AttributedModel =\u003E netstandard\r\n- [ ] System.Composition.Convention =\u003E netstandard, System.Composition.AttributedModel\r\n- [ ] System.Composition.Hosting =\u003E netstandard, System.Composition.Runtime\r\n- [ ] System.Composition.Runtime =\u003E netstandard\r\n- [ ] System.Composition.TypedParts =\u003E netstandard, System.Composition.Runtime, System.Composition.AttributedModel, System.Composition.Hosting\r\n- [ ] System.Configuration.ConfigurationManager =\u003E netstandard, System.Security.Cryptography.ProtectedData\r\n- [ ] System.Diagnostics.PerformanceCounter =\u003E System.Configuration.ConfigurationManager\r\n- [ ] System.DirectoryServices.AccountManagement =\u003E System.Configuration.ConfigurationManager\r\n- [ ] System.IO.Ports =\u003E netstandard\r\n- [ ] System.Management =\u003E System.CodeDom\r\n- [ ] System.Runtime.Caching =\u003E netstandard, System.Configuration.ConfigurationManager\r\n- [ ] System.Security.Cryptography.Xml =\u003E netstandard\r\n- [ ] System.ServiceModel.Syndication =\u003E netstandard\r\n\r\n#### Lastly ####\r\n- [ ] Remove \u0060#nullable enable\u0060 from individual files after all dependent projects annotated  ",
+                    "Milestone": "6.0.0",
+                    "Assignees": [
+                      "jeffhandley"
+                    ],
+                    "Labels": [
+                      {
+                        "Name": "area-Meta",
+                        "BackgroundColor": "d4c5f9"
+                      },
+                      {
+                        "Name": "tracking",
+                        "BackgroundColor": "b60205"
+                      }
+                    ],
+                    "Kind": 3,
+                    "ProjectStatus": {
+                      "ProjectName": ".NET 6.0",
+                      "Column": "Proposed"
+                    }
+                  },
+                  "Children": []
+                },
+                {
+                  "Issue": {
+                    "Id": "dotnet/sdk#14272",
+                    "CreatedAt": "2020-10-21T18:44:09+00:00",
+                    "CreatedBy": "terrajobst",
+                    "IsClosed": false,
+                    "Title": "Turn Nullable on for new projects",
+                    "DescriptionMarkdown": "We want to set \u0060\u003CNullable\u003EEnabled\u003C/Nullable\u003E\u0060 for new projects.\r\n\r\nWe probably don\u0027t want to infer this as part of the TFM and instead make it part of the project template. Otherwise retargeting becomes a major hurdle.",
+                    "Milestone": null,
+                    "Assignees": [
+                      "cartermp"
+                    ],
+                    "Labels": [],
+                    "Kind": 3,
+                    "ProjectStatus": {
+                      "ProjectName": ".NET 6.0",
+                      "Column": "Proposed"
+                    }
+                  },
+                  "Children": []
+                }
+              ]
             },
             {
               "Issue": {
@@ -467,22 +1825,18 @@
                 "IsClosed": false,
                 "Title": "Finish System.Text.Json",
                 "DescriptionMarkdown": "There are about 200 open issues for JSON and community engagement continues to be high along with direct asks from authors like NSwag. There are still have some missing features that prevents System.Text.Json to be successful as the standard JSON stack for .NET. Two major areas of investment are beefing up the serialization support (~20 features) and providing a source generator for JSON serialization to make it friendly for trimming.\r\n\r\n# Work Items\r\n\r\n- [ ] TBD",
-                "Milestone": null,
+                "Milestone": "6.0.0",
                 "Assignees": [
                   "terrajobst"
                 ],
                 "Labels": [
                   {
                     "Name": "User Story",
-                    "BackgroundColor": "FFA500"
+                    "BackgroundColor": "0e8a16"
                   },
                   {
                     "Name": "area-System.Text.Json",
                     "BackgroundColor": "d4c5f9"
-                  },
-                  {
-                    "Name": "untriaged",
-                    "BackgroundColor": "fbca04"
                   }
                 ],
                 "Kind": 2,
@@ -509,7 +1863,7 @@
                 "Labels": [
                   {
                     "Name": "User Story",
-                    "BackgroundColor": "FFA500"
+                    "BackgroundColor": "0e8a16"
                   },
                   {
                     "Name": "area-Meta",
@@ -536,7 +1890,7 @@
             "CreatedAt": "2020-10-15T22:53:09+00:00",
             "CreatedBy": "bradygaster",
             "IsClosed": false,
-            "Title": "Enable Power Platform Scenarios with HTTP APIs",
+            "Title": "Experience: Enable Power Platform Scenarios with HTTP APIs",
             "DescriptionMarkdown": "Since November 2019, we\u2019ve done significant work to improve the overall end-to-end experience for developers who need to extend PowerApps (or any other Power Platform resource). The goals of this multi-organization partnership spanning DevDiv, Azure, and Power Platform, have been to enable the following application development scenario: \r\n\r\n1. A citizen developer needs to build a business app using PowerApps. \r\n2. The PowerApp needs to use existing application infrastructure, so the citizen dev works with a .NET developer who is either building or who has already built and deployed an existing HTTP API. \r\n3. The API developer creates a PowerApps Custom Connector to give the citizen developer a connection to the HTTP API. \r\n4. The citizen developer uses the connection to the HTTP API to build their PowerApp. \r\n5. The citizen developer makes the PowerApp available to users in their enterprise via Teams. \r\n\r\nSince the partnership began in November, we\u2019ve accomplished significant strides across all partner teams, and now ASP.NET Core Web API customers have a clear path to getting HTTP APIs published into Azure API Management, which makes them easy to ingest into PowerApps.  \r\n\r\nUser Stories under this Experience:",
             "Milestone": null,
             "Assignees": [
@@ -544,8 +1898,8 @@
             ],
             "Labels": [
               {
-                "Name": "Experience",
-                "BackgroundColor": "3BB9FF"
+                "Name": "Epic",
+                "BackgroundColor": "c6415a"
               }
             ],
             "Kind": 1,
@@ -562,7 +1916,7 @@
             "CreatedAt": "2020-10-15T23:02:48+00:00",
             "CreatedBy": "bradygaster",
             "IsClosed": false,
-            "Title": "HTTP API Testing Tools",
+            "Title": "Experience: HTTP API Testing Tools",
             "DescriptionMarkdown": "As the investments we make into building out HTTP APIs for use in the Power Platform take shape, an interesting by-product is that we\u2019re hearing from more developers that they need a way to call their APIs from clients hosted somewhere else. Consider the following scenarios in which developers are building HTTP APIs for use by either Azure or Power Platform clients: \r\n\r\n1. A developer needs to create an Azure Function that, given an ID, gets an order from a database and sends an adaptive card to a Teams channel representing the products in the order. The Function will be called within a Logic App.  \r\n2. A citizen developer is building a mobile app to replace an internal supply chain implemented using an intranet site. The product database page will be replicated as an HTTP API that will be called from a PowerApp. \r\n\r\nIn both scenarios a developer needs to build a \u201Cclient\u201D for an API on which they\u2019re also developing. In the Logic App scenario, a developer needs to be able to debug an HTTP API running on localhost but call that HTTP API from a Logic App running in Azure. In the PowerApp scenario, a citizen dev using the PowerApps maker experience \u2013 a web-based IDE \u2013 will be building and testing a app in a web browser.  \r\n\r\nIn both scenarios, the \u201Cclient\u201D will need to call the API, and the API developer will need a way to receive those calls and to step through their code using the rich debugging tools present in the Visual Studio family of products. But in both scenarios, the \u201Cclient\u201D will need a tunnel to localhost, as both are running on the open internet.  \r\n\r\nDevelopers need an \u201CF5 to Localhost Tunnel\u201D experience to answer this problem. \r\nUser Stories under this Experience:",
             "Milestone": null,
             "Assignees": [
@@ -570,8 +1924,8 @@
             ],
             "Labels": [
               {
-                "Name": "Experience",
-                "BackgroundColor": "3BB9FF"
+                "Name": "Epic",
+                "BackgroundColor": "c6415a"
               }
             ],
             "Kind": 1,
@@ -591,14 +1945,14 @@
         "CreatedBy": "jamshedd",
         "IsClosed": false,
         "Title": "Enterprise and LTS",
-        "DescriptionMarkdown": ".NET 6.0 will be a Long-Term Support (LTS) release. We see many enterprises prefer our LTS releases over Current releases for their longer support (relative to Current releases), they pick an LTS version so they don\u2019t have to move forward every year. This is not very different from what we see with OS LTS versions \u2013 enterprise customers go from one LTS to the next and skip the in-between SAC releases. Since .NET 6.0 will be the successor to 3.1 LTS we expect customers presently using 3.1 LTS and wanting to target the next LTS will pick 6.0 LTS. We will support 3.1 through December 2022, so once .NET 6.0 ships, customers will have 1 year to plan for, rebuild and test their apps and complete their deployment. Customers that cannot migrate their apps to 6.0 in this timeframe will probably ask us to provide longer support.  \r\n\r\nIf customers can successfully complete their migration forward in this 1-year period everyone benefits. So, it is in everyone\u2019s interest that we do everything we can to enable customers to come forward to 6.0 as easily, smoothly and quickly as possible. \r\n\r\nExperiences under this Epic:\r\n\r\n- [ ] [Enterprises have a first class experience acquiring and deploying .NET 6.0](https://github.com/dotnet/core/issues/5240).\r\n- [ ] [Enterprises get first-class support when using .NET 6.0 on Linux](https://github.com/dotnet/core/issues/5333).\r\n- [ ] [Path to migrate an app from Framework to .NET 6.0 is well understood and streamlined](https://github.com/dotnet/core/issues/5396)",
+        "DescriptionMarkdown": ".NET 6.0 will be a Long-Term Support (LTS) release. We see many enterprises prefer our LTS releases over Current releases for their longer support (relative to Current releases), they pick an LTS version so they don\u2019t have to move forward every year. This is not very different from what we see with OS LTS versions \u2013 enterprise customers go from one LTS to the next and skip the in-between SAC releases. Since .NET 6.0 will be the successor to 3.1 LTS we expect customers presently using 3.1 LTS and wanting to target the next LTS will pick 6.0 LTS. We will support 3.1 through December 2022, so once .NET 6.0 ships, customers will have 1 year to plan for, rebuild and test their apps and complete their deployment. Customers that cannot migrate their apps to 6.0 in this timeframe will probably ask us to provide longer support.  \r\n\r\nIf customers can successfully complete their migration forward in this 1-year period everyone benefits. So, it is in everyone\u2019s interest that we do everything we can to enable customers to come forward to 6.0 as easily, smoothly and quickly as possible. \r\n\r\nEpics under this Theme:\r\n\r\n- [ ] [Enterprises have a first class experience acquiring and deploying .NET 6.0](https://github.com/dotnet/core/issues/5240).\r\n- [ ] [Enterprises get first-class support when using .NET 6.0 on Linux](https://github.com/dotnet/core/issues/5333).\r\n- [ ] [Path to migrate an app from Framework to .NET 6.0 is well understood and streamlined](https://github.com/dotnet/core/issues/5396)",
         "Milestone": null,
         "Assignees": [
           "jamshedd"
         ],
         "Labels": [
           {
-            "Name": "Epic",
+            "Name": "Theme",
             "BackgroundColor": "800080"
           }
         ],
@@ -623,8 +1977,8 @@
             ],
             "Labels": [
               {
-                "Name": "Experience",
-                "BackgroundColor": "3BB9FF"
+                "Name": "Epic",
+                "BackgroundColor": "c6415a"
               }
             ],
             "Kind": 1,
@@ -649,7 +2003,7 @@
                 "Labels": [
                   {
                     "Name": "User Story",
-                    "BackgroundColor": "FFA500"
+                    "BackgroundColor": "0e8a16"
                   }
                 ],
                 "Kind": 2,
@@ -676,8 +2030,8 @@
             ],
             "Labels": [
               {
-                "Name": "Experience",
-                "BackgroundColor": "3BB9FF"
+                "Name": "Epic",
+                "BackgroundColor": "c6415a"
               }
             ],
             "Kind": 1,
@@ -702,8 +2056,8 @@
             ],
             "Labels": [
               {
-                "Name": "Experience",
-                "BackgroundColor": "3BB9FF"
+                "Name": "Epic",
+                "BackgroundColor": "c6415a"
               }
             ],
             "Kind": 1,
@@ -718,39 +2072,6 @@
     },
     {
       "Issue": {
-        "Id": "dotnet/runtime#43313",
-        "CreatedAt": "2020-10-12T17:15:15+00:00",
-        "CreatedBy": "sdmaclea",
-        "IsClosed": false,
-        "Title": "Support Apple Silicon",
-        "DescriptionMarkdown": "Apple has [announced plans to transition its Mac hardware line]( https://www.apple.com/newsroom/2020/06/apple-announces-mac-transition-to-apple-silicon/) to a new Arm64-based chip that they refer to as \u201CApple Silicon\u201D. This epic tracks the high level status of the milestones required to ship this feature in .NET 6.\r\n\r\n.NET 6 will include new runtime id -- \u0060osx-arm64\u0060 -- for targeting this hardware. It refers to the macOS operating system running on Apple Silicon devices.\r\n\r\n### .NET 6 - CoreCLR\r\n\r\n**Functionality**\r\n- [x] Support compilation targeting osx-arm64\r\n- [x] Modify code generation to support osx-arm64 security features\r\n- [ ] Modify code generation to support osx-arm64 interop with native libraries\r\n\r\n**Testing**\r\n- [x] Apple Silicon Prototype hardware available \r\n- [x] Manual testing of basic inner and outer loop tests \r\n- [ ] Apple commercially shipping arm64 macos devices\r\n- [ ] CI/CD Testing enabled\r\n- [ ] CI/CD Stress testing enabled\r\n\r\n**Stability**\r\n- [x] Basic tests passing rate \u003E 99%\r\n- [ ] Stress tests passing rate \u003E 99%\r\n- [ ] All tests passing rate \u003E 99.9%\r\n\r\n**Availability**\r\n- [x] .NET Core runtime nightly builds available\r\n- [ ] ASP.NET Core runtime nightly builds available\r\n- [ ] .NET Core SDK nightly builds available\r\n- [ ] .NET 6 preview available\r\n- [ ] .NET 6 release available\r\n\r\n**Details**\r\n\r\nSee [Enable .NET Core on Apple Silicon](https://github.com/orgs/dotnet/projects/18) for the full set of related PRs and issues.\r\n\r\n### .NET 6 - Mono\r\n**Functionality**\r\n- [ ] Support compilation targeting osx-arm64\r\n- [x] Modify code generation to support osx-arm64 security features\r\n- [ ] Modify code generation to support osx-arm64 interop with native libraries\r\n\r\n**Testing**\r\n- [x] Apple Silicon Prototype hardware available \r\n- [ ] Manual testing of basic inner and outer loop tests \r\n- [ ] Apple commercially shipping arm64 macos devices\r\n- [ ] CI/CD Testing enabled\r\n- [ ] CI/CD Stress testing enabled\r\n\r\n**Stability**\r\n- [ ] Basic tests passing rate \u003E 99%\r\n- [ ] Stress tests passing rate \u003E 99%\r\n- [ ] All tests passing rate \u003E 99.9%\r\n\r\n**Availability**\r\n- [ ] Runtime nightly builds available\r\n- [ ] .NET 6 preview available\r\n- [ ] .NET 6 release available\r\n\r\n/cc @richlander @mangod9 @janvorli @JulieLeeMSFT @sandreenko @tommcdon @steveisok @directhex @akoeplinger @jeffschwMSFT ",
-        "Milestone": "6.0.0",
-        "Assignees": [],
-        "Labels": [
-          {
-            "Name": "Epic",
-            "BackgroundColor": "800080"
-          },
-          {
-            "Name": "arch-arm64",
-            "BackgroundColor": "eb6420"
-          },
-          {
-            "Name": "area-Meta",
-            "BackgroundColor": "d4c5f9"
-          },
-          {
-            "Name": "os-mac-os-x-big-sur",
-            "BackgroundColor": "fef2c0"
-          }
-        ],
-        "Kind": 0,
-        "ProjectStatus": null
-      },
-      "Children": []
-    },
-    {
-      "Issue": {
         "Id": "dotnet/runtime#41478",
         "CreatedAt": "2020-08-27T21:54:53+00:00",
         "CreatedBy": "HongGit",
@@ -762,14 +2083,14 @@
         "Labels": [
           {
             "Name": "Epic",
-            "BackgroundColor": "800080"
+            "BackgroundColor": "c6415a"
           },
           {
             "Name": "area-System.ServiceModel.Syndication",
             "BackgroundColor": "d4c5f9"
           }
         ],
-        "Kind": 0,
+        "Kind": 1,
         "ProjectStatus": null
       },
       "Children": []
@@ -787,14 +2108,14 @@
         "Labels": [
           {
             "Name": "Epic",
-            "BackgroundColor": "800080"
+            "BackgroundColor": "c6415a"
           },
           {
             "Name": "area-System.Text.Json",
             "BackgroundColor": "d4c5f9"
           }
         ],
-        "Kind": 0,
+        "Kind": 1,
         "ProjectStatus": null
       },
       "Children": []
@@ -812,7 +2133,7 @@
         "Labels": [
           {
             "Name": "Epic",
-            "BackgroundColor": "800080"
+            "BackgroundColor": "c6415a"
           },
           {
             "Name": "area-System.IO",
@@ -823,7 +2144,7 @@
             "BackgroundColor": "c2e0c6"
           }
         ],
-        "Kind": 0,
+        "Kind": 1,
         "ProjectStatus": null
       },
       "Children": []
@@ -841,7 +2162,7 @@
         "Labels": [
           {
             "Name": "Epic",
-            "BackgroundColor": "800080"
+            "BackgroundColor": "c6415a"
           },
           {
             "Name": "arch-wasm",
@@ -856,7 +2177,7 @@
             "BackgroundColor": "005e5e"
           }
         ],
-        "Kind": 0,
+        "Kind": 1,
         "ProjectStatus": null
       },
       "Children": []
@@ -874,14 +2195,14 @@
         "Labels": [
           {
             "Name": "Epic",
-            "BackgroundColor": "800080"
+            "BackgroundColor": "c6415a"
           },
           {
             "Name": "area-Meta",
             "BackgroundColor": "d4c5f9"
           }
         ],
-        "Kind": 0,
+        "Kind": 1,
         "ProjectStatus": null
       },
       "Children": []
@@ -899,7 +2220,7 @@
         "Labels": [
           {
             "Name": "Epic",
-            "BackgroundColor": "800080"
+            "BackgroundColor": "c6415a"
           },
           {
             "Name": "area-Meta",
@@ -910,7 +2231,7 @@
             "BackgroundColor": "c2e0c6"
           }
         ],
-        "Kind": 0,
+        "Kind": 1,
         "ProjectStatus": null
       },
       "Children": []
@@ -930,292 +2251,17 @@
         "Labels": [
           {
             "Name": "Epic",
-            "BackgroundColor": "800080"
+            "BackgroundColor": "c6415a"
           },
           {
             "Name": "area-Meta",
             "BackgroundColor": "d4c5f9"
           }
         ],
-        "Kind": 0,
+        "Kind": 1,
         "ProjectStatus": null
       },
       "Children": []
-    },
-    {
-      "Issue": {
-        "Id": "dotnet/runtime#37039",
-        "CreatedAt": "2020-05-27T02:58:52+00:00",
-        "CreatedBy": "elinor-fung",
-        "IsClosed": false,
-        "Title": "Roslyn Code analyzers for interop",
-        "DescriptionMarkdown": "This tracking issue for a small backlog of rules around interop to add to the officially recommended set of analyzers. The rules are grouped around runtime functionality/features, but would represent separate analyzers in implementation. Since many issues concerning interop are rooted in a discrepancy between the user\u0027s intent and implementation, it is expected that only a small number of rules would be useful and applicable to all users. Official documentation will remain the main source of guidance for more nuanced behaviour that requires clear understanding of intent.\r\n\r\nThe upcoming plan to provide source generators for p/invokes should not directly affect the rules here, as that functionality would be using a different attribute for declaring p/invokes. However, there is the opportunity to provide an analyzer to help users migrate to the source generator approach. Once a source generator exists, the rules here could also be updated to consider p/invokes which use that generator or, depending on their severity, warnings within the generator itself.\r\n\r\nThe intent is that as the runtime interop team works through a backlog of analyzers around existing features and functionality, the concept of considering and adding analyzers for any new features will become natural and simply be part of that feature work. The [P/Invokes](#p/invokes) and [Marshalling](#marshalling) rules are expected to be the starting points for working through this backlog.\r\n\r\n## P/Invokes\r\n\r\nThese rules inspect the actual declaration and invocation of p/invokes.\r\n\r\n- [x] Do not use \u0060[Out]\u0060 string for P/Invokes: #35692\r\n- [x] Avoid \u0060StringBuilder\u0060 parameters for P/Invokes: #35693\r\n- [ ] Prefer \u0060ExactSpelling=true\u0060 in \u0060[DllImport]\u0060 for known APIs: #35695\r\n- [ ] Remove redundant configuration from \u0060[DllImport]\u0060 declaration #33808\r\n- [ ] CA1404 port: dotnet/roslyn-analyzers#420\r\n- [ ] Prefer \u0060SafeHandle\u0060 over \u0060IntPtr\u0060 for known APIs: #42404\r\n- [ ] Get the last error after calls to P/Invokes with \u0060SetLastError=true\u0060\r\n  - Category: Interoperability\r\n  - Default: Enabled\r\n  - After calling a p/invoke that sets the last error, \u0060Marshal.GetLastWin32Error\u0060 should be called to retrieve the last error.\r\n    \u0060\u0060\u0060C#\r\n    [DllImport(\u0022MyLibrary\u0022, SetLastError = true)]\r\n    private static extern void Foo();\r\n\r\n    public static void Bar()\r\n    {\r\n        Foo(); // Flag last error not retrieved\r\n    }\r\n\r\n    public static void Baz()\r\n    {\r\n        Foo(); // OK\r\n        if (Marshal.GetLastWin32Error() == 0) { ... }\r\n    }\r\n    \u0060\u0060\u0060\r\n- [ ] Specify \u0060SetLastError=true\u0060 in \u0060[DllImport]\u0060 for known APIs\r\n  - Category: Interoperability\r\n  - Default: Enabled\r\n  - For APIs that are known to set last error, \u0060SetLastError=true\u0060 should be specified. This would require having/building a database of APIs to compare against.\r\n    \u0060\u0060\u0060C#\r\n    // Flag SetLastError=false for known API\r\n    [DllImport(\u0022kernel32\u0022)]\r\n    public static extern bool CloseHandle(IntPtr hObject);\r\n\r\n    // OK - known API does not set last error\r\n    [DllImport(\u0022kernel32\u0022)]\r\n    public static extern int GetCurrentProcessId();\r\n    \u0060\u0060\u0060\r\n  - Recommend:\r\n    \u0060\u0060\u0060C#\r\n    [DllImport(\u0022kernel32.dll\u0022, SetLastError = true)]\r\n    public static extern bool CloseHandle(IntPtr hObject);\r\n    \u0060\u0060\u0060\r\n  - If the user does not intend to check the error, this can be skipped, but the general guidance is to both define the p/invoke to set last error (for APIs that do so) and check the error.\r\n\r\n## Marshalling\r\n\r\nThese rules inspect how data is marshalled. They would apply to the parameters on p/invokes and any types (e.g. marshalled structs, delegates) used by p/invokes.\r\n\r\n- [ ] Specify \u0060SizeConst\u0060 when marshalling as ByValArray: #36134\r\n- [ ] CA1414 port: dotnet/roslyn-analyzers#430\r\n- [ ] Avoid \u0060Delegate\u0060 or \u0060MulticastDelegate\u0060 fields in marshalled structs\r\n  - Category: Interoperability\r\n  - Default: Enabled\r\n  - \u0060Delegate\u0060 and \u0060MulticastDelegate\u0060 do not have a required signature, so they do not guarantee that the delegate passed in will match the signature the native code expects. Marshalling a struct containing a \u0060Delegate\u0060 or \u0060MulticastDelegate\u0060 from its native representation to a managed object can destabilize the runtime if the value of the field in the native representation is not a function pointer that wraps a managed delegate. Use a specific delegate type instead of \u0060Delegate\u0060 or \u0060MulticastDelegate\u0060.\r\n    \u0060\u0060\u0060C#\r\n    [DllImport(\u0022MyLibrary\u0022)]\r\n    private static extern void Foo(MyStruct s);\r\n\r\n    struct MyStruct\r\n    {\r\n        Delegate Bar; // Flag Delegate in marshalled struct\r\n    }\r\n    \u0060\u0060\u0060\r\n\r\n## COM\r\n\r\nThese rules inspect COM-related functionality. Many of the [existing rules](#existing-rules) that have not yet been ported are around COM.\r\n\r\n- [ ] Types should not be both \u0060[ComImport]\u0060 and \u0060[ComVisible(true)]\u0060\r\n  - Types should not be marked as both imported from COM and made visible to COM.\r\n- [ ] COM-visible types should be accessible and creatable\r\n  - Types marked \u0060ComVisible(true)\u0060 should be public, non-abstract, and have a public parameterless constructor.\r\n  - [CA1409](https://docs.microsoft.com/visualstudio/code-quality/ca1409) looks to have the same intent, but only specifically flagged the public parameterless constructor.\r\n\r\n## Low-level interop APIs\r\n\r\nThese rules are related to APIs that provide low-level interaction/integration with the runtime\u0027s interop system.\r\n\r\n- [ ] Interfaces marked with \u0060DynamicInterfaceCastableImplementationAttribute\u0060 should provide a default implementation of all inherited interface methods: #41529\r\n\r\n## Cross-platform\r\n\r\nThere is an [existing proposal](https://github.com/dotnet/designs/pull/110/files) for an analyzer that detects the use of platform-specific APIs where the API might not be available. Many interop-related APIs are platform-specific and would be given the appropriate attribute such that the proposed analyzer would flag their use.\r\n\r\nThe logic that will be used by the proposed analyzer for platform-specific APIs could be leveraged for platform-specifc interop behaviour that is not tied to a specifid API. There are some types or \u0060MarshalAs\u0060 values for which marshalling is not supported on all platforms. In these cases, it is not a known API that is platform-specific, but a user-defined p/invoke that is platform-specific due to the way it is defined. An analyzer would detect those p/invokes and treat those as platform-specific calls, following the same logic as that for the platform-specific APIs for determining the platform context and checking for platform guards around the call site.\r\n\r\nRules:\r\n- Marshalling of \u0060\u003CType\u003E\u0060 requires \u0060\u003COS\u003E\u0060\r\n- Marshalling as \u0060\u003CUnmanagedType.*\u003E\u0060 requires \u0060\u003COS\u003E\u0060\r\n\r\n## Existing rules\r\n\r\nThere are a number of [rules](https://docs.microsoft.com/visualstudio/code-quality/interoperability-warnings) around interop and marshalling that go through legacy (static) analysis. They have all previously been deprecated or slated to be ported as time allows. See [FxCop rule port status](https://docs.microsoft.com/visualstudio/code-quality/fxcop-rule-port-status) for a list of all ported, tracked, and deprecated rules.",
-        "Milestone": "6.0.0",
-        "Assignees": [],
-        "Labels": [
-          {
-            "Name": "Epic",
-            "BackgroundColor": "800080"
-          },
-          {
-            "Name": "area-Interop-coreclr",
-            "BackgroundColor": "d4c5f9"
-          }
-        ],
-        "Kind": 0,
-        "ProjectStatus": null
-      },
-      "Children": [
-        {
-          "Issue": {
-            "Id": "dotnet/runtime#35692",
-            "CreatedAt": "2020-05-01T02:19:55+00:00",
-            "CreatedBy": "elinor-fung",
-            "IsClosed": true,
-            "Title": "Do not use [Out] string for P/Invokes",
-            "DescriptionMarkdown": "Add a rule to flag P/Invoke declarations passing \u0060string\u0060 parameters by value with the \u0060[Out]\u0060 attribute, which can destabilize the runtime if the string is an interned string.\r\n\u0060\u0060\u0060C#\r\n // Flag [Out] string\r\n[DllImport(\u0022MyLibrary\u0022)]\r\nprivate static extern void Foo([Out] string s);\r\n\r\n// OK\r\n[DllImport(\u0022MyLibrary\u0022)]\r\nprivate static extern void Bar(out string s1, [Out] ref string s2);\r\n\u0060\u0060\u0060\r\n\r\n**Category:** Interoperability\r\n**Default:** Enabled\r\n\r\ncc @terrajobst @stephentoub @AaronRobinsonMSFT @jkoritzinsky ",
-            "Milestone": "5.0.0",
-            "Assignees": [],
-            "Labels": [
-              {
-                "Name": "api-approved",
-                "BackgroundColor": "159818"
-              },
-              {
-                "Name": "area-System.Runtime.InteropServices",
-                "BackgroundColor": "d4c5f9"
-              },
-              {
-                "Name": "code-analyzer",
-                "BackgroundColor": "0f46ad"
-              }
-            ],
-            "Kind": 3,
-            "ProjectStatus": null
-          },
-          "Children": []
-        },
-        {
-          "Issue": {
-            "Id": "dotnet/runtime#35693",
-            "CreatedAt": "2020-05-01T02:21:25+00:00",
-            "CreatedBy": "elinor-fung",
-            "IsClosed": true,
-            "Title": "Avoid StringBuilder parameters for P/Invokes",
-            "DescriptionMarkdown": "Marshalling for \u0060StringBuilder\u0060 always creates a native buffer copy and can thus be very inefficient. Consider using a \u0060char\u0060 buffer from \u0060ArrayPool\u0060 instead.\r\n\u0060\u0060\u0060C#\r\n// Flag StringBuilder parameter\r\n[DllImport(\u0022MyLibrary\u0022)]\r\nprivate static extern void Foo(StringBuilder buffer);\r\n\u0060\u0060\u0060\r\n\r\n**Category:** Performance\r\n**Default:** Disabled\r\n\r\nSince each instance of this violation would require user intervention to determine if it makes sense to address and how to address it, this would be off-by-default and up to the user to enable for code where perf is a concern.\r\n\r\ncc @terrajobst @stephentoub @AaronRobinsonMSFT @jkoritzinsky ",
-            "Milestone": "5.0.0",
-            "Assignees": [],
-            "Labels": [
-              {
-                "Name": "api-approved",
-                "BackgroundColor": "159818"
-              },
-              {
-                "Name": "area-System.Runtime.InteropServices",
-                "BackgroundColor": "d4c5f9"
-              },
-              {
-                "Name": "code-analyzer",
-                "BackgroundColor": "0f46ad"
-              }
-            ],
-            "Kind": 3,
-            "ProjectStatus": null
-          },
-          "Children": []
-        },
-        {
-          "Issue": {
-            "Id": "dotnet/runtime#35695",
-            "CreatedAt": "2020-05-01T02:29:39+00:00",
-            "CreatedBy": "elinor-fung",
-            "IsClosed": false,
-            "Title": "Prefer ExactSpelling=true on [DllImport] for known APIs",
-            "DescriptionMarkdown": "On Windows, setting \u0060ExactSpelling=true\u0060 on the \u0060DllImport\u0060 attribute prevents the runtime from looking for alternate function names (suffix based on \u0060CharSet\u0060), giving a slight performance benefit by avoiding this search.\r\n\r\nThere is a fair amount of nuance associated with the behaviour of \u0060ExactSpelling\u0060 and under which scenarios there would actually be a performance benefit. In order to avoid noise, this rule can be scoped to check for a database of Win32 APIs that use the suffixes and provide a warning and fix for those cases where it matters.\r\n\r\n\u0060\u0060\u0060C#\r\n// Flag ExactSpelling=false\r\n[DllImport(\u0022kernel32.dll\u0022, CharSet=CharSet.Unicode)]\r\nprivate static extern bool SetEnvironmentVariableW(string name, string? value);\r\n\r\n// OK - not in database of APIs\r\n[DllImport(\u0022MyLibrary.dll\u0022, CharSet=CharSet.Unicode)]\r\nprivate static extern void Foo();\r\n\u0060\u0060\u0060\r\n\r\nRecommend:\r\n\u0060\u0060\u0060C#\r\n[DllImport(\u0022kernel32.dll\u0022, CharSet=CharSet.Unicode, ExactSpelling = true)]\r\nprivate static extern bool SetEnvironmentVariableW(string name, string? value);\r\n\u0060\u0060\u0060\r\n\r\n**Category:** Performance\r\n**Default:** Enabled\r\n\r\ncc @terrajobst @stephentoub @AaronRobinsonMSFT @jkoritzinsky",
-            "Milestone": "6.0.0",
-            "Assignees": [],
-            "Labels": [
-              {
-                "Name": "api-approved",
-                "BackgroundColor": "159818"
-              },
-              {
-                "Name": "area-System.Runtime.InteropServices",
-                "BackgroundColor": "d4c5f9"
-              },
-              {
-                "Name": "code-analyzer",
-                "BackgroundColor": "0f46ad"
-              }
-            ],
-            "Kind": 3,
-            "ProjectStatus": null
-          },
-          "Children": []
-        },
-        {
-          "Issue": {
-            "Id": "dotnet/runtime#33808",
-            "CreatedAt": "2020-03-19T16:43:13+00:00",
-            "CreatedBy": "terrajobst",
-            "IsClosed": false,
-            "Title": "Remove redundant configuration from [DllImport] declaration",
-            "DescriptionMarkdown": "Flag places where an attribute is set on a DllImport that\u0027s already the default value.\n\n**Category**: Style",
-            "Milestone": "Future",
-            "Assignees": [],
-            "Labels": [
-              {
-                "Name": "api-suggestion",
-                "BackgroundColor": "1d76db"
-              },
-              {
-                "Name": "area-System.Runtime.InteropServices",
-                "BackgroundColor": "d4c5f9"
-              },
-              {
-                "Name": "code-analyzer",
-                "BackgroundColor": "0f46ad"
-              },
-              {
-                "Name": "code-fixer",
-                "BackgroundColor": "0f46ad"
-              }
-            ],
-            "Kind": 3,
-            "ProjectStatus": null
-          },
-          "Children": []
-        },
-        {
-          "Issue": {
-            "Id": "dotnet/runtime#420",
-            "CreatedAt": "2019-12-01T15:51:25+00:00",
-            "CreatedBy": "NextTurn",
-            "IsClosed": true,
-            "Title": "createdump can read memory with process_vm_readv on Linux",
-            "DescriptionMarkdown": "See benchmark results in microsoft/clrmd#351",
-            "Milestone": null,
-            "Assignees": [],
-            "Labels": [
-              {
-                "Name": "area-Diagnostics-coreclr",
-                "BackgroundColor": "d4c5f9"
-              }
-            ],
-            "Kind": 3,
-            "ProjectStatus": null
-          },
-          "Children": []
-        },
-        {
-          "Issue": {
-            "Id": "dotnet/runtime#42404",
-            "CreatedAt": "2020-09-17T20:13:36+00:00",
-            "CreatedBy": "Mrnikbobjeff",
-            "IsClosed": false,
-            "Title": "Analyzer suggestion: Prefer SafeHandle over IntPtr",
-            "DescriptionMarkdown": "After working on some Interop analyzers I thought about SafeHandle and how known api\u0027s could suggest using the corresponding safehandle, such as SafeFileHandle or SafeWaitHandle. This could also more broadly be applied based on the method name, e.g. methods contains alloc/free could offer a warning when an IntPtr is used instead of a custom safehandle.",
-            "Milestone": "6.0.0",
-            "Assignees": [],
-            "Labels": [
-              {
-                "Name": "area-System.Runtime.InteropServices",
-                "BackgroundColor": "d4c5f9"
-              },
-              {
-                "Name": "code-analyzer",
-                "BackgroundColor": "0f46ad"
-              }
-            ],
-            "Kind": 3,
-            "ProjectStatus": null
-          },
-          "Children": []
-        },
-        {
-          "Issue": {
-            "Id": "dotnet/runtime#36134",
-            "CreatedAt": "2020-05-08T18:42:15+00:00",
-            "CreatedBy": "elinor-fung",
-            "IsClosed": false,
-            "Title": "Specify SizeConst when marshalling field as ByValArray",
-            "DescriptionMarkdown": "When marshalling using \u0060UnmanagedType.ByValArray\u0060, the \u0060SizeConst\u0060 field should be specified.\r\n\r\n\u0060\u0060\u0060C#\r\nstruct MyStruct\r\n{\r\n    [MarshalAs(UnmanagedType.ByValArray)]\r\n    int[] Foo;\r\n}\r\n\u0060\u0060\u0060\r\n\r\n**Category:** Interoperability\r\n**Default:** Enabled\r\n\r\ncc @terrajobst @stephentoub @AaronRobinsonMSFT @jkoritzinsky",
-            "Milestone": "6.0.0",
-            "Assignees": [],
-            "Labels": [
-              {
-                "Name": "api-suggestion",
-                "BackgroundColor": "1d76db"
-              },
-              {
-                "Name": "area-System.Runtime.InteropServices",
-                "BackgroundColor": "d4c5f9"
-              },
-              {
-                "Name": "code-analyzer",
-                "BackgroundColor": "0f46ad"
-              }
-            ],
-            "Kind": 3,
-            "ProjectStatus": null
-          },
-          "Children": []
-        },
-        {
-          "Issue": {
-            "Id": "dotnet/runtime#430",
-            "CreatedAt": "2019-12-02T10:31:34+00:00",
-            "CreatedBy": "damageboy",
-            "IsClosed": false,
-            "Title": "Superfluous mov(s) opcodes around left shifting/vmovmskps",
-            "DescriptionMarkdown": "## Repro Repo:\r\nhttps://github.com/damageboy/coreclr-jit-why-mov-now\r\n\r\n## Relevant piece of code:\r\n\r\nhttps://github.com/damageboy/coreclr-jit-why-mov-now/blob/09e990e4d87190e33ca9ea1a794ec045a6651f97/Program.cs#L37-L44\r\n\r\n\u0060\u0060\u0060csharp\r\n            maskyMcMaskFace  = (ulong) (uint) MoveMask(CompareGreaterThan(L0, P).AsSingle()) \u003C\u003C 00;\r\n            maskyMcMaskFace |= (ulong) (uint) MoveMask(CompareGreaterThan(L1, P).AsSingle()) \u003C\u003C 08;\r\n            maskyMcMaskFace |= (ulong) (uint) MoveMask(CompareGreaterThan(L2, P).AsSingle()) \u003C\u003C 16;\r\n            maskyMcMaskFace |= (ulong) (uint) MoveMask(CompareGreaterThan(L3, P).AsSingle()) \u003C\u003C 24;\r\n            maskyMcMaskFace |= (ulong) (uint) MoveMask(CompareGreaterThan(L4, P).AsSingle()) \u003C\u003C 32;\r\n            maskyMcMaskFace |= (ulong) (uint) MoveMask(CompareGreaterThan(L5, P).AsSingle()) \u003C\u003C 40;\r\n            maskyMcMaskFace |= (ulong) (uint) MoveMask(CompareGreaterThan(L6, P).AsSingle()) \u003C\u003C 48;\r\n            maskyMcMaskFace |= (ulong) (uint) MoveMask(CompareGreaterThan(L7, P).AsSingle()) \u003C\u003C 56;\r\n\u0060\u0060\u0060\r\n\r\n## Generated asm:\r\n\r\nhttps://github.com/damageboy/coreclr-jit-why-mov-now/blob/09e990e4d87190e33ca9ea1a794ec045a6651f97/listing.asm#L57-L115\r\n\r\n\u0060\u0060\u0060nasm\r\n;             maskyMcMaskFace  = (ulong) (uint) MoveMask(CompareGreaterThan(L0, P).AsSingle()) \u003C\u003C 00;\r\n00007F05AE6B097A C5F566C8             vpcmpgtd ymm1,ymm1,ymm0\r\n00007F05AE6B097E C5FC50F9             vmovmskps edi,ymm1\r\n00007F05AE6B0982 8BFF                 mov     edi,edi\r\n\r\n\r\n;             maskyMcMaskFace |= (ulong) (uint) MoveMask(CompareGreaterThan(L1, P).AsSingle()) \u003C\u003C 08;\r\n00007F05AE6B0984 C5ED66C8             vpcmpgtd ymm1,ymm2,ymm0\r\n00007F05AE6B0988 C5FC50C1             vmovmskps eax,ymm1\r\n00007F05AE6B098C 8BC0                 mov     eax,eax\r\n00007F05AE6B098E 48C1E008             shl     rax,8\r\n00007F05AE6B0992 480BF8               or      rdi,rax\r\n\r\n\r\n;             maskyMcMaskFace |= (ulong) (uint) MoveMask(CompareGreaterThan(L2, P).AsSingle()) \u003C\u003C 16;\r\n00007F05AE6B0995 C5E566C8             vpcmpgtd ymm1,ymm3,ymm0\r\n00007F05AE6B0999 C5FC50C1             vmovmskps eax,ymm1\r\n00007F05AE6B099D 8BC0                 mov     eax,eax\r\n00007F05AE6B099F 48C1E010             shl     rax,10h\r\n00007F05AE6B09A3 480BC7               or      rax,rdi\r\n00007F05AE6B09A6 488BF8               mov     rdi,rax\r\n\r\n\r\n;             maskyMcMaskFace |= (ulong) (uint) MoveMask(CompareGreaterThan(L3, P).AsSingle()) \u003C\u003C 24;\r\n00007F05AE6B09A9 C5DD66C8             vpcmpgtd ymm1,ymm4,ymm0\r\n00007F05AE6B09AD C5FC50C1             vmovmskps eax,ymm1\r\n00007F05AE6B09B1 8BC0                 mov     eax,eax\r\n00007F05AE6B09B3 48C1E018             shl     rax,18h\r\n00007F05AE6B09B7 480BC7               or      rax,rdi\r\n00007F05AE6B09BA 488BF8               mov     rdi,rax\r\n\r\n\r\n;             maskyMcMaskFace |= (ulong) (uint) MoveMask(CompareGreaterThan(L4, P).AsSingle()) \u003C\u003C 32;\r\n00007F05AE6B09BD C5D566C8             vpcmpgtd ymm1,ymm5,ymm0\r\n00007F05AE6B09C1 C5FC50C1             vmovmskps eax,ymm1\r\n00007F05AE6B09C5 8BC0                 mov     eax,eax\r\n00007F05AE6B09C7 48C1E020             shl     rax,20h\r\n00007F05AE6B09CB 480BC7               or      rax,rdi\r\n00007F05AE6B09CE 488BF8               mov     rdi,rax\r\n\r\n\r\n;             maskyMcMaskFace |= (ulong) (uint) MoveMask(CompareGreaterThan(L5, P).AsSingle()) \u003C\u003C 40;\r\n00007F05AE6B09D1 C5CD66C8             vpcmpgtd ymm1,ymm6,ymm0\r\n00007F05AE6B09D5 C5FC50C1             vmovmskps eax,ymm1\r\n00007F05AE6B09D9 8BC0                 mov     eax,eax\r\n00007F05AE6B09DB 48C1E028             shl     rax,28h\r\n00007F05AE6B09DF 480BC7               or      rax,rdi\r\n00007F05AE6B09E2 488BF8               mov     rdi,rax\r\n\r\n\r\n;             maskyMcMaskFace |= (ulong) (uint) MoveMask(CompareGreaterThan(L6, P).AsSingle()) \u003C\u003C 48;\r\n00007F05AE6B09E5 C5C566C8             vpcmpgtd ymm1,ymm7,ymm0\r\n00007F05AE6B09E9 C5FC50C1             vmovmskps eax,ymm1\r\n00007F05AE6B09ED 8BC0                 mov     eax,eax\r\n00007F05AE6B09EF 48C1E030             shl     rax,30h\r\n00007F05AE6B09F3 480BC7               or      rax,rdi\r\n00007F05AE6B09F6 488BF8               mov     rdi,rax\r\n\r\n\r\n;             maskyMcMaskFace |= (ulong) (uint) MoveMask(CompareGreaterThan(L7, P).AsSingle()) \u003C\u003C 56;\r\n00007F05AE6B09F9 C5BD66C0             vpcmpgtd ymm0,ymm8,ymm0\r\n00007F05AE6B09FD C5FC50C0             vmovmskps eax,ymm0\r\n00007F05AE6B0A01 8BC0                 mov     eax,eax\r\n00007F05AE6B0A03 48C1E038             shl     rax,38h\r\n00007F05AE6B0A07 480BC7               or      rax,rdi\r\n00007F05AE6B0A0A 488BF8               mov     rdi,rax\r\n\u0060\u0060\u0060\r\n\r\n## Issue\r\nIn the asm listing, you can see that the first left shift by 0 has no effect, which is great!\r\nThe second one generates proper code.\r\n\r\nBut the 3rd and onwards (\u003C\u003C16..\u003C\u003C56) all generate an additional \u0060mov\u0060 instruction:\r\n\u0060\u0060\u0060nasm\r\nor      rax,rdi\r\nmov     rdi,rax\r\n\u0060\u0060\u0060\r\n\r\nWhere it could simple do a single:\r\n\u0060\u0060\u0060nasm\r\nor rdi,rax\r\n\u0060\u0060\u0060\r\n\r\nWhich it did for the first shift only...?\r\n\r\nI do realize these opcodes are the most expensive to execute, but this is completely erratic and does impact decoding and to some extent the execution speed of the code.\r\n\r\nIt is perhaps indicative of a more fundamental issue as well?\r\n\r\n\r\ncategory:cq\r\ntheme:register-allocator\r\nskill-level:intermediate\r\ncost:medium",
-            "Milestone": "Future",
-            "Assignees": [],
-            "Labels": [
-              {
-                "Name": "area-CodeGen-coreclr",
-                "BackgroundColor": "d4c5f9"
-              },
-              {
-                "Name": "optimization",
-                "BackgroundColor": "0052cc"
-              }
-            ],
-            "Kind": 3,
-            "ProjectStatus": null
-          },
-          "Children": []
-        },
-        {
-          "Issue": {
-            "Id": "dotnet/runtime#41529",
-            "CreatedAt": "2020-08-28T19:06:29+00:00",
-            "CreatedBy": "jkoritzinsky",
-            "IsClosed": false,
-            "Title": "All inherited interface members should be implemented on an interface marked with DynamicInterfaceCastableImplementationAttribute",
-            "DescriptionMarkdown": "An interface marked with a \u0060System.Runtime.InteropServices.DynamicInterfaceCastableImplementationAttribute\u0060 attribute should provide a default interface implementation of all inherited interface methods.\r\n\r\n\u0060\u0060\u0060csharp\r\ninterface Foo\r\n{\r\n      void Frob();\r\n}\r\n\r\n[DynamicInterfaceCastableImplementation]\r\ninterface Bar : Foo\r\n{\r\n}\r\n\u0060\u0060\u0060\r\n\r\n\r\n**Category:** Usage\r\n**Default:** Enabled\r\n\r\ncc @terrajobst @stephentoub @AaronRobinsonMSFT @elinor-fung ",
-            "Milestone": "6.0.0",
-            "Assignees": [],
-            "Labels": [
-              {
-                "Name": "api-suggestion",
-                "BackgroundColor": "1d76db"
-              },
-              {
-                "Name": "area-System.Runtime.InteropServices",
-                "BackgroundColor": "d4c5f9"
-              },
-              {
-                "Name": "code-analyzer",
-                "BackgroundColor": "0f46ad"
-              }
-            ],
-            "Kind": 3,
-            "ProjectStatus": null
-          },
-          "Children": []
-        }
-      ]
     },
     {
       "Issue": {
@@ -1233,7 +2279,7 @@
         "Labels": [
           {
             "Name": "Epic",
-            "BackgroundColor": "800080"
+            "BackgroundColor": "c6415a"
           },
           {
             "Name": "arch-arm64",
@@ -1248,7 +2294,7 @@
             "BackgroundColor": "b60205"
           }
         ],
-        "Kind": 0,
+        "Kind": 1,
         "ProjectStatus": null
       },
       "Children": []
@@ -1269,14 +2315,14 @@
         "Labels": [
           {
             "Name": "Epic",
-            "BackgroundColor": "800080"
+            "BackgroundColor": "c6415a"
           },
           {
             "Name": "area-Single-File",
             "BackgroundColor": "d4c5f9"
           }
         ],
-        "Kind": 0,
+        "Kind": 1,
         "ProjectStatus": null
       },
       "Children": [
@@ -1459,7 +2505,7 @@
         "Labels": [
           {
             "Name": "Epic",
-            "BackgroundColor": "800080"
+            "BackgroundColor": "c6415a"
           },
           {
             "Name": "area-Interop-mono",
@@ -1474,209 +2520,10 @@
             "BackgroundColor": "b60205"
           }
         ],
-        "Kind": 0,
+        "Kind": 1,
         "ProjectStatus": null
       },
       "Children": []
-    },
-    {
-      "Issue": {
-        "Id": "dotnet/runtime#35853",
-        "CreatedAt": "2020-05-05T19:42:39+00:00",
-        "CreatedBy": "kunalspathak",
-        "IsClosed": false,
-        "Title": "Improving ARM64 Performance in .NET 5.0 \u2013 Closing the gap with x64",
-        "DescriptionMarkdown": ".NET 3.0 was the first release to add support for [ARM64](https://docs.microsoft.com/en-us/dotnet/core/whats-new/dotnet-core-3-0#linux-improvements), starting with Linux (see [ARM64 tracking issue](https://github.com/dotnet/runtime/issues/11042)). As part of .NET 5.0, we are adding support for Windows. At this point, we believe that the .NET ARM64 implementation has functional parity with x64 (please report functional bugs!). We\u2019ve since shifted our focus toward performance parity with x64, for Windows and Linux. This issue tracks our progress to achieve that goal. Some of the issues we have identified may broader than ARM64, but still critical performance for our ARM64 performance goals.\r\n\r\n\r\n| Issues  | Description                                                               | Category               |\r\n|---------|---------------------------------------------------------------------------|------------------------|\r\n| #33308  | Optimize library APIs to use ARM64 hardware intrinsics                    | Libraries              |\r\n| #35108  | Indirect call produces redundant address load for R2R                     | Function call          |\r\n| #36700 | Virtual stub call produces redundant address load for R2R / JIT        | Function call          |\r\n| #35274  | [arm/arm64] Leaf frames, saving LR, and return address hijacking       | Function call        |\r\n| #38890 |   Cache the target of indirect cell address to optimize redundant target loading     | Function call        |\r\n| #36663 | Dead stores generated from arguments to the dead helper call  | Function call        |\r\n| #35631  | Unused HFA arguments still get written to stack                           | Function call          |\r\n| #35635  | HFA register arguments pushed to stack                                    | Function call          |\r\n| #35268  | Constant pool should share values                                         | General                |\r\n| #34937  | Optimize a % b operation for ARM64                                        | General                |\r\n| #35618  | Code inefficiencies in loop array indexing                                | General                |\r\n| #35257  | Double constants usage in a loop can be CSEed                             | General                |\r\n| #35976  | Vector64\u003CT\u003E is converted to HVA TYP_DOUBLE                             | General                | \r\n| #35622  | Addressing mode inefficiencies in Guid:op_Equality(Guid,Guid):bool        | Addressing mode        |\r\n| #34810  | ARM64: Post index addressing mode                                         | Addressing mode        |\r\n| #35141  | Optimize redundant memory loads with mov                                  | Peep-hole optimization |\r\n| #35071  | Redundant load/stores for methods that operates/returns structs           | Peep-hole optimization |\r\n| #35136  | Optimize pair of \u0022str wzr, [reg]\u0022 to \u0022str xzr\u0022                               | Peep-hole optimization |\r\n| #35134  | Optimize pair of \u0022str reg, [fp]\u0022 to stp                                   | Peep-hole optimization |\r\n| #35133  | Optimize pair of \u0022str reg, [reg]\u0022 to stp                                  | Peep-hole optimization |\r\n| #35132  | Optimize pair of \u0022ldr reg, [reg]\u0022 to ldp                                  | Peep-hole optimization |\r\n| #35130  | Optimize pair of \u0022ldr reg, [fp]\u0022 to ldp                                   | Peep-hole optimization |\r\n| #35252  | Redundant movs can be eliminiated                                         | Peep-hole optimization |\r\n| #35254  | Redundant movs done for zero extend the register                          | Peep-hole optimization |\r\n| #35614  | Remove redundant store that is immediately after the load in same src/dst | Peep-hole optimization |\r\n| #35613  | Remove redundant load that is immediately after the store in same src/dst | Peep-hole optimization |\r\n\r\ncategory:cq\r\ntheme:meta\r\nskill-level:expert\r\ncost:large",
-        "Milestone": "Future",
-        "Assignees": [],
-        "Labels": [
-          {
-            "Name": "Epic",
-            "BackgroundColor": "800080"
-          },
-          {
-            "Name": "arch-arm64",
-            "BackgroundColor": "eb6420"
-          },
-          {
-            "Name": "area-CodeGen-coreclr",
-            "BackgroundColor": "d4c5f9"
-          },
-          {
-            "Name": "tenet-performance",
-            "BackgroundColor": "c2e0c6"
-          }
-        ],
-        "Kind": 0,
-        "ProjectStatus": null
-      },
-      "Children": []
-    },
-    {
-      "Issue": {
-        "Id": "dotnet/runtime#35410",
-        "CreatedAt": "2020-04-24T15:10:53+00:00",
-        "CreatedBy": "steveisok",
-        "IsClosed": false,
-        "Title": "Track fully enabling libraries tests and enabling missing features for iOS, Android, and Xam.Mac",
-        "DescriptionMarkdown": "This epic serves as a libraries POV as we work towards full test coverage and add missing features for mobile in .NET 5.  \r\n\r\n## iOS\r\n\r\n### Testing\r\n- [ ] Fully integrate the test runner into the libraries build https://github.com/dotnet/runtime/issues/35123 (Steve)\r\n- [ ] Integrate with helix (Steve)\r\n- [ ] Analyze test results, identify issues to fix (Steve / Eric)\r\n\r\n### ICU\r\n- [ ] Build ICU for iOS/tvOS https://github.com/dotnet/runtime/issues/33654 \r\n- [ ] Do not package w/ Invariant mode enabled https://github.com/dotnet/runtime/issues/35090\r\n\r\n### Networking\r\n- [ ] iOS/tvOS specific define to create \u0060Foundation.NSUrlSessionHandler\u0060\r\n\r\n## Android\r\n\r\n### Testing\r\n- [ ] Fully integrate the test runner into the libraries build https://github.com/dotnet/runtime/issues/35262 (Steve)\r\n- [ ] Piggyback on iOS helix integration (Steve)\r\n- [ ] Analyze test results, identify issues to fix (Steve / Eric)\r\n\r\n### Security\r\n- [ ] Establish a process surrounding how we will manage the OpenSSL dependency (Jeff)\r\n- [ ] When the android runner is available, run existing tests w/ OpenSSL.  Identify missing features (Steve)\r\n\r\n### Networking\r\n- [ ] Android specific define to create \u0060AndroidClientHandler\u0060\r\n\r\n## Xam.Mac\r\n\r\n### Testing\r\n- [x] Enable in-tree runtime pack for desktop mono https://github.com/dotnet/runtime/issues/35247\r\n- [ ] **Blocked**  Ensure SDK can find the mono runtime pack ",
-        "Milestone": "6.0.0",
-        "Assignees": [],
-        "Labels": [
-          {
-            "Name": "Epic",
-            "BackgroundColor": "800080"
-          },
-          {
-            "Name": "area-Meta",
-            "BackgroundColor": "d4c5f9"
-          }
-        ],
-        "Kind": 0,
-        "ProjectStatus": null
-      },
-      "Children": [
-        {
-          "Issue": {
-            "Id": "dotnet/runtime#33654",
-            "CreatedAt": "2020-03-16T22:46:23+00:00",
-            "CreatedBy": "steveisok",
-            "IsClosed": false,
-            "Title": "Build icu for iOS/tvOS",
-            "DescriptionMarkdown": "In order to support globalization on iOS, we would like a custom build version so that we know / can control the binary size and have more flexibility.  ",
-            "Milestone": "6.0.0",
-            "Assignees": [
-              "akoeplinger"
-            ],
-            "Labels": [
-              {
-                "Name": "area-System.Globalization",
-                "BackgroundColor": "d4c5f9"
-              },
-              {
-                "Name": "os-ios",
-                "BackgroundColor": "fef2c0"
-              },
-              {
-                "Name": "os-tvos",
-                "BackgroundColor": "fef2c0"
-              }
-            ],
-            "Kind": 3,
-            "ProjectStatus": null
-          },
-          "Children": []
-        },
-        {
-          "Issue": {
-            "Id": "dotnet/runtime#35090",
-            "CreatedAt": "2020-04-17T02:25:53+00:00",
-            "CreatedBy": "steveisok",
-            "IsClosed": false,
-            "Title": "Ensure ICU is not packaged when Invariant mode is enabled",
-            "DescriptionMarkdown": "When Invariant mode is enabled and we are publishing for iOS / tvOS, we must ensure that no ICU artifacts are produced.\r\n\r\nExample:\r\n\u0060dotnet publish \u003Crequired-args\u003E /p:InvariantGlobalization=true\u0060\r\n\r\nNo ICU binaries should be in the publish folder.",
-            "Milestone": "6.0.0",
-            "Assignees": [
-              "akoeplinger"
-            ],
-            "Labels": [
-              {
-                "Name": "area-Infrastructure-mono",
-                "BackgroundColor": "d4c5f9"
-              },
-              {
-                "Name": "os-ios",
-                "BackgroundColor": "fef2c0"
-              },
-              {
-                "Name": "os-tvos",
-                "BackgroundColor": "fef2c0"
-              }
-            ],
-            "Kind": 3,
-            "ProjectStatus": null
-          },
-          "Children": []
-        },
-        {
-          "Issue": {
-            "Id": "dotnet/runtime#35262",
-            "CreatedAt": "2020-04-21T22:04:03+00:00",
-            "CreatedBy": "steveisok",
-            "IsClosed": true,
-            "Title": "Enable the test runner for Android",
-            "DescriptionMarkdown": "In order to run tests against Android, we must:\r\n\r\n**Base Docker Image**\r\n- [x] Install the android sdk on the base docker image\r\n- [x] Ensure all the platform tools (API level 21) are installed (and any other tools we need)\r\n\r\n**Build**\r\n- [x] Create targets / props that support building the test runner app (Use / expand upon https://github.com/dotnet/runtime/issues/35123)\r\n- [x] Port the test host (may be able to trim the iOS host)\r\n- [x] Compile / link with mono-runtime \r\n- [x] Run a successful test ",
-            "Milestone": "6.0.0",
-            "Assignees": [
-              "EgorBo"
-            ],
-            "Labels": [
-              {
-                "Name": "area-Infrastructure-mono",
-                "BackgroundColor": "d4c5f9"
-              },
-              {
-                "Name": "os-android",
-                "BackgroundColor": "fef2c0"
-              }
-            ],
-            "Kind": 3,
-            "ProjectStatus": null
-          },
-          "Children": [
-            {
-              "Issue": {
-                "Id": "dotnet/runtime#35123",
-                "CreatedAt": "2020-04-17T18:58:54+00:00",
-                "CreatedBy": "steveisok",
-                "IsClosed": true,
-                "Title": "Integrate the iOS test runner into the build",
-                "DescriptionMarkdown": "We want to make the mobile testing experience as similar as possible, so the end goal should be:\r\n\r\n\u0060build.sh/cmd -os iOS -arch \u003Cx86/arm/arm64\u003E -Subset mono\u002Blibs\u002Blibs.test -test -c Release\u0060\r\n\r\nWithin that, we need to accomplish (feel free to add others):\r\n\r\n- [x] Migrate existing props and targets into the libraries test build flow \r\n- [x] If not already there, add target to redirect publish to use the in tree runtime pack folder\r\n- [x] Modify build to use \u0060dotnet publish\u0060 for each test suite.  If 1 app per suite is not appropriate locally, adjust to something more acceptable.\r\n- [x] Enable property to specify a provisioning profile (device test runs)",
-                "Milestone": "5.0.0",
-                "Assignees": [
-                  "mdh1418"
-                ],
-                "Labels": [
-                  {
-                    "Name": "area-Infrastructure-libraries",
-                    "BackgroundColor": "d4c5f9"
-                  },
-                  {
-                    "Name": "area-Infrastructure-mono",
-                    "BackgroundColor": "d4c5f9"
-                  }
-                ],
-                "Kind": 3,
-                "ProjectStatus": null
-              },
-              "Children": []
-            }
-          ]
-        },
-        {
-          "Issue": {
-            "Id": "dotnet/runtime#35247",
-            "CreatedAt": "2020-04-21T16:35:32+00:00",
-            "CreatedBy": "steveisok",
-            "IsClosed": true,
-            "Title": "Enable in tree runtime pack for all of mono",
-            "DescriptionMarkdown": "After working with this in a mobile context, I can see it providing benefits to all of mono.  Most notably as a replacement for our \u0027patch-dotnet\u0027 target.  \r\n\r\n- [ ] Relax the check for \u0060BinPlaceTestRuntimePack\u0060 to be \u0060RuntimeFlavor = \u0027mono\u0027\u0060 \r\n- [ ] For desktop, the test host needs to be generated, so ensure that\u0027s still working right (basically, you should successfully run libraries tests)\r\n- [ ] Validate \u0060lib-runtime-packs\u0060 folder is created w/ the right contents",
-            "Milestone": null,
-            "Assignees": [
-              "mdh1418"
-            ],
-            "Labels": [
-              {
-                "Name": "area-Infrastructure-mono",
-                "BackgroundColor": "d4c5f9"
-              }
-            ],
-            "Kind": 3,
-            "ProjectStatus": null
-          },
-          "Children": []
-        }
-      ]
     },
     {
       "Issue": {
@@ -1694,7 +2541,7 @@
         "Labels": [
           {
             "Name": "Epic",
-            "BackgroundColor": "800080"
+            "BackgroundColor": "c6415a"
           },
           {
             "Name": "area-Interop-coreclr",
@@ -1705,7 +2552,7 @@
             "BackgroundColor": "ffa500"
           }
         ],
-        "Kind": 0,
+        "Kind": 1,
         "ProjectStatus": null
       },
       "Children": [
@@ -1987,7 +2834,7 @@
         "Labels": [
           {
             "Name": "Epic",
-            "BackgroundColor": "800080"
+            "BackgroundColor": "c6415a"
           },
           {
             "Name": "area-Meta",
@@ -2002,7 +2849,7 @@
             "BackgroundColor": "b60205"
           }
         ],
-        "Kind": 0,
+        "Kind": 1,
         "ProjectStatus": null
       },
       "Children": [
@@ -2139,7 +2986,7 @@
             "Id": "nuget/Home#9441",
             "CreatedAt": "2020-04-14T21:50:48+00:00",
             "CreatedBy": "zkat",
-            "IsClosed": false,
+            "IsClosed": true,
             "Title": "net5 tfm: produce error when missing TPV",
             "DescriptionMarkdown": "Produce an error when a OS flavored .NET 5 TFM is consumed but the package has no TPV in either folder name of the manifest. Is this supposed to be during restore??",
             "Milestone": "Sprint 178 - 2020.10.19",
@@ -2276,7 +3123,7 @@
                 "BackgroundColor": "1f6be5"
               }
             ],
-            "Kind": 0,
+            "Kind": 1,
             "ProjectStatus": null
           },
           "Children": []
@@ -2388,39 +3235,6 @@
     },
     {
       "Issue": {
-        "Id": "dotnet/runtime#33557",
-        "CreatedAt": "2020-03-13T15:31:16+00:00",
-        "CreatedBy": "lambdageek",
-        "IsClosed": false,
-        "Title": "[mono] Audit embedding API for .NET 5 correctness",
-        "DescriptionMarkdown": "This is a tracking issue to audit the public embedding API for correctness with respect to assembly load context support.\r\n\r\nThe goal is to consider how each function in the headers below will behave when there are multiple ALCs in the managed code, and to decide whether the function behavior needs to be corrected, or if it is not feasible to correct, whether the function\u0027s documentation should be updated with a deprecation note and a new ALC-aware replacement added.\r\n\r\nThe top priority are functions that are mentioned in [xamarin-macios exports.t4](https://github.com/xamarin/xamarin-macios/blob/master/runtime/exports.t4) or headers that are used in the source code in the [xamarin android monodroid/jni directory](https://github.com/xamarin/xamarin-android/tree/master/src/monodroid/jni), and [Java.Interop](https://github.com/xamarin/java.interop/blob/master/src/java-interop/)\r\n\r\n- \u0060mono/utils\u0060\r\n   - [ ] mono-logger.h\r\n   - [ ] mono-error.h\r\n   - [ ] mono-forward.h\r\n   - [ ] mono-publib.h\r\n   - [ ] mono-jemalloc.h\r\n   - [ ] mono-dl-fallback.h\r\n   - [ ] mono-counters.h\r\n- \u0060mono/metadata\u0060\r\n   - [ ] appdomain.h\r\n   - [ ] assembly.h\r\n   - [ ] attrdefs.h\r\n   - [ ] blob.h\r\n   - [ ] class.h\r\n   - [ ] debug-helpers.h\r\n   - [ ] debug-mono-symfile.h\r\n   - [ ] environment.h\r\n   - [ ] exception.h\r\n   - [ ] image.h\r\n   - [ ] loader.h\r\n   - [ ] metadata.h\r\n   - [ ] mono-config.h\r\n   - [ ] mono-debug.h\r\n   - [ ] mono-gc.h\r\n   - [ ] object.h\r\n   - [ ] object-forward.h\r\n   - [ ] opcodes.h\r\n   - [ ] profiler.h\r\n   - [ ] profiler-events.h\r\n   - [ ] reflection.h\r\n   - [ ] row-indexes.h\r\n   - [ ] sgen-bridge.h\r\n   - [ ] threads.h\r\n   - [ ] tokentype.h\r\n   - [ ] verify.h\r\n- \u0060mono/mini\u0060\r\n   - [ ] jit.h\r\n\r\nThe following headers aren\u0027t installed, but they have \u0060MONO_API\u0060 functions, and should be audited too:\r\n\r\nMini\r\n- [ ] \u0060mono/utils/mini-runtime.h\u0060\r\n- [ ] \u0060mono/utils/monovm.h\u0060\r\n- [ ] \u0060mono/utils/mini.h\u0060\r\n- [ ] \u0060mono/utils/mini-llvm.h\u0060\r\n- [ ] \u0060mono/utils/aot-runtime.h\u0060\r\n- [ ] \u0060mono/utils/debugger-agent.h\u0060\r\n\r\nMetadata:\r\n- [ ] \u0060mono/metadata/cil-coff.h\u0060\r\n- [ ] \u0060mono/metadata/marshal-ilgen.h\u0060\r\n- [ ] \u0060mono/metadata/marshal.h\u0060\r\n- [ ] \u0060mono/metadata/coree.h\u0060\r\n- [ ] \u0060mono/metadata/assembly-internals.h\u0060\r\n- [ ] \u0060mono/metadata/sgen-toggleref.h\u0060\r\n- [ ] \u0060mono/metadata/class-internals.h\u0060\r\n- [ ] \u0060mono/metadata/w32file.h\u0060\r\n- [ ] \u0060mono/metadata/security-core-clr.h\u0060\r\n- [ ] \u0060mono/metadata/metadata-internals.h\u0060\r\n- [ ] \u0060mono/metadata/monitor.h\u0060\r\n- [ ] \u0060mono/metadata/object-internals.h\u0060\r\n- [ ] \u0060mono/metadata/mono-mlist.h\u0060\r\n- [ ] \u0060mono/metadata/method-builder-ilgen.h\u0060\r\n- [ ] \u0060mono/metadata/filewatcher.h\u0060\r\n- [ ] \u0060mono/metadata/threads-types.h\u0060\r\n- [ ] \u0060mono/metadata/cominterop.h\u0060\r\n- [ ] \u0060mono/metadata/mempool.h\u0060\r\n- [ ] \u0060mono/metadata/mono-perfcounters.h\u0060\r\n- [ ] \u0060mono/metadata/icall-table.h\u0060\r\n- [ ] \u0060mono/metadata/mono-hash.h\u0060\r\n- [ ] \u0060mono/metadata/gc-internals.h\u0060\r\n\r\nUtils\r\n- [ ] \u0060mono/utils/mono-path.h\u0060\r\n- [ ] \u0060mono/utils/mono-linked-list-set.h\u0060\r\n- [ ] \u0060mono/utils/mono-proclib.h\u0060\r\n- [ ] \u0060mono/utils/mono-logger-internals.h\u0060\r\n- [ ] \u0060mono/utils/strenc.h\u0060\r\n- [ ] \u0060mono/utils/hazard-pointer.h\u0060\r\n- [ ] \u0060mono/utils/mono-threads-api.h\u0060\r\n- [ ] \u0060mono/utils/mono-dl-fallback.h\u0060\r\n- [ ] \u0060mono/utils/mono-embed.h\u0060\r\n- [ ] \u0060mono/utils/mono-error-internals.h\u0060\r\n- [ ] \u0060mono/utils/mono-digest.h\u0060\r\n- [ ] \u0060mono/utils/os-event.h\u0060\r\n- [ ] \u0060mono/utils/mono-threads.h\u0060\r\n- [ ] \u0060mono/utils/monobitset.h\u0060\r\n- [ ] \u0060mono/utils/mono-uri.h\u0060\r\n- [ ] \u0060mono/utils/mono-mmap.h\u0060\r\n- [ ] \u0060mono/utils/lock-free-alloc.h\u0060\r\n- [ ] \u0060mono/utils/mono-conc-hashtable.h\u0060\r\n- [ ] \u0060mono/utils/lock-free-queue.h\u0060\r\n- [ ] \u0060mono/utils/mono-logger.h\u0060\r\n- [ ] \u0060mono/utils/mono-poll.h\u0060\r\n\r\n\r\n",
-        "Milestone": "6.0.0",
-        "Assignees": [],
-        "Labels": [
-          {
-            "Name": "Epic",
-            "BackgroundColor": "800080"
-          },
-          {
-            "Name": "area-VM-meta-mono",
-            "BackgroundColor": "d4c5f9"
-          },
-          {
-            "Name": "runtime-mono",
-            "BackgroundColor": "005e5e"
-          },
-          {
-            "Name": "tracking",
-            "BackgroundColor": "b60205"
-          }
-        ],
-        "Kind": 0,
-        "ProjectStatus": null
-      },
-      "Children": []
-    },
-    {
-      "Issue": {
         "Id": "dotnet/runtime#33308",
         "CreatedAt": "2020-03-06T22:28:08+00:00",
         "CreatedBy": "BruceForstall",
@@ -2432,7 +3246,7 @@
         "Labels": [
           {
             "Name": "Epic",
-            "BackgroundColor": "800080"
+            "BackgroundColor": "c6415a"
           },
           {
             "Name": "arch-arm64",
@@ -2447,7 +3261,7 @@
             "BackgroundColor": "23ef90"
           }
         ],
-        "Kind": 0,
+        "Kind": 1,
         "ProjectStatus": null
       },
       "Children": [
@@ -2508,14 +3322,14 @@
         "Labels": [
           {
             "Name": "Epic",
-            "BackgroundColor": "800080"
+            "BackgroundColor": "c6415a"
           },
           {
             "Name": "area-CodeGen-coreclr",
             "BackgroundColor": "d4c5f9"
           }
         ],
-        "Kind": 0,
+        "Kind": 1,
         "ProjectStatus": null
       },
       "Children": []
@@ -2539,14 +3353,14 @@
           },
           {
             "Name": "Epic",
-            "BackgroundColor": "800080"
+            "BackgroundColor": "c6415a"
           },
           {
             "Name": "area-System.Reflection.Emit",
             "BackgroundColor": "d4c5f9"
           }
         ],
-        "Kind": 0,
+        "Kind": 1,
         "ProjectStatus": null
       },
       "Children": [
@@ -3071,14 +3885,14 @@
         "Labels": [
           {
             "Name": "Epic",
-            "BackgroundColor": "800080"
+            "BackgroundColor": "c6415a"
           },
           {
             "Name": "area-System.Diagnostics",
             "BackgroundColor": "d4c5f9"
           }
         ],
-        "Kind": 0,
+        "Kind": 1,
         "ProjectStatus": null
       },
       "Children": [
@@ -3183,7 +3997,7 @@
         "Labels": [
           {
             "Name": "Epic",
-            "BackgroundColor": "800080"
+            "BackgroundColor": "c6415a"
           },
           {
             "Name": "area-System.Text.Json",
@@ -3194,7 +4008,7 @@
             "BackgroundColor": "c2e0c6"
           }
         ],
-        "Kind": 0,
+        "Kind": 1,
         "ProjectStatus": null
       },
       "Children": []
@@ -3212,14 +4026,14 @@
         "Labels": [
           {
             "Name": "Epic",
-            "BackgroundColor": "800080"
+            "BackgroundColor": "c6415a"
           },
           {
             "Name": "area-Setup",
             "BackgroundColor": "d4c5f9"
           }
         ],
-        "Kind": 0,
+        "Kind": 1,
         "ProjectStatus": null
       },
       "Children": []
@@ -3239,7 +4053,7 @@
         "Labels": [
           {
             "Name": "Epic",
-            "BackgroundColor": "800080"
+            "BackgroundColor": "c6415a"
           },
           {
             "Name": "area-Setup",
@@ -3250,7 +4064,7 @@
             "BackgroundColor": "c2ff72"
           }
         ],
-        "Kind": 0,
+        "Kind": 1,
         "ProjectStatus": null
       },
       "Children": []
@@ -3270,7 +4084,7 @@
         "Labels": [
           {
             "Name": "Epic",
-            "BackgroundColor": "800080"
+            "BackgroundColor": "c6415a"
           },
           {
             "Name": "area-Setup",
@@ -3281,7 +4095,7 @@
             "BackgroundColor": "c2ff72"
           }
         ],
-        "Kind": 0,
+        "Kind": 1,
         "ProjectStatus": null
       },
       "Children": []
@@ -3299,14 +4113,14 @@
         "Labels": [
           {
             "Name": "Epic",
-            "BackgroundColor": "800080"
+            "BackgroundColor": "c6415a"
           },
           {
             "Name": "area-Snap",
             "BackgroundColor": "d4c5f9"
           }
         ],
-        "Kind": 0,
+        "Kind": 1,
         "ProjectStatus": null
       },
       "Children": []
@@ -3326,7 +4140,7 @@
         "Labels": [
           {
             "Name": "Epic",
-            "BackgroundColor": "800080"
+            "BackgroundColor": "c6415a"
           },
           {
             "Name": "area-Infrastructure-installer",
@@ -3337,7 +4151,7 @@
             "BackgroundColor": "c2ff72"
           }
         ],
-        "Kind": 0,
+        "Kind": 1,
         "ProjectStatus": null
       },
       "Children": []
@@ -3357,7 +4171,7 @@
         "Labels": [
           {
             "Name": "Epic",
-            "BackgroundColor": "800080"
+            "BackgroundColor": "c6415a"
           },
           {
             "Name": "area-Setup",
@@ -3368,7 +4182,7 @@
             "BackgroundColor": "c2ff72"
           }
         ],
-        "Kind": 0,
+        "Kind": 1,
         "ProjectStatus": null
       },
       "Children": []
@@ -3388,14 +4202,14 @@
         "Labels": [
           {
             "Name": "Epic",
-            "BackgroundColor": "800080"
+            "BackgroundColor": "c6415a"
           },
           {
             "Name": "area-Setup",
             "BackgroundColor": "d4c5f9"
           }
         ],
-        "Kind": 0,
+        "Kind": 1,
         "ProjectStatus": null
       },
       "Children": []
@@ -3415,14 +4229,14 @@
         "Labels": [
           {
             "Name": "Epic",
-            "BackgroundColor": "800080"
+            "BackgroundColor": "c6415a"
           },
           {
             "Name": "area-Setup",
             "BackgroundColor": "d4c5f9"
           }
         ],
-        "Kind": 0,
+        "Kind": 1,
         "ProjectStatus": null
       },
       "Children": []
@@ -3435,21 +4249,21 @@
         "IsClosed": false,
         "Title": "Deployment and Servicing guidance for customers",
         "DescriptionMarkdown": "- Particularly for Windows desktop UI scenarios\n- How can enterprise customers deploy their apps to Windows clients?\n- How can enterprise customers service .NET Core to Windows clients?\n- How can customers author MSIX deployments via VS?",
-        "Milestone": "5.0.0",
+        "Milestone": "6.0.0",
         "Assignees": [
           "dleeapho"
         ],
         "Labels": [
           {
             "Name": "Epic",
-            "BackgroundColor": "800080"
+            "BackgroundColor": "c6415a"
           },
           {
             "Name": "area-Setup",
             "BackgroundColor": "d4c5f9"
           }
         ],
-        "Kind": 0,
+        "Kind": 1,
         "ProjectStatus": null
       },
       "Children": []
@@ -3469,14 +4283,14 @@
         "Labels": [
           {
             "Name": "Epic",
-            "BackgroundColor": "800080"
+            "BackgroundColor": "c6415a"
           },
           {
             "Name": "area-Setup",
             "BackgroundColor": "d4c5f9"
           }
         ],
-        "Kind": 0,
+        "Kind": 1,
         "ProjectStatus": null
       },
       "Children": []
@@ -3496,14 +4310,14 @@
         "Labels": [
           {
             "Name": "Epic",
-            "BackgroundColor": "800080"
+            "BackgroundColor": "c6415a"
           },
           {
             "Name": "area-Setup",
             "BackgroundColor": "d4c5f9"
           }
         ],
-        "Kind": 0,
+        "Kind": 1,
         "ProjectStatus": null
       },
       "Children": []
@@ -3523,14 +4337,14 @@
         "Labels": [
           {
             "Name": "Epic",
-            "BackgroundColor": "800080"
+            "BackgroundColor": "c6415a"
           },
           {
             "Name": "area-Setup",
             "BackgroundColor": "d4c5f9"
           }
         ],
-        "Kind": 0,
+        "Kind": 1,
         "ProjectStatus": null
       },
       "Children": []
@@ -3550,14 +4364,14 @@
         "Labels": [
           {
             "Name": "Epic",
-            "BackgroundColor": "800080"
+            "BackgroundColor": "c6415a"
           },
           {
             "Name": "area-Setup",
             "BackgroundColor": "d4c5f9"
           }
         ],
-        "Kind": 0,
+        "Kind": 1,
         "ProjectStatus": null
       },
       "Children": []
@@ -3575,14 +4389,14 @@
         "Labels": [
           {
             "Name": "Epic",
-            "BackgroundColor": "800080"
+            "BackgroundColor": "c6415a"
           },
           {
             "Name": "area-Tracing-coreclr",
             "BackgroundColor": "d4c5f9"
           }
         ],
-        "Kind": 0,
+        "Kind": 1,
         "ProjectStatus": null
       },
       "Children": []
@@ -3591,24 +4405,30 @@
   "Assignees": [
     "AaronRobinsonMSFT",
     "agocke",
-    "akoeplinger",
+    "alnikola",
+    "anurse",
     "bradygaster",
+    "cartermp",
     "cathysull",
     "dagood",
     "dleeapho",
-    "EgorBo",
     "elinor-fung",
     "geoffkizer",
     "glennc",
+    "halter73",
     "jamshedd",
+    "jeffhandley",
     "jeffschwMSFT",
     "jkoritzinsky",
     "jkotas",
+    "karelz",
     "kevinwkt",
-    "mdh1418",
+    "ManickaP",
+    "MihaZupan",
     "nkolev92",
     "richlander",
     "samsp-msft",
+    "scalablecory",
     "sfoslund",
     "steveharter",
     "swaroop-sridhar",
@@ -3616,6 +4436,7 @@
     "terrajobst",
     "thaystg",
     "tommcdon",
+    "Tratcher",
     "vitek-karas",
     "VSadov",
     "zivkan",
@@ -3624,11 +4445,19 @@
   "Milestones": [
     null,
     ".NET 5",
+    "1.0.0",
+    "1.0.0-preview1",
+    "1.0.0-preview2",
+    "1.0.0-preview3",
+    "1.0.0-preview4",
+    "1.0.0-preview6",
+    "1.0.0-preview7",
     "3.0",
     "3.1",
     "5.0.0",
     "5.0.1xx",
     "6.0.0",
+    "Backlog",
     "Future",
     "Sprint 174 - 2020.07.27",
     "Sprint 175 - 2020.08.17",

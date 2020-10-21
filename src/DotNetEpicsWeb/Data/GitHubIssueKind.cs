@@ -2,8 +2,8 @@
 {
     public enum GitHubIssueKind
     {
+        Theme,
         Epic,
-        Experience,
         UserStory,
         Issue
     }

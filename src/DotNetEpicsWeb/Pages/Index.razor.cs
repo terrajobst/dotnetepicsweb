@@ -18,9 +18,9 @@ namespace DotNetEpicsWeb.Pages
 
         public string Filter { get; set; }
 
-        public bool IncludeEpics { get; set; } = true;
+        public bool IncludeThemes { get; set; } = true;
 
-        public bool IncludeExperiences { get; set; } = true;
+        public bool IncludeEpics { get; set; } = true;
 
         public bool IncludeUserStories { get; set; } = true;
 
@@ -119,10 +119,10 @@ namespace DotNetEpicsWeb.Pages
 
         private bool SkipNode(GitHubIssueNode node)
         {
-            if (!IncludeEpics && node.Issue.Kind == GitHubIssueKind.Epic)
+            if (!IncludeThemes && node.Issue.Kind == GitHubIssueKind.Theme)
                 return true;
 
-            if (!IncludeExperiences && node.Issue.Kind == GitHubIssueKind.Experience)
+            if (!IncludeEpics && node.Issue.Kind == GitHubIssueKind.Epic)
                 return true;
 
             if (!IncludeUserStories && node.Issue.Kind == GitHubIssueKind.UserStory)

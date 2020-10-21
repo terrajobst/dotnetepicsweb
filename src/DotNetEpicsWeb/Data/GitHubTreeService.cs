@@ -245,9 +245,9 @@ namespace DotNetEpicsWeb.Data
                 return false;
             }
 
-            if (!SetKindWhenContainsLabel(GitHubIssueKind.Epic, DotNetEpicsConstants.LabelEpic))
+            if (!SetKindWhenContainsLabel(GitHubIssueKind.Theme, DotNetEpicsConstants.LabelTheme))
             {
-                if (!SetKindWhenContainsLabel(GitHubIssueKind.Experience, DotNetEpicsConstants.LabelExperience))
+                if (!SetKindWhenContainsLabel(GitHubIssueKind.Epic, DotNetEpicsConstants.LabelEpic))
                 {
                     if (!SetKindWhenContainsLabel(GitHubIssueKind.UserStory, DotNetEpicsConstants.LabelUserStory))
                     {

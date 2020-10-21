@@ -8,25 +8,25 @@
 <ul>
     <li>
         <p>
-            <strong>Epic</strong>. Epics are a theme of work that contain several experiences needed to
-            complete the larger goal. An epic will often have an associated theme document
-            describing the objectives.
+            <strong>Theme</strong>. A top-level/overarching objective that will span the project
+            leases. A theme will often have an associated document describing those objectives.
         </p>
     </li>
     <li>
         <p>
-            <strong>Experience</strong>. An experience represents a specific and tangible customer
-            experience that is delivered within the release, and can typically be
-            implemented in a few sprints. Experiences are usually blog-worthy
-            deliverables.
+            <strong>Epic</strong>. This is a higher level grouping of related user stories, it
+            can span up to the entire release. For example "Enterprises have a first class experience
+            acquiring and deploying .NET 6.0"
         </p>
     </li>
     <li>
         <p>
-            <strong>User story</strong>. The common structure for a user story addresses the &quot;who,
-            what, and why&quot; of a feature: <code>As a &lt;user type&gt;, I want to &lt;task&gt; so that
-            &lt;goal&gt;.</code> For example: <code>As a &lt;customer&gt;, I want to &lt;create an account&gt;
-            so that &lt;I can make purchases&gt;.</code>
+            <strong>User story</strong>. An explanation of the feature written from the perspective
+            of the end user. Its purpose is to articulate how a software feature will provide value
+            to the customer. Once implemented, it will contribute value towards the overall epic.
+            For example: "As an IT Pro I have easy access to .NET Core installer release information
+            and scripts in my air gapped environment so I can use this to determine which updates
+            need to be deployed"
         </p>
     </li>
     <li>
@@ -39,19 +39,19 @@
 </ul>
 <p>
     All four of them are represented as GitHub issues. The first three are encoded
-    by applying a label called <code>Epic</code>, <code>Experience</code>, or <code>User Story</code>.
+    by applying a label called <code>Theme</code>, <code>Epic</code>, or <code>User Story</code>.
     The last one is simply any issue that doesn&#39;t have of these special labels applied.
 </p>
 <p>
-    The general structure is that an <code>Epic</code> will have one or more <code>Experience</code>
+    The general structure is that a <code>Theme</code> will have one or more <code>Epic</code>
     issues, which in turn has one or more <code>User Story</code> issues under them. Since
     GitHub has no formal way of declaring children, the nesting is expressed by
     referencing the issue inside a task list. The task list item is meant to be
     marked when the referenced issue is completed.
 </p>
-<h3 id="how-to-create-new-epics-experiences-and-user-stories">How to create new epics, experiences, and user stories</h3>
+<h3>How to create new themes, epics, and user stories</h3>
 <ul>
+    <li><a href="https://github.com/dotnet/core/issues/new?template=theme.md">Create new theme</a></li>
     <li><a href="https://github.com/dotnet/core/issues/new?template=epic.md">Create new epic</a></li>
-    <li><a href="https://github.com/dotnet/core/issues/new?template=experience.md">Create new experience</a></li>
-    <li><a href="https://github.com/dotnet/core/issues/new?template=user_story_template.md">Create new user story</a></li>
+    <li><a href="https://github.com/dotnet/core/issues/new?template=user_story.md">Create new user story</a></li>
 </ul>

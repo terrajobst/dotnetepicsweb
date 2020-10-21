@@ -233,12 +233,12 @@ app {
     margin-right: .25rem;
 }
 
-    .gh-issue-kind-header.epic {
+    .gh-issue-kind-header.theme {
         background-color: purple;
     }
 
-    .gh-issue-kind-header.experience {
-        background-color: deepskyblue;
+    .gh-issue-kind-header.epic {
+        background-color: #c6415a;
     }
 
     .gh-issue-kind-header.userstory {
@@ -257,13 +257,13 @@ app {
     font-size: 14px;
 }
 
-    .gh-issue-kind.epic {
+    .gh-issue-kind.theme {
         background-color: purple;
     }
 
-    .gh-issue-kind.experience {
+    .gh-issue-kind.epic {
         color: black;
-        background-color: deepskyblue;
+        background-color: #c6415a;
     }
 
     .gh-issue-kind.userstory {
