@@ -242,7 +242,7 @@ app {
     }
 
     .gh-issue-kind-header.userstory {
-        background-color: orange;
+        background-color: #0e8a16;
     }
 
     .gh-issue-kind-header.issue {
@@ -266,8 +266,7 @@ app {
     }
 
     .gh-issue-kind.userstory {
-        color: black;
-        background-color: orange;
+        background-color: #0e8a16;
     }
 
     .gh-issue-kind.issue {
