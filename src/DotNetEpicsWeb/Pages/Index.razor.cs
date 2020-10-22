@@ -22,7 +22,7 @@ namespace DotNetEpicsWeb.Pages
 
         public bool IncludeEpics { get; set; } = true;
 
-        public bool IncludeUserStories { get; set; } = true;
+        public bool IncludeUserStories { get; set; }
 
         public bool IncludeIssues { get; set; }
 
