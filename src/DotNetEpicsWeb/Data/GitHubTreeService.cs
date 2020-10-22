@@ -139,6 +139,11 @@ namespace DotNetEpicsWeb.Data
             var releases = new SortedSet<string>(roots.SelectMany(r => r.DescendantsAndSelf()).Select(n => n.Issue.ProjectStatus?.ProjectName));
             var states = new SortedSet<string>(roots.SelectMany(r => r.DescendantsAndSelf()).Select(n => n.Issue.ProjectStatus?.Column));
 
+            assignees.Add(null);
+            milestones.Add(null);
+            releases.Add(null);
+            states.Add(null);
+
             var tree = new GitHubIssueTree();
             tree.Roots.AddRange(roots);
             tree.Assignees = assignees;

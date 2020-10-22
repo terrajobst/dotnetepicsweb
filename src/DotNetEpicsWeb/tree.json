@@ -7,7 +7,7 @@
         "CreatedBy": "samsp-msft",
         "IsClosed": false,
         "Title": ".NET is recognized as a compelling framework for building cloud native apps",
-        "DescriptionMarkdown": "(placeholder)\r\nToday, .NET is seen as a stack for enterprises building LOB applications. \u201C.NET is for people who work at banks\u201D is not uncommon feedback in our customer interviews. We plan to change that by building great fundamentals and investing in OSS ecosystems that give us a platform to reach new customer bases. At the same time our existing enterprise customers want to become more Cloud Native, and we need to flatten the learning curve and barriers to adoption.\r\n\r\n\r\nScenario Areas\r\n\r\n- [ ] Improve development experience for multi-app solutions\r\n- [ ] .NET Apps can depend on containers in Dev\r\n- [ ] Ship an extensible/customizable reverse proxy performant enough for cloud scale workloads https://github.com/microsoft/reverse-proxy/issues/480\r\n- [ ] Simplified API experience for Web API apps\r\n- [ ] Optimizations for Constrained Environments \r\n- [ ] Libraries to interop with common cloud native components/services\r\n",
+        "DescriptionMarkdown": "(placeholder)\r\nToday, .NET is seen as a stack for enterprises building LOB applications. \u201C.NET is for people who work at banks\u201D is not uncommon feedback in our customer interviews. We plan to change that by building great fundamentals and investing in OSS ecosystems that give us a platform to reach new customer bases. At the same time our existing enterprise customers want to become more Cloud Native, and we need to flatten the learning curve and barriers to adoption.\r\n\r\n\r\nScenario Areas\r\n\r\n- [ ] Improve development experience for multi-app solutions\r\n- [ ] .NET Apps can depend on containers in Dev\r\n- [ ] Ship an extensible/customizable reverse proxy performant enough for cloud scale workloads https://github.com/microsoft/reverse-proxy/issues/480\r\n- [ ] Provide an API experience that scales down well and is easier to learn https://github.com/dotnet/core/issues/5408\r\n- [ ] Optimizations for Constrained Environments \r\n- [ ] Libraries to interop with common cloud native components/services\r\n",
         "Milestone": null,
         "Assignees": [
           "glennc"
@@ -32,8 +32,8 @@
             "CreatedBy": "samsp-msft",
             "IsClosed": false,
             "Title": "Ship an extensible/customizable reverse proxy performant enough for cloud scale workloads",
-            "DescriptionMarkdown": "As a cloud native infrastructure/service developer (cohort 3), I want a reverse proxy solution that is customizable to my needs and performant enough for cloud scale workloads.\r\n\r\nThis includes the following user stories:\r\n\r\nConfiguration\r\n  - [x] Proxy supports static config files, with hot reload for handling changes #9 \r\n  - [x] Proxy supports dynamic configuration pulling from other sources #8\r\n    - [ ] Service fabric integration #257\r\n    - [ ] Kubernetes integration #200\r\n - [ ] Routes can be fully dynamic and discovered on a per request basis for hyper scale hosting  #46\r\n\r\nRouting\r\n- [ ] Proxy can front multiple sites and route based on SNI/Host #14 \r\n- [x] Proxy should enable routing based on header values #405\r\n- [ ] Proxy should have active health checks to confirm the state of destinations #228\r\n- [x] Proxy has session affinity #45 \r\n- [ ] Proxy can divert routes to support A/B testing, service rollout etc #126\r\n- [x] Proxy supports multiple algorithms for load balancing across destinations #58\r\n- [x] Proxy supports authentication / authorization for specific routes #122\r\n- [ ] Proxy can deliver static files directly #187 \r\n\r\nProxying\r\n- [x] Url can be transformed for destinations #207\r\n- [x] Requests and responses headers can be transformed #21 \r\n- [x] Http Methods can be transformed (eg POST to PUT) #445\r\n- [ ] Outbound http connections to destinations are configurable #282 \r\n- [x] Proxy adds standard headers related to request forwarding #13\r\n- [ ] Proxy can be used in a hosted datacenter environment with limitations such as SNAT #62\r\n- [ ] Support for Lets Encrypt for TLS termination #110\r\n- [ ] Proxy can handle gRPC traffic including streaming #118\r\n- [x] Proxy component can be used stand-alone for advanced scenarios #408  \r\n\r\nDiagnostics\r\n- [ ] Proxy supplies metrics for monitoring performance #61\r\n- [ ] Proxy supplies logs for with pertinent  info for each stage of the request #115\r\n- [ ] Proxy has an API for determining its health #125\r\n\r\nGeneral\r\n- [ ] Proxy is hardened so it can directly face the internet #16\r\n- [ ] Proxy has cloud scale performance, and is benchmarked in the lab #51  \r\n- [ ] Proxy has documentation #484\r\n- [ ] Customer can add middleware to customize the proxy functionality such as routing, header manipulation #114\r\n- [x] support for .NET 3.1 \u0026 5 #159\r\n- [ ] Support for back pressure #290\r\n\r\nPackaging\r\n- [x] Proxy can be consumed as a library so it can be readily extended and customized #143\r\n- [ ] Proxy is supplied as a project template for dotnet new #77\r\n- [ ] Proxy is supplied as a pre-built exe with a configuration file #261 \r\n- [ ] Proxy is supplied as a pre-built docker image #247 \r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n",
-            "Milestone": null,
+            "DescriptionMarkdown": "As a cloud native infrastructure/service developer, I want a reverse proxy solution that is customizable to my needs and performant enough for cloud scale workloads.\r\n\r\nFrom a YARP perspective, this list represents the functionality we consider to be required for a YARP v1.\r\n\r\nThis includes the following user stories:\r\n\r\n**Configuration**\r\n- [x] Proxy supports static config files, with hot reload for handling changes #9 \r\n  - [ ] Proxy configuration is extensible for custom metadata on routes, destinations etc #485\r\n- [x] Proxy supports dynamic configuration pulling from other sources #8\r\n  - [ ] Proxy has Service Fabric integration for dynamic discovery of routes #257\r\n  - [ ] Proxy can act as a Kubernetes Ingress Controller #200\r\n- [ ] Routes can be fully dynamic and discovered on a per request basis for hyper scale hosting  #46\r\n\r\n**Routing \u0026 inbound connections**\r\n- [ ] Proxy can front multiple sites and route based on SNI/Host #14 \r\n- [x] Proxy should enable routing based on header values #405\r\n- [ ] Proxy should have active health checks to confirm the state of destinations #228\r\n- [x] Proxy supports Session Affinity to route subsequent requests to the same host#45 \r\n- [ ] Proxy can divert routes to support A/B testing, service rollout etc #126\r\n- [x] Proxy supports multiple algorithms for load balancing across destinations #58\r\n- [x] Proxy supports authentication / authorization for specific routes #122\r\n- [ ] Proxy can deliver static files directly #187\r\n- [ ] Support for Lets Encrypt for TLS termination #110 \r\n\r\n**Proxying \u0026 outbound connections**\r\n- [x] Incoming request Url can be transformed before passing to destination(s) #207\r\n- [x] Requests and responses headers can be transformed #21 \r\n- [x] Http Methods can be transformed (eg POST to PUT) #445\r\n- [ ] Outbound http connections to destinations are configurable #282 \r\n- [x] Proxy adds standard headers related to request forwarding #13\r\n- [ ] Proxy can be used in a hosted datacenter environment with limitations such as SNAT #62\r\n- [ ] Proxy can handle gRPC traffic including streaming #118\r\n- [x] Proxy component can be used stand-alone for advanced scenarios #408  \r\n\r\n**Diagnostics**\r\n- [ ] Proxy supplies metrics for monitoring performance #61\r\n- [ ] Proxy supplies logs for with pertinent  info for each stage of the request #115\r\n- [ ] Proxy has an API for determining its health #125\r\n\r\n**General**\r\n- [ ] Proxy is hardened so it can directly face the internet #16\r\n  - [ ] Proxy monitors its own load/health and throttles connections when required #470\r\n- [ ] Proxy has cloud scale performance, and is benchmarked in the lab #51  \r\n- [ ] Proxy has documentation #484\r\n- [ ] Customer can add middleware to customize the proxy functionality such as routing, header manipulation #114\r\n- [x] Support for .NET 3.1 \u0026 5 #159\r\n- [ ] Support for back pressure #290\r\n\r\n**Packaging**\r\n- [x] Proxy can be consumed as a library so it can be readily extended and customized #143\r\n- [ ] Proxy is supplied as a project template for dotnet new #77\r\n- [ ] Proxy is supplied as a pre-built exe with a configuration file #261 \r\n- [ ] Proxy is supplied as a pre-built docker image #247 \r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n",
+            "Milestone": "YARP 1.0.0",
             "Assignees": [],
             "Labels": [
               {
@@ -63,6 +63,35 @@
                 "Labels": [
                   {
                     "Name": "Type: Enhancement",
+                    "BackgroundColor": "0075ca"
+                  },
+                  {
+                    "Name": "User Story",
+                    "BackgroundColor": "0e8a16"
+                  }
+                ],
+                "Kind": 2,
+                "ProjectStatus": null
+              },
+              "Children": []
+            },
+            {
+              "Issue": {
+                "Id": "microsoft/reverse-proxy#485",
+                "CreatedAt": "2020-10-22T13:00:07+00:00",
+                "CreatedBy": "alnikola",
+                "IsClosed": false,
+                "Title": "Proxy configuration is extensible for custom metadata on routes, destinations etc",
+                "DescriptionMarkdown": "There are several \u0060*Options\u0060 types specifying parameters of different providers and policies like \u0060CookieSessionAffinityProviderOptions\u0060, \u0060ConsecutiveFailuresHealthPolicyOptions\u0060, \u0060TransportFailureRateHealthPolicyOptions\u0060 etc. In the essence, they are part of the YARP configuration, but currently it\u0027s not possible to define them through the generic config provider mechanism. They can be set and changed through code only. There are some ad hoc workarounds to this issue created for some scenarios (e.g. health check policies), but there is a solid need for a well designed \u0060*Options\u0060 configuration mechanism.\r\n\r\nWe should design and implement a proper \u0060*Options\u0060 configuration subsystem.",
+                "Milestone": null,
+                "Assignees": [],
+                "Labels": [
+                  {
+                    "Name": "Type: Enhancement",
+                    "BackgroundColor": "0075ca"
+                  },
+                  {
+                    "Name": "Type: Idea",
                     "BackgroundColor": "0075ca"
                   },
                   {
@@ -140,7 +169,7 @@
                 "IsClosed": false,
                 "Title": "Proxy can act as a Kubernetes Ingress Controller",
                 "DescriptionMarkdown": "Hello folks!\r\n\r\nFirst of all, great work! Congratz for the first preview release! It is indeed something .Net Community was lagging behind and had for too long to deal with clumsy things like nginx.\r\n\r\nSo, I\u0027m coming to a point where I\u0027d like to make a POC with YARP for a controlled small set of microservices in Kubernetes and that comes to a need to make it an ingestion controller.\r\n\r\nWith that in mind, I would like to ask if the Kube integration is something you guys plan to have on this repo, on some other under MSFT umbrella, or if it is something that the community will have to implemente for their own needs.\r\n\r\nIf it is something MSFT will (or already is) develop, ok, all we have todo is wait. If that is something that community will have to build, is that something that would be acceptable on this repo as a PR? If we should go to this PR, I\u0027de like to use this issue to discuss the approach we should take to contribute it.\r\n\r\nThanks! Keep it going!",
-                "Milestone": "1.0.0",
+                "Milestone": "YARP 1.0.0",
                 "Assignees": [],
                 "Labels": [
                   {
@@ -165,7 +194,7 @@
                 "IsClosed": false,
                 "Title": "Routes can be fully dynamic and discovered on a per request basis for hyper scale hosting",
                 "DescriptionMarkdown": "The current proxy routing design assumes all route data is available up front and can be loaded atomically into the route table. The EndpointDataSource routing model assumes this as well.\r\n\r\nFor more dynamically-configured services, we probably don\u0027t want to fetch the entire route table from the db, but instead have a pull and cache for each hostname model.\r\n\r\nHow can we lazy-load route, backend, and endpoint data on a per request basis?\r\n\r\nAssume we\u0027re working with a discrete key like Host, not a complicated best-match scenario like Path, and little or no wildcard support (maybe wildcard subdomains but only for specific depths?).\r\n\r\n@davidni is this a scenario you\u0027d evaluated?\r\n\r\n@rynowak can such a system work within routing, co-exist side by side routing, or would it completely replace routing?",
-                "Milestone": "1.0.0",
+                "Milestone": "YARP 1.0.0",
                 "Assignees": [],
                 "Labels": [
                   {
@@ -217,7 +246,7 @@
                 "CreatedAt": "2020-09-08T17:22:46+00:00",
                 "CreatedBy": "Tratcher",
                 "IsClosed": true,
-                "Title": "Header based routing",
+                "Title": "Proxy should enable routing based on header values",
                 "DescriptionMarkdown": "Multiple partners have asked for header based routing. I\u0027ll ask them to give examples below. @davidni has an implementation in Island Gateway and had been working on this as an AspNetCore 5 feature but it wasn\u0027t done in time (https://github.com/dotnet/aspnetcore/pull/23594). The plan is to port Island Gateway\u0027s work to YARP so it works on 3.1 and 5.0 and then contribute it back to AspNetCore in 6.0.",
                 "Milestone": "1.0.0-preview6",
                 "Assignees": [
@@ -250,7 +279,7 @@
                 "IsClosed": false,
                 "Title": "Proxy should have active health checks to confirm the state of destinations",
                 "DescriptionMarkdown": "We have the IHealthProbeWorker and associated infrastructure, but it\u0027s all internal and nobody ever starts it.\r\n\r\nThis was forked from the original partner team code before health checks were completely implemented. Some missing pieces:\r\n- An IHostedService that resolves the IHealthProbeWorker and starts and stops it when needed. \r\n- DI extensions for registering the health services.\r\n\r\n@davidni \r\n\r\n\r\n",
-                "Milestone": "1.0.0-preview7",
+                "Milestone": "YARP 1.0.0-preview7",
                 "Assignees": [
                   "alnikola"
                 ],
@@ -279,7 +308,7 @@
                 "CreatedAt": "2020-04-08T18:43:40+00:00",
                 "CreatedBy": "anurse",
                 "IsClosed": true,
-                "Title": "Session Affinity",
+                "Title": "Proxy supports Session Affinity to route subsequent requests to the same host",
                 "DescriptionMarkdown": "We should support session affinity as a native feature in the proxy. It\u0027s effectively a load balancer directive. Some attribute of the incoming request is used as a key to identify which backend to route to.\r\n\r\nAffinity logic needs to run:\r\n* Before load balancing, to check the affinity \u0022stamp\u0022 and select a single destination (i.e. one of the servers within a backend) (if possible)\r\n* After load balancing, to stamp the selected destination into a cookie, if enabled.\r\n\r\nIt also may need to be able to re-trigger load balancing (in the failure modes below).\r\n\r\nSupported \u0022modes\u0022 (please do suggest others!):\r\n* Cookie\r\n\t* A request with no incoming \u0022stamp\u0022 is assigned to a destination by normal load balancing policy\r\n\t* The return response is stamped with a Cookie containing the destination ID, cryptographically signed by a key trusted by all proxy instances (DataProtection!)\r\n\t* On future requests, we validate the stamp and select the specific destination for routing\r\n\t* If that destination is no longer in the active set of destinations, we \u0022fail\u0022 (see failure modes)\r\n* 5-tuple (\u0060Source IP\u0060, \u0060Source Port\u0060, \u0060Dest IP\u0060, \u0060Dest Port\u0060, \u0060Protocol\u0060)\r\n\t* Hash the 5-tuple values and use it to identify a destination.\r\n\t* If that destination is no longer in the active set of destinations, we \u0022fail\u0022 (see failure modes)\r\n* Header value\r\n\t* Hash some header value and use it to identify a destination\r\n\t* Useful for auth-token based affinity (used in Azure SignalR, for example)\r\n* ~~Crazy idea: magic SignalR mode?~~ We should track this separately, just wanted to see if anyone had C O O L thoughts here.\r\n\t* It could be cool to have native support for session affinity for SignalR connections.\r\n\t* There\u0027s a connection ID in the initial \u0060/negotiate\u0060 response, which is also present in the query string of all future requests, which we could use for affinity.\r\n\t* This could be very useful for applications which don\u0027t generally need affinity, but also use SignalR (which requires affinity).\r\n\t* Could possibly be generalized\r\n\r\nFailure modes\r\n* If the session affinity system identifies a target destination which is no longer routable, a configurable failure response should be used\r\n* Possible responses\r\n\t* Re-affinitize to one of the other destinations (i.e. re-route and stamp the new backend)\r\n\t* Return a 503 (since the target destination is no longer active)\r\n\r\nThese are mostly just my rando thoughts. I\u0027m interested in @davidni \u0027s thoughts, as well as the team\u0027s (@Tratcher @halter73)",
                 "Milestone": "1.0.0-preview2",
                 "Assignees": [
@@ -308,7 +337,7 @@
                 "IsClosed": false,
                 "Title": "Proxy can divert routes to support A/B testing, service rollout etc",
                 "DescriptionMarkdown": "A/B testing is a common scenario for proxies, letting services incrementally upgrade/experiment using live traffic.\r\n\r\nHow does a service decide which requests to route to which test group?\r\n- Assuming all requests are stateless you could decide this randomly on a per-request basis.\r\n- For a stateful service you\u0027d want to do a random assignment and then use affinization (https://github.com/microsoft/reverse-proxy/issues/45).\r\n- A service may also decide to statically affinitize based on known groups like tenants (e.g. move small customers before big ones).\r\n\r\nInitial theory:\r\n- This is a separate feature from load balancing. Within a load balancing set we assume all servers are equally able to handle a request aside from considerations of health and load. You\u0027d select a test group and then load balance within that group.\r\n- This should take advantage of the routing layer. For something like tenant based affinity that information may already be part of the route definition.\r\n- Alternatively we could put it into the route config (ProxyRoute), allowing it to specify multiple backends and an assignment strategy.\r\n- This should be compatible with retry mechanisms to allow failing over to the other test group.",
-                "Milestone": "1.0.0",
+                "Milestone": "YARP 1.0.0",
                 "Assignees": [],
                 "Labels": [
                   {
@@ -335,7 +364,7 @@
                 "CreatedAt": "2020-04-15T18:04:24+00:00",
                 "CreatedBy": "samsp-msft",
                 "IsClosed": true,
-                "Title": "Load balancing algorithms",
+                "Title": "Proxy supports multiple algorithms for load balancing across destinations",
                 "DescriptionMarkdown": "Complete the set of common load balancing schemes\r\n- [x] Round Robin #72\r\n- [x] Random #73 \r\n- [x] Least loaded of 2 random #75\r\n* ~~First healthy endpoint~~ (already implemented)",
                 "Milestone": null,
                 "Assignees": [],
@@ -458,7 +487,7 @@
                 "IsClosed": false,
                 "Title": "Proxy can deliver static files directly",
                 "DescriptionMarkdown": "### What should we add or change to make your life better?\r\nSupport to configure static file resources.\r\n### Why is this important to you?\r\nAvoid using Nginx on the front end.\r\n\r\nThis is doable today if you customize the pipeline to include static files, but needs a configuration option for a stand-alone exe",
-                "Milestone": "1.0.0",
+                "Milestone": "YARP 1.0.0",
                 "Assignees": [],
                 "Labels": [
                   {
@@ -481,11 +510,36 @@
             },
             {
               "Issue": {
+                "Id": "microsoft/reverse-proxy#110",
+                "CreatedAt": "2020-04-27T08:25:55+00:00",
+                "CreatedBy": "RehanSaeed",
+                "IsClosed": false,
+                "Title": "Support for Lets Encrypt for TLS termination",
+                "DescriptionMarkdown": "### What should we add or change to make your life better?\r\n\r\nMost reverse proxies out there support Lets Encrypt. @natemcmaster runs https://github.com/natemcmaster/LetsEncrypt which is trying to add LetsEncrypt support to ASP.NET Core. Please help him finish, so it can also be used on this project.\r\n\r\n### Why is this important to you?\r\n\r\nA reverse proxy without TLS termination is not very useful. Lets Encrypt is a great choice for TLS, being free, secure and automated.",
+                "Milestone": "YARP 1.0.0",
+                "Assignees": [],
+                "Labels": [
+                  {
+                    "Name": "Type: Idea",
+                    "BackgroundColor": "0075ca"
+                  },
+                  {
+                    "Name": "User Story",
+                    "BackgroundColor": "0e8a16"
+                  }
+                ],
+                "Kind": 2,
+                "ProjectStatus": null
+              },
+              "Children": []
+            },
+            {
+              "Issue": {
                 "Id": "microsoft/reverse-proxy#207",
                 "CreatedAt": "2020-05-26T18:52:08+00:00",
                 "CreatedBy": "jmezach",
                 "IsClosed": true,
-                "Title": "Url can be transformed for destinations",
+                "Title": "Incoming request Url can be transformed before passing to destination(s)",
                 "DescriptionMarkdown": "I\u0027ve been looking into YARP to see if it can be used as an API gateway. We currently have one based on the [Ocelot](https://github.com/ThreeMammals/Ocelot) library but since it seems that might be deprecated in favor of YARP I figured I could take a look and see if I can achieve the same thing.\r\n\r\nOne of the things I\u0027m able to do with Ocelot and which I haven\u0027t been able to achieve with YARP yet is the ability to rewrite the downstream request path. For example, let\u0027s say that I want to proxy the upstream URL https://somewhere.example.com/someapi/\u003Cthe-rest\u003E to the downstream URL https://localhost:5003/\u003Cthe-rest\u003E.\r\n\r\nI would expect this to work, however currently I\u0027m seeing request to https://localhost:5003/someapi/\u003Cthe-rest\u003E instead. Here\u0027s the config I\u0027m using:\r\n\r\n\u0060\u0060\u0060json\r\n\u0022ReverseProxy\u0022: {\r\n  \u0022Routes\u0022: [\r\n    {\r\n      \u0022RouteId\u0022: \u0022someapi\u0022,\r\n      \u0022BackendId\u0022: \u0022EchoService\u0022,\r\n      \u0022Match\u0022: {\r\n        \u0022Methods\u0022: [ \u0022GET\u0022, \u0022POST\u0022 ],\r\n        \u0022Host\u0022: \u0022somewhere.example.com\u0022,\r\n        \u0022Path\u0022: \u0022/someapi/{**catchall}\u0022\r\n      }\r\n    }\r\n  ],\r\n  \u0022Backends\u0022: {\r\n    \u0022EchoService\u0022: {\r\n      \u0022LoadBalancing\u0022: {\r\n        \u0022Mode\u0022: \u0022Random\u0022\r\n      },\r\n      \u0022Destinations\u0022: {\r\n        \u0022backend_destination1\u0022: {\r\n          \u0022Address\u0022: \u0022https://localhost:5003/\u0022\r\n        }\r\n      }\r\n    }\r\n  }\r\n},\r\n\u0060\u0060\u0060\r\n\r\nIs this something that\u0027s supported, or planned to be supported?",
                 "Milestone": null,
                 "Assignees": [],
@@ -510,7 +564,7 @@
                 "CreatedAt": "2020-03-19T19:11:38+00:00",
                 "CreatedBy": "davidni",
                 "IsClosed": true,
-                "Title": "Config-based request and response transformation",
+                "Title": "Config-based request and response header transformation",
                 "DescriptionMarkdown": "In Island Gateway we implemented the notion of \u0060Transformations\u0060, which takes inspiration from Traefik\u0027s middlewares (though we\u0027re not calling them middlewares for obvious reasons). See e.g. [Traefik\u0027s StripPrefix](https://docs.traefik.io/middlewares/stripprefix/).\r\n\r\nA user can specify e.g. \u0060Transformations=StripPrefix(\u0027/api\u0027), AddPrefix(\u0027/v2\u0027)\u0060, which results in the listed processing steps being applied sequentially at runtime.\r\n\r\nThe ability to specify simple transformations like these through config is a requirement for us.\r\n\r\nExample of a route using transformations:\r\n\u0060\u0060\u0060\r\nRule            = Host(\u0027example.com\u0027) \u0026\u0026 Path(\u0027/myservice/{**catchall}\u0027)\r\nTransformations = StripPrefix(\u0027/myservice\u0027)\r\n\u0060\u0060\u0060\r\n\r\n(this is a feature we already implemented in Island Gateway, filing here as requested to track)",
                 "Milestone": "1.0.0-preview2",
                 "Assignees": [
@@ -564,7 +618,7 @@
                 "IsClosed": false,
                 "Title": "Outbound http connections to destinations are configurable ",
                 "DescriptionMarkdown": "https://github.com/dotnet/runtime/issues/987",
-                "Milestone": "1.0.0",
+                "Milestone": "YARP 1.0.0",
                 "Assignees": [
                   "ManickaP"
                 ],
@@ -626,7 +680,7 @@
                 "IsClosed": false,
                 "Title": "Proxy can be used in a hosted datacenter environment with limitations such as SNAT",
                 "DescriptionMarkdown": "Customers behind certain firewalls or load balancers, such as Azure\u0027s SNAT, have a limit on the number of connections they can make per ip/port endpoint.\r\n\r\n\u0060HttpClient\u0060 has a \u0060MaxConnectionsPerServer\u0060 setting, but the limit is not actually applied per-server, but rather per-pool, with each pool being partitioned by a number of connection properties:\r\n- Kind, describing the type of connection (HTTP, HTTPS, Proxied HTTPS, etc.)\r\n- Host, the hostname in the request URI.\r\n- Port, the port in the request URI.\r\n- SslHostName, the SNI value associated with the connection (might be hostname from URI, might be Host header)\r\n- ProxyUri, the proxy that is being used to transport the connection.\r\n- Identity, the user the connection was authenticated over.\r\n\r\nIt is unreasonable to apply a meaningful SNAT limit on top of \u0060HttpClient\u0060 because the client will pool connections and does not expose connection lifetime events to the user.",
-                "Milestone": "1.0.0",
+                "Milestone": "YARP 1.0.0",
                 "Assignees": [
                   "scalablecory"
                 ],
@@ -643,34 +697,13 @@
             },
             {
               "Issue": {
-                "Id": "microsoft/reverse-proxy#110",
-                "CreatedAt": "2020-04-27T08:25:55+00:00",
-                "CreatedBy": "RehanSaeed",
-                "IsClosed": false,
-                "Title": "Support for Lets Encrypt for TLS termination",
-                "DescriptionMarkdown": "### What should we add or change to make your life better?\r\n\r\nMost reverse proxies out there support Lets Encrypt. @natemcmaster runs https://github.com/natemcmaster/LetsEncrypt which is trying to add LetsEncrypt support to ASP.NET Core. Please help him finish, so it can also be used on this project.\r\n\r\n### Why is this important to you?\r\n\r\nA reverse proxy without TLS termination is not very useful. Lets Encrypt is a great choice for TLS, being free, secure and automated.",
-                "Milestone": "1.0.0",
-                "Assignees": [],
-                "Labels": [
-                  {
-                    "Name": "Type: Idea",
-                    "BackgroundColor": "0075ca"
-                  }
-                ],
-                "Kind": 3,
-                "ProjectStatus": null
-              },
-              "Children": []
-            },
-            {
-              "Issue": {
                 "Id": "microsoft/reverse-proxy#118",
                 "CreatedAt": "2020-04-27T22:25:04+00:00",
                 "CreatedBy": "davidni",
                 "IsClosed": false,
                 "Title": "Proxy can handle gRPC traffic including streaming",
                 "DescriptionMarkdown": "Streaming requests (e.g. duplex gRPC request) require special handling by YARP (at a minimum, e.g. remove minimum request data rate enforcement).\r\n\r\nToday we check for gRPC content type, but this is both too broad (not all gRPC requests require streaming semantics) as well as too narrow (other protocols than gRPC on top of HTTP/2 could also require streaming semantics).\r\n\r\nSome proposals were discussed  in https://github.com/microsoft/reverse-proxy/pull/80#discussion_r416156407",
-                "Milestone": "1.0.0",
+                "Milestone": "YARP 1.0.0",
                 "Assignees": [],
                 "Labels": [
                   {
@@ -724,7 +757,7 @@
                 "IsClosed": false,
                 "Title": "Proxy supplies metrics for monitoring performance",
                 "DescriptionMarkdown": "Collect metrics for all stages of the proxy processing, including outbound http requests",
-                "Milestone": "1.0.0-preview7",
+                "Milestone": "YARP 1.0.0-preview7",
                 "Assignees": [
                   "MihaZupan"
                 ],
@@ -763,7 +796,7 @@
                 "IsClosed": false,
                 "Title": "Proxy supplies logs for with pertinent  info for each stage of the request ",
                 "DescriptionMarkdown": "https://github.com/microsoft/reverse-proxy/blob/00c4e7c77059b7c4a9912a4c89c9a05026d55628/src/ReverseProxy.Core/Middleware/LoadBalancingMiddleware.cs#L47-L49\r\n\r\nUsing the IOperationLogger allocates a closure per call per request. We need to re-think how to write these start/stop/failed logs.",
-                "Milestone": "1.0.0-preview7",
+                "Milestone": "YARP 1.0.0-preview7",
                 "Assignees": [
                   "MihaZupan"
                 ],
@@ -790,7 +823,7 @@
                 "IsClosed": false,
                 "Title": "Proxy has an API for determining its health",
                 "DescriptionMarkdown": "### What should we add or change to make your life better?\r\nAdd an API that can be used to collect statistics and state of the proxy. This would also have events for lifetime so that app code can know when the proxy is shutting down.\r\n### Why is this important to you?\r\nIt provides a foundational piece of infrastructure for solving:\r\n#23 part c - API for app code to shutdown the proxy\r\n#124 - REST or gRPC API for remote access to proxy status\r\n#123 - Dashboard for proxy config \u0026 status",
-                "Milestone": "1.0.0",
+                "Milestone": "YARP 1.0.0",
                 "Assignees": [],
                 "Labels": [
                   {
@@ -815,11 +848,40 @@
                 "IsClosed": false,
                 "Title": " Proxy is hardened so it can directly face the internet ",
                 "DescriptionMarkdown": "We expect several features to be add-ins that plug in as connection middleware. Add a connection middleware to the sample in this repo.\r\n\r\nHere\u0027s one example from Http2:\r\nhttps://github.com/dotnet/aspnetcore/blob/09bb7b4ca5a4fbde0283c294c35fac8b485c0074/src/Servers/Kestrel/samples/Http2SampleApp/Program.cs#L41-L54\r\n\r\nOther things we expect to need to plug into here:\r\n- Sniff SNI and rate limit\r\n- Rate limit SSL handshakes by IP\r\n\r\nWe don\u0027t have to write those components as part of this task, just demonstrate that a connection middleware has access to the necessary inputs and controls (e.g. IPs, sniffing the data stream, drop connections, etc.).\r\n\r\nSpecifically, this involves being able to filter connections based on information contained in the ClientHello TLS frame. Examples include:\r\n- Cipher Suite selection\r\n- Protocol Version\r\n- Server Name Indication (SNI)\r\n- Application-Level Protocol Negotiation (ALPN; used for HTTP/2 and HTTP/3)",
-                "Milestone": "1.0.0",
+                "Milestone": "YARP 1.0.0",
                 "Assignees": [],
                 "Labels": [
                   {
                     "Name": "Type: Enhancement",
+                    "BackgroundColor": "0075ca"
+                  },
+                  {
+                    "Name": "User Story",
+                    "BackgroundColor": "0e8a16"
+                  }
+                ],
+                "Kind": 2,
+                "ProjectStatus": null
+              },
+              "Children": []
+            },
+            {
+              "Issue": {
+                "Id": "microsoft/reverse-proxy#470",
+                "CreatedAt": "2020-10-15T16:43:51+00:00",
+                "CreatedBy": "alnikola",
+                "IsClosed": false,
+                "Title": "Proxy monitors its own load/health and throttles connections when required",
+                "DescriptionMarkdown": "Add self-diagnostics capability to YARP and implement throttling policies which can be applied if some thresholds have been exceeded.\r\n\r\nIndicators to watch for:\r\n- CPU load\r\n- Memory pressure\r\n- Available TCP ports\r\n- Average/mean/p95 client requests latency\r\n\r\nExamples of throttling policies:\r\n- Stop accepting new HTTP 1.1 requests by immediately returning 503\r\n- Stop accepting new active streams on HTTP/2 connections\r\n- Stop accepting new TCP connections",
+                "Milestone": null,
+                "Assignees": [],
+                "Labels": [
+                  {
+                    "Name": "Type: Enhancement",
+                    "BackgroundColor": "0075ca"
+                  },
+                  {
+                    "Name": "Type: Idea",
                     "BackgroundColor": "0075ca"
                   },
                   {
@@ -839,8 +901,8 @@
                 "CreatedBy": "samsp-msft",
                 "IsClosed": false,
                 "Title": "Proxy has cloud scale performance, and is benchmarked in the lab",
-                "DescriptionMarkdown": "Ongoing effort to analyze perf of the proxy.\r\n\r\n- [ ] Add micro benchmarks #223 \r\n- [ ] Add more benchmark scenarios #222 \r\n- [ ] Poor performance and errors when proxying https #355 \r\n- [ ] Profile Memory #221",
-                "Milestone": "1.0.0",
+                "DescriptionMarkdown": "Ongoing effort to analyze perf of the proxy.\r\n\r\n- [ ] Add micro benchmarks #223 \r\n- [ ] Add more benchmark scenarios #222 \r\n- [ ] Poor performance and errors when proxying https #355 \r\n- [ ] Profile Memory #221\r\n- [ ] Do not flow the Connection header? #439",
+                "Milestone": "YARP 1.0.0",
                 "Assignees": [],
                 "Labels": [
                   {
@@ -864,7 +926,7 @@
                     "IsClosed": false,
                     "Title": "Add microbenchmarks",
                     "DescriptionMarkdown": "We should add microbenchmarks for key methods like ProxyInvokerMiddleware.Invoke(), LoadBalancingMiddleware.Invoke(), LoadBalancer.PickDestination(), etc. using https://github.com/dotnet/BenchmarkDotNet.\r\n\r\nThis provides a benefit over end-to-end benchmarks since microbenchmarks can more reliably measure smaller performance gains or losses in the components they measure which can add up over time.",
-                    "Milestone": "1.0.0",
+                    "Milestone": "YARP 1.0.0",
                     "Assignees": [
                       "halter73"
                     ],
@@ -887,7 +949,7 @@
                     "IsClosed": false,
                     "Title": "Add more benchmark scenarios",
                     "DescriptionMarkdown": "This is a follow up to https://github.com/microsoft/reverse-proxy/issues/40.\r\n\r\nThere are countless proxy scenarios and variations that can be benchmarked, but currently our proxy benchmarks only capture the following scenario:\r\n\r\n- Using unencrypted connections and making HTTP/1.1 GET requests to both the proxy and backend\r\n\r\nThis scenario varies by response body size: 10B, 100B, 1KB, 10KB, 100KB plaintext responses are currently tested. Limiting response body sizes to just 32KB and 255KB should reduce the total number of scenarios allowing us to add more interesting scenarios without creating information overload.\r\n\r\nThe next proxy benchmark scenarios we plan to add are:\r\n\r\n- Using TLS connections and making HTTP/2 GET requests to both the proxy and backend\r\n- Using TLS connections and making HTTP/1.1 GET requests to both the proxy and backend\r\n- Using unencrypted connections and making HTTP/1.1 POST requests to both the proxy and backend\r\n\r\nAfter those scenarios are completed. Here are even more scenarios we can consider.\r\n\r\n- Logging completely disabled\r\n- Requests with bodies\r\n- Variations on headers\r\n  - Large request headers\r\n  - Large response headers\r\n  - Request/Response header transformation\r\n- gRPC through the rpoxy\r\n  - gRPC streaming\r\n\r\n",
-                    "Milestone": "1.0.0",
+                    "Milestone": "YARP 1.0.0",
                     "Assignees": [
                       "halter73"
                     ],
@@ -910,7 +972,7 @@
                     "IsClosed": false,
                     "Title": "Poor performance and errors when proxying to https",
                     "DescriptionMarkdown": "### Describe the bug\r\nI\u0027ve been running some benchmarks on my local machine for my API gateway that is currently using Ocelot, but that I\u0027m in the process of migrating to YARP. To perform the benchmarks I\u0027ve been using [Crank](https://github.com/dotnet/crank) from the .NET team, which is awesome by the way.\r\n\r\nWhat I\u0027ve seen so far is that if the downstream service I\u0027m proxying to is using HTTP, YARP is much faster than Ocelot. For example, here are the results for my current gateway using Ocelot:\r\n\r\n\u0060\u0060\u0060\r\nFirst Request (ms):   850\r\nRequests:             18,068\r\nBad responses:        0\r\nMean latency (us):    214,006\r\nMax latency (us):     499,452\r\nRequests/sec:         1,181\r\nRequests/sec (max):   7,272\r\n\u0060\u0060\u0060\r\n\r\nWhile these are the results for a similar scenario, but using YARP:\r\n\r\n\u0060\u0060\u0060\r\nFirst Request (ms):   1,205\r\nRequests:             48,984\r\nBad responses:        0\r\nMean latency (us):    78,480\r\nMax latency (us):     2,128,675\r\nRequests/sec:         3,258\r\nRequests/sec (max):   13,420\r\n\u0060\u0060\u0060\r\n\r\nThose are not too shabby, although the max latency for YARP is interesting. Do note that my Ocelot based gateway is running on .NET Core 3.1, while my YARP gateway is running on .NET 5 Preview 7.\r\n\r\nHowever, when I ran the same benchmark with the gateway proxying to the downstream service using HTTPS, I\u0027m seeing very different results:\r\n\r\n**Ocelot:**\r\n\u0060\u0060\u0060\r\nFirst Request (ms):   1,088\r\nRequests:             12,819\r\nBad responses:        0\r\nMean latency (us):    301,467\r\nMax latency (us):     3,571,386\r\nRequests/sec:         839\r\nRequests/sec (max):   7,944\r\n\u0060\u0060\u0060\r\n\r\n**YARP:**\r\n\u0060\u0060\u0060\r\nFirst Request (ms):   1,631\r\nRequests:             527\r\nBad responses:        515\r\nMean latency (us):    9,021,413\r\nMax latency (us):     10,132,335\r\nRequests/sec:         18\r\nRequests/sec (max):   6,587\r\n\u0060\u0060\u0060\r\n\r\nObviously the number of bad responses triggered me, so I\u0027ve looked into the logs to see if I can figure out what\u0027s going wrong. I see a lot of these exceptions:\r\n\r\n\u0060\u0060\u0060\r\n[04:31:02.965] System.OperationCanceledException: The operation was canceled.\r\n[04:31:02.965]    at System.Threading.CancellationToken.ThrowOperationCanceledException()\r\n[04:31:02.965]    at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)\r\n[04:31:02.965]    at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.GetResult(Int16 token)\r\n[04:31:02.965]    at System.Net.Security.SslStream.\u003CFillHandshakeBufferAsync\u003Eg__InternalFillHandshakeBufferAsync|180_0[TIOAdapter](TIOAdapter adap, ValueTask\u00601 task, Int32 minSize)\r\n[04:31:02.965]    at System.Net.Security.SslStream.ReceiveBlobAsync[TIOAdapter](TIOAdapter adapter)\r\n[04:31:02.965]    at System.Net.Security.SslStream.ForceAuthenticationAsync[TIOAdapter](TIOAdapter adapter, Boolean receiveFirst, Byte[] reAuthenticationData, Boolean isApm)\r\n[04:31:02.965]    at System.Net.Http.ConnectHelper.EstablishSslConnectionAsyncCore(Stream stream, SslClientAuthenticationOptions sslOptions, CancellationToken cancellationToken)\r\n[04:31:02.965]    at System.Net.Http.HttpConnectionPool.ConnectAsync(HttpRequestMessage request, Boolean allowHttp2, CancellationToken cancellationToken)\r\n[04:31:02.965]    at System.Net.Http.HttpConnectionPool.CreateHttp11ConnectionAsync(HttpRequestMessage request, CancellationToken cancellationToken)\r\n[04:31:02.965]    at System.Net.Http.HttpConnectionPool.GetHttpConnectionAsync(HttpRequestMessage request, CancellationToken cancellationToken)\r\n[04:31:02.965]    at System.Net.Http.HttpConnectionPool.SendWithRetryAsync(HttpRequestMessage request, Boolean doRequestAuth, CancellationToken cancellationToken)\r\n[04:31:02.965]    at Microsoft.ReverseProxy.Service.Proxy.HttpProxy.NormalProxyAsync(HttpContext context, HttpRequestMessage upstreamRequest, Transforms transforms, HttpMessageInvoker httpClient, ProxyTelemetryContext proxyTelemetryContext, CancellationToken shortCancellation, CancellationToken longCancellation)\r\n[04:31:02.965]    at Microsoft.ReverseProxy.Telemetry.TextOperationLogger\u00601.ExecuteAsync(String operationName, Func\u00601 action)\r\n[04:31:02.965]    at Microsoft.ReverseProxy.Middleware.ProxyInvokerMiddleware.Invoke(HttpContext context)\r\n[04:31:02.965]    at Microsoft.AspNetCore.Routing.EndpointMiddleware.\u003CInvoke\u003Eg__AwaitRequestTask|6_0(Endpoint endpoint, Task requestTask, ILogger logger)\r\n[04:31:02.965]    at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)\r\n[04:31:02.965]    at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddleware.Invoke(HttpContext context)\r\n\u0060\u0060\u0060\r\n\r\nThat looks like it is somehow not able to complete the SSL handshake with the downstream service, but my Ocelot based gateway doesn\u0027t have that same problem and both are going to the exact same service. That service is running on ASP.NET Core 3.1 by the way.\r\n\r\n### To Reproduce\r\n\u003C!--\r\nWhat steps can we follow to reproduce the issue?\r\n\r\n\r\nGot Exceptions? Include both the message and the stack trace\r\n--\u003E\r\n\r\nSo far I\u0027ve followed the basic guide for setting up a reverse proxy with YARP. I\u0027m using the following configuration:\r\n\r\n\u0060\u0060\u0060json\r\n\u0022ReverseProxy\u0022: {\r\n  \u0022Routes\u0022: [\r\n    {\r\n        \u0022RouteId\u0022: \u0022realization\u0022,\r\n        \u0022ClusterId\u0022: \u0022EchoService\u0022,\r\n        \u0022Match\u0022: {\r\n          \u0022Methods\u0022: [ \u0022GET\u0022, \u0022POST\u0022 ],\r\n          \u0022Hosts\u0022: [ \u0022localhost\u0022 ],\r\n          \u0022Path\u0022: \u0022/realization/{*remainder}\u0022\r\n        },\r\n        \u0022Transforms\u0022: [\r\n            { \u0022PathSet\u0022: \u0022/api/values\u0022 }\r\n        ]\r\n     }\r\n  ],\r\n  \u0022Clusters\u0022: {\r\n    {\r\n      \u0022EchoService\u0022: {\r\n        \u0022LoadBalancing\u0022: {\r\n          \u0022Mode\u0022: \u0022Random\u0022\r\n        },\r\n        \u0022Destinations\u0022: {\r\n          \u0022backend_destination1\u0022: {\r\n            \u0022Address\u0022: \u0022https://localhost:5003/\u0022\r\n          }\r\n        }\r\n   }\r\n}\r\n  }\r\n}\r\n\u0060\u0060\u0060\r\n\r\nChanging \u0060backend_destination1\u0060\u0027s \u0060Address\u0060 to \u0060http://localhost:5002/\u0060 fixes the issue.\r\n\r\n### Further technical details\r\n\r\n- Include the version of the packages you are using: **1.0.0-preview.3**\r\n- The platform (Linux/macOS/Windows): macOS",
-                    "Milestone": "1.0.0",
+                    "Milestone": "YARP 1.0.0",
                     "Assignees": [],
                     "Labels": [
                       {
@@ -939,13 +1001,38 @@
                     "IsClosed": false,
                     "Title": "Capture memory profile and eliminate unnecessary allocations",
                     "DescriptionMarkdown": "We should look at our primary scenarios, perhaps those defined for our TE-style benchmarks https://github.com/microsoft/reverse-proxy/issues/40, and capture a memory profile so we can eliminate unnecessary allocations and improve performance.",
-                    "Milestone": "1.0.0",
+                    "Milestone": "YARP 1.0.0",
                     "Assignees": [
                       "halter73"
                     ],
                     "Labels": [
                       {
                         "Name": "Type: Task",
+                        "BackgroundColor": "0075ca"
+                      },
+                      {
+                        "Name": "tenet-performance",
+                        "BackgroundColor": "c14376"
+                      }
+                    ],
+                    "Kind": 3,
+                    "ProjectStatus": null
+                  },
+                  "Children": []
+                },
+                {
+                  "Issue": {
+                    "Id": "microsoft/reverse-proxy#439",
+                    "CreatedAt": "2020-09-24T22:27:46+00:00",
+                    "CreatedBy": "Tratcher",
+                    "IsClosed": false,
+                    "Title": "Do not flow the Connection header?",
+                    "DescriptionMarkdown": "https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.10\r\n\r\nThe Connection header is per hop and shouldn\u0027t be forwarded through a proxy. Note most of the spec concerns here apply to traditional forward proxies, but they might still be useful for a reverse proxy. E.g. Forwarding a \u0060Connection: close\u0060 header would allow the client to terminate the proxy\u0027s connection to the destination and negatively impact performance.\r\n\r\nNote for WebSockets we do need to forward the \u0060Connection: Upgrade\u0060 header, so we can\u0027t ban Connection outright.",
+                    "Milestone": "YARP 1.0.0",
+                    "Assignees": [],
+                    "Labels": [
+                      {
+                        "Name": "Type: Bug",
                         "BackgroundColor": "0075ca"
                       },
                       {
@@ -968,7 +1055,7 @@
                 "IsClosed": false,
                 "Title": "Proxy has Documentation",
                 "DescriptionMarkdown": "This is a collective tracking of what is needed for documentation.\r\n\r\n- [ ]  How to customize YARP with pipleine modules #452, #114 \r\n- [ ] Authentication #416 \r\n- [ ] Configuring https #305 \r\n- [ ] configuration #183",
-                "Milestone": null,
+                "Milestone": "YARP 1.0.0",
                 "Assignees": [],
                 "Labels": [
                   {
@@ -988,7 +1075,7 @@
                     "IsClosed": false,
                     "Title": "Sample/Doc for pipeline module(s)",
                     "DescriptionMarkdown": "Most of the questions we get for \u0022how do I?\u0022 with the proxy can be solved with a custom middleware component. Although we have a samples folder - that is more of a scratch pad for the teams internal experiments - it is not documentation for what you can do and how you should do it as a middleware component. For example, can you create new destinations on the fly, can you lookup the destinations for a backend cluster and swap those in.\r\n\r\nThis should cover:\r\n\r\n* What properties existing pipeline stages operate on, and write out -\u003E so that you know where to insert your module\r\n* Reading from config\r\n* Modifying destinations for a request\r\n* Reading and modifying headers before the request is sent to destination\r\n* Reading and modifying headers before the response is sent to the client\r\n\r\n ",
-                    "Milestone": "1.0.0",
+                    "Milestone": "YARP 1.0.0",
                     "Assignees": [],
                     "Labels": [
                       {
@@ -1013,7 +1100,7 @@
                     "IsClosed": false,
                     "Title": "Documentation for swapping authentication types",
                     "DescriptionMarkdown": "A common scenario I\u0027m running into is to proxy a request for the sole reason of swapping the authentication token. \r\n\r\nIn particular, the use case involves the swapping of 2 OAuth2 tokens. The client has access to one IdentityServer and the resource server to a different IdentityServer. The proxy in between is the only component that has access to both IdentityServers and is able to swap the access tokens. The swap should work only for specific (configured) routes.\r\n\r\nConsider adding documentation that covers this authentication scenario.\r\n\r\n\r\n\r\n",
-                    "Milestone": "1.0.0",
+                    "Milestone": "YARP 1.0.0",
                     "Assignees": [],
                     "Labels": [
                       {
@@ -1038,7 +1125,7 @@
                     "IsClosed": false,
                     "Title": "Docs for HTTPS scenarios",
                     "DescriptionMarkdown": "I\u0027m aggregating some notes here from a variety of issues, questions, discussions, etc. around the HTTPS/TLS capabilities of YARP. These should eventually be written up into a doc.\r\n\r\nGeneral:\r\n- Inbound and outbound TLS are independent.\r\n- TLS offloading = inbound HTTPS and outbound HTTP\r\n- No tunneling support\r\n\r\nInbound\r\n- server specific, link to docs for each, summarize capabilities, more details for kestrel as it has more extensibility\r\n- SNI\r\n- hot cert swapping (via SNI callback)\r\n- TLS versions\r\n- perfect score TLS config\r\n- let\u0027s encrypt\r\n- log/filter protocols after handshake\r\n- advanced protocol filters before handshake\r\n\r\nOutbound\r\n- HTTPS enabled by specifying it in the destination server address\r\n- uses the destination address host name by default. You\u0027ll get a TLS error if it\u0027s expecting the original host\r\n- There\u0027s a transform rule to use the original host, or header transform to use an arbitrary host.\r\n- needs valid certs\r\n- customize HttpClient settings (not yet, https://github.com/microsoft/reverse-proxy/issues/137)",
-                    "Milestone": "1.0.0",
+                    "Milestone": "YARP 1.0.0",
                     "Assignees": [],
                     "Labels": [
                       {
@@ -1067,7 +1154,7 @@
                     "IsClosed": false,
                     "Title": "Doc server configurations",
                     "DescriptionMarkdown": "Doc that YARP is supported on all AspNetCore servers. Link to the setup docs for each server. All of these servers provide SSL termination.\n\nHighlight advanced scenario we plan to support though kestrel like early connection interception.\n\nhttps://twitter.com/demisbellot/status/1263606633239904257?s=19",
-                    "Milestone": "1.0.0",
+                    "Milestone": "YARP 1.0.0",
                     "Assignees": [],
                     "Labels": [
                       {
@@ -1094,7 +1181,7 @@
                 "IsClosed": false,
                 "Title": "Proxy can be customized with middleware to enable advanced scenarios",
                 "DescriptionMarkdown": "### What should we add or change to make your life better?\r\nFrom looking at the source code I can see that you can add custom middlewares to the reverse proxy pipeline but I dont see any documentation outlining how to do it.\r\n### Why is this important to you?\r\nI think many of the people looking at the project is because they need to do some customization at the pipeline level and they want to avoid having to do it in another language like Lua in the case of Kong. Having this documentation would be very useful.",
-                "Milestone": "1.0.0",
+                "Milestone": "YARP 1.0.0",
                 "Assignees": [],
                 "Labels": [
                   {
@@ -1150,7 +1237,7 @@
                 "IsClosed": false,
                 "Title": "Implement back pressure in kestrel for incoming connections",
                 "DescriptionMarkdown": "https://github.com/dotnet/aspnetcore/issues/13295",
-                "Milestone": "1.0.0",
+                "Milestone": "YARP 1.0.0",
                 "Assignees": [],
                 "Labels": [
                   {
@@ -1198,7 +1285,7 @@
                 "IsClosed": false,
                 "Title": "Proxy is supplied as a project template for dotnet new",
                 "DescriptionMarkdown": "We believe one delivery mechanism for the proxy (perhaps the main one) is a \u0060dotnet new\u0060 template. We should have what we need to create one, so let\u2019s add it to this repo and start producing it in our builds.",
-                "Milestone": "1.0.0",
+                "Milestone": "YARP 1.0.0",
                 "Assignees": [],
                 "Labels": [
                   {
@@ -1223,7 +1310,7 @@
                 "IsClosed": false,
                 "Title": "Proxy is supplied as a pre-built exe with core functionality available via configuration",
                 "DescriptionMarkdown": "The original issue #247 got hijacked as a request for docker, so forking this as an issue for creating an exe.\r\n\r\n\u003E We\u0027ve proposed shipping YARP in three formats:\r\n\u003E \r\n\u003E * A library - https://www.nuget.org/packages/Microsoft.ReverseProxy/\r\n\u003E * A template - #77\r\n\u003E * A pre-built application exe (this issue)\r\n\u003E \r\n\u003E The pre-built app should:\r\n\u003E \r\n\u003E * Read from a config file\r\n\u003E * Cover basic scenarios\r\n\u003E * Support a variety of platforms\r\n\u003E \r\n\u003E # Scenarios\r\n\u003E * Config based routes, clusters, \u0026 backends\r\n\u003E * Remote route config? E.g. load from a database, service fabric, k8?\r\n\u003E * Dashboards?  #123\r\n\u003E * Health checks for the proxy itself.\r\n\u003E * Static files? #187\r\n\u003E * Auth?\r\n\u003E * Multi-instance?\r\n\u003E   \r\n\u003E   * Data protection (Session Affinity)\r\n\u003E * Single-file exe with linking: #7\r\n\u003E * Config UI? #184\r\n\u003E \r\n\u003E # Config\r\n\u003E The library already supports loading routes from a config file. However, an app will need to expose additional config for the scenarios described above.\r\n\u003E \r\n\u003E # Platforms\r\n\u003E * Windows, Mac, Linux\r\n\u003E * Builds for both runtime dependent and standalone (servicing?)\r\n\u003E \r\n\u003E # Acquisition\r\n\u003E * Microsoft download center?",
-                "Milestone": "1.0.0",
+                "Milestone": "YARP 1.0.0",
                 "Assignees": [],
                 "Labels": [
                   {
@@ -1248,7 +1335,7 @@
                 "IsClosed": false,
                 "Title": "Proxy is supplied as a pre-built docker image",
                 "DescriptionMarkdown": "We\u0027ve proposed shipping YARP in three formats:\r\n- A library - https://www.nuget.org/packages/Microsoft.ReverseProxy/\r\n- A template - https://github.com/microsoft/reverse-proxy/issues/77\r\n- A pre-built application exe #261\r\n- A docker image (this issue)\r\n\r\nThe pre-built app should:\r\n- Read from a config file\r\n- Cover basic scenarios\r\n- Support a variety of platforms\r\n\r\n# Scenarios\r\n- Config based routes, clusters, \u0026 backends\r\n- Remote route config? E.g. load from a database, service fabric, k8?\r\n- Dashboards?  https://github.com/microsoft/reverse-proxy/issues/123\r\n- Health checks for the proxy itself.\r\n- Static files? https://github.com/microsoft/reverse-proxy/issues/187\r\n- Auth?\r\n- Multi-instance?\r\n  - Data protection (Session Affinity)\r\n- Single-file exe with linking: https://github.com/microsoft/reverse-proxy/issues/7\r\n- Config UI? https://github.com/microsoft/reverse-proxy/issues/184\r\n\r\n# Config\r\nThe library already supports loading routes from a config file. However, an app will need to expose additional config for the scenarios described above.\r\n\r\n# Platforms\r\n- Windows, Mac, Linux\r\n- Builds for both runtime dependent and standalone (servicing?)\r\n\r\n# Acquisition\r\n- Microsoft download center?",
-                "Milestone": "1.0.0",
+                "Milestone": "YARP 1.0.0",
                 "Assignees": [],
                 "Labels": [
                   {
@@ -1266,6 +1353,27 @@
               "Children": []
             }
           ]
+        },
+        {
+          "Issue": {
+            "Id": "dotnet/core#5408",
+            "CreatedAt": "2020-10-22T20:38:45+00:00",
+            "CreatedBy": "glennc",
+            "IsClosed": false,
+            "Title": "Provide an API experience that scales down well and is easier to learn",
+            "DescriptionMarkdown": "Title: Provide an API experience that scales down well and is easier to learn\r\n\r\nASP.NET Core does not provide a smooth way to scale an API down. We provide MVC which has lots of features, but also lots of concepts to learn. We want to provide experiences for building APIs that can start simpler, with a clearer getting started experience, and can smoothly progress to controllers if desired.\r\n\r\nOur results from [Feather](https://github.com/featherhttp/framework) studies and some of our Cloud Native user studies have shown that developers new to .NET react well to more simplified API experiences, and we think that also dovetails well with the Cloud Native theme as frequently the complexity that Controllers are designed to allow you to manage are instead managed across process/project boundaries.\r\n\r\nThis epic will allow us to enhance our API offering by extracting features currently only available in MVC, allowing them to be used outside of MVC. The intent is to allow these extracted features to be used in a functions/lambda model as well as a controller model of APIs. We started this work with Endpoint routing, but today that experience lacks a lot of desirable features, like model binding and validation, and doesn\u0027t have a clear story for better code organization once you grow beyond what fits well in an inline lambda.\r\n\r\n**Initial Principles/Goals:**\r\n\r\n1. Improve the endpoint routing APIs to the point that we could make it the default API story in ASP.NET Core\r\n   1. Allow using features that are currently only available in MVC that make sense (model binding is the big one)\r\n   1. Provide a smooth migration experience from inline lambda, to functions, to classes or controllers as code organization for an API\r\n1. Don\u0027t create APIs for small apps. The idea is not to create a less capable API experience. Instead we want to allow simple things to be simple. Allowing seamless mixing of controllers and non-controllers, sharing of all the concepts and infrastructure that make sense.\r\n1. Ensure APIs are good for our single-file/trimming/AOT experiences. Ensuring that a small API also produces a small binary output when built.\r\n\r\n",
+            "Milestone": null,
+            "Assignees": [],
+            "Labels": [
+              {
+                "Name": "Epic",
+                "BackgroundColor": "c6415a"
+              }
+            ],
+            "Kind": 1,
+            "ProjectStatus": null
+          },
+          "Children": []
         }
       ]
     },
@@ -1276,7 +1384,7 @@
         "CreatedBy": "bradygaster",
         "IsClosed": false,
         "Title": "Meeting Developer Expectations",
-        "DescriptionMarkdown": ".NET 5 introduced more incremental improvements for applications to realize faster startup times and smaller exe sizes using single file and app trimming. As we look ahead on how we continue to make .NET a compelling platform for developers to build their modern apps on, we will continue to evolve the platform by building on top of what .NET 5 has brought to the ecosystem.\r\n\r\nEpics under this theme:\r\n\r\n- [ ] Epic: Make .NET a good choice for environments that require single file and AOT https://github.com/dotnet/runtime/issues/43538\r\n- [ ] Epic: Deliver on the remaining .NET Core customer promises from .NET 5 #5395\r\n- [ ] Epic: Democratize Machine Learning for .NET developer https://github.com/dotnet/machinelearning-modelbuilder/issues/1053\r\n- [ ] Enable APIs to be discoverable and integrated in the Power Platform\r\n  - [ ] Epic: Enabling Power Platform Scenarios with HTTP APIs #5367\r\n  - [ ] Epic: HTTP API Testing Tools #5368",
+        "DescriptionMarkdown": ".NET 5 introduced more incremental improvements for applications to realize faster startup times and smaller exe sizes using single file and app trimming. As we look ahead on how we continue to make .NET a compelling platform for developers to build their modern apps on, we will continue to evolve the platform by building on top of what .NET 5 has brought to the ecosystem.\r\n\r\nEpics under this theme:\r\n\r\n- [ ] Epic: Make .NET a good choice for environments that require single file and AOT https://github.com/dotnet/runtime/issues/43538\r\n- [ ] Epic: Deliver on the remaining .NET Core customer promises from .NET 5 #5395\r\n- [ ] Epic: Democratize Machine Learning for .NET developer https://github.com/dotnet/machinelearning-modelbuilder/issues/1053\r\n- [ ] Enable APIs to be discoverable and integrated in the Power Platform\r\n  - [ ] Epic: Enabling Power Platform Scenarios with HTTP APIs #5367\r\n  - [ ] Epic: HTTP API Testing Tools #5368\r\n- [ ] Epic: Make sure .NET is continuously improved #5410",
         "Milestone": null,
         "Assignees": [
           "cathysull"
@@ -1343,7 +1451,7 @@
                 "Labels": [
                   {
                     "Name": "User Story",
-                    "BackgroundColor": "FFA500"
+                    "BackgroundColor": "0e8a16"
                   },
                   {
                     "Name": "area-NativeAOT",
@@ -1580,7 +1688,7 @@
                 "CreatedAt": "2020-10-16T22:41:22+00:00",
                 "CreatedBy": "samsp-msft",
                 "IsClosed": false,
-                "Title": "Support assembly load context throughout the product",
+                "Title": "Assembly load context is supported throughout .NET so developers can create scopes to support load/unload scenarios",
                 "DescriptionMarkdown": "The assembly load context has been rather successful in solving a large set of customer problems. The most prominent one is the so called \u201Cplugin\u201D model where the application (host) loads other components to augment its functionality in some way. Such components are typically loaded into separate load contexts to avoid dependency collisions. Additionally, in some apps it\u2019s also desirable to be able to eventually unload such components either to free resources or to enable update of the component.\r\n\r\nProducing such applications has proven rather challenging in the current state of .NET Core because there are certain parts of the frameworks produces by us which are not compatible with multiple load contexts and/or unload ability.\r\nWe should drive the frameworks we own to fix these issues so that customer\u2019s code doesn\u2019t have to handle issues in frameworks they rely on. We should focus this effort on certain application types first to prioritize the work. We\u2019ve seen feedback on mainly ASP.NET and WPF applications. There might be overlap with the \u201Cfaster inner loop\u201D effort which would affect the prioritization as well.\r\n\r\nThe work can be split into two parts (and prioritized differently):\r\n* Given feature works correctly in presence of secondary load context \u2013 for example XamlParser has problems when used with assemblies in non-default load context. Similarly, ASP.NET\u2019s hosting code also doesn\u2019t work well in such a scenario. It might be possible to use static analyzers to detect some of the problems in this area.\r\n* Usage of a given feature doesn\u2019t prevent secondary load context from unloading correctly \u2013 for example TypeConverter holds onto all types which were used with it, and thus prevents unloading of such types. Static analyzers are probably not going to help in this area.\r\n\r\nIn both cases an important part of the work should be a general approach to testing \u2013 for example reuse existing test assets but run them under different conditions and providing customer guidance for first \u0026 third parties.\r\n\r\n# Work Items\r\n- [ ] TBD",
                 "Milestone": null,
                 "Assignees": [
@@ -1615,8 +1723,8 @@
                 "CreatedAt": "2020-10-16T22:43:05+00:00",
                 "CreatedBy": "samsp-msft",
                 "IsClosed": false,
-                "Title": "Improve framework trimming using source generators",
-                "DescriptionMarkdown": "Source Generators are a new technology that was added to Roslyn in the .NET 5 timeframe, but we have not yet utilized them by creating generators to assist with runtime and framework features. We will work to define customer scenarios in more detail here with customer development, but one apparent area is in ASP.NET reveal where there are limitations that can be solved by source generators.\r\n\r\nGenerators should be investigated/added for the following prioritized scenarios:\r\n\r\n- [ ] Trimming / Blazor / Native \u0026 Mono AOT \u2013 source generators can be used to convert code that does reflection.emit at runtime to source generators which will create code at build time rather than runtime. The generated code can then be analyzed by the illinker or native AOT enabling those scenarios.\r\n- [ ] Dependency Injection \u2013 is an important part of ASP.NET startup that could be replaceable with code generation at build time.\r\n- [ ] System.Text.Json serialization \u2013 code generators can work around the need for runtime reflection, and generate serializers for specific classes.\r\n- [ ] EventSource \u2013 event source uses reflection.emit to simplify creation of classes (manifests) for custom event sources \u2013 this can be changed to a build-time activity using source generators.\r\n- [ ] Regular Expressions \u2013 can be converted from using reflection.emit to build-time source generation, improving the startup time, making them fast in AOT, and possible in native AOT (Bing recently requested this \u2013 fast startup and fast regex).\r\n- [ ] Marshaling interop\r\n",
+                "Title": "Source generators are added to common libraries to enable apps using them to be trimmed.",
+                "DescriptionMarkdown": "Source Generators are a new technology that was added to Roslyn in the .NET 5 timeframe, but we have not yet utilized them by creating generators to assist with runtime and framework features. We will work to define customer scenarios in more detail here with customer development.\r\n\r\nCode that uses runtime reflection and reflection.emit causes issues for Trimming and Native AOT. Source generators can be used to generate alternative code at build time that is static so can be used in conjunction with Trimming and AOT. Work on trimming ASP.NET apps has revealed where there are current limitations that can be solved by source generators.\r\n\r\nGenerators should be investigated/added for the following prioritized scenarios:\r\n\r\n- [ ] Trimming / Blazor / Native \u0026 Mono AOT \u2013 source generators can be used to convert code that does reflection.emit at runtime to source generators which will create code at build time rather than runtime. The generated code can then be analyzed by the illinker or native AOT enabling those scenarios.\r\n- [ ] Dependency Injection \u2013 is an important part of ASP.NET startup that could be replaceable with code generation at build time.\r\n- [ ] System.Text.Json serialization \u2013 code generators can work around the need for runtime reflection, and generate serializers for specific classes.\r\n- [ ] EventSource \u2013 event source uses reflection.emit to simplify creation of classes (manifests) for custom event sources \u2013 this can be changed to a build-time activity using source generators.\r\n- [ ] Regular Expressions \u2013 can be converted from using reflection.emit to build-time source generation, improving the startup time, making them fast in AOT, and possible in native AOT (Bing recently requested this \u2013 fast startup and fast regex).\r\n- [ ] Marshaling interop\r\n",
                 "Milestone": null,
                 "Assignees": [
                   "vitek-karas",
@@ -1962,6 +2070,27 @@
               "ProjectName": ".NET 6.0",
               "Column": "Proposed"
             }
+          },
+          "Children": []
+        },
+        {
+          "Issue": {
+            "Id": "dotnet/core#5410",
+            "CreatedAt": "2020-10-22T22:38:24+00:00",
+            "CreatedBy": "terrajobst",
+            "IsClosed": false,
+            "Title": "Make sure .NET is continuously improved",
+            "DescriptionMarkdown": "### Summary\r\n\r\nWe\u0027ll use this epic to collect bottom-up improvements coming from the engineering team.\r\n\r\n### User Stories\r\n\r\nUser Stories under this Epic:\r\n\r\n- [ ] [Title of the linked User Story](hyperlink to the User Story issue).\r\n",
+            "Milestone": null,
+            "Assignees": [],
+            "Labels": [
+              {
+                "Name": "Epic",
+                "BackgroundColor": "c6415a"
+              }
+            ],
+            "Kind": 1,
+            "ProjectStatus": null
           },
           "Children": []
         }
@@ -3992,7 +4121,7 @@
         "Milestone": "6.0.0",
         "Assignees": [
           "steveharter",
-          "kevinwkt"
+          "layomia"
         ],
         "Labels": [
           {
@@ -4403,6 +4532,7 @@
     }
   ],
   "Assignees": [
+    null,
     "AaronRobinsonMSFT",
     "agocke",
     "alnikola",
@@ -4422,7 +4552,7 @@
     "jkoritzinsky",
     "jkotas",
     "karelz",
-    "kevinwkt",
+    "layomia",
     "ManickaP",
     "MihaZupan",
     "nkolev92",
@@ -4445,13 +4575,11 @@
   "Milestones": [
     null,
     ".NET 5",
-    "1.0.0",
     "1.0.0-preview1",
     "1.0.0-preview2",
     "1.0.0-preview3",
     "1.0.0-preview4",
     "1.0.0-preview6",
-    "1.0.0-preview7",
     "3.0",
     "3.1",
     "5.0.0",
@@ -4462,7 +4590,9 @@
     "Sprint 174 - 2020.07.27",
     "Sprint 175 - 2020.08.17",
     "Sprint 177 - 2020.09.28",
-    "Sprint 178 - 2020.10.19"
+    "Sprint 178 - 2020.10.19",
+    "YARP 1.0.0",
+    "YARP 1.0.0-preview7"
   ],
   "Releases": [
     null,

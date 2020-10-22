@@ -247,10 +247,15 @@ namespace DotNetEpicsWeb.Pages
 
             if (SelectedAssignee != null)
             {
-                if (SelectedAssignee == "" && node.Issue.Assignees.Any())
-                    return false;
+                if (SelectedAssignee == "")
+                {
+                    if (node.Issue.Assignees.Any())
+                        return false;
+                }
                 else if (!node.Issue.Assignees.Contains(SelectedAssignee))
+                {
                     return false;
+                }
             }
 
             if (SelectedMilestone != null && SelectedMilestone != (node.Issue.Milestone ?? ""))
