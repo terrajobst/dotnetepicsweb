@@ -24,33 +24,13 @@ namespace DotNetEpicsWeb.Data
             }
         }
 
-        private static Color ParseColor(string color)
-        {
-            if (!string.IsNullOrEmpty(color) && color.Length == 6 &&
-                int.TryParse(color.Substring(0, 2), NumberStyles.HexNumber, null, out var r) &&
-                int.TryParse(color.Substring(2, 2), NumberStyles.HexNumber, null, out var g) &&
-                int.TryParse(color.Substring(4, 2), NumberStyles.HexNumber, null, out var b))
-            {
-                return Color.FromArgb(r, g, b);
-            }
-
-            return Color.Black;
-        }
-
-        private static int PerceivedBrightness(string color)
-        {
-            var c = ParseColor(color);
-            return (int)Math.Sqrt(
-                c.R * c.R * .241 +
-                c.G * c.G * .691 +
-                c.B * c.B * .068);
-        }
-
         private static string GetForegroundColor(string backgroundColor)
         {
-            var brightness = PerceivedBrightness(backgroundColor);
-            var foregroundColor = brightness > 130 ? "black" : "white";
-            return foregroundColor;
+            // turn the background color into Color obj
+            var c = ColorTranslator.FromHtml($"#{backgroundColor}");
+
+            // calculate best foreground color
+            return (((c.R + c.B + c.G) / 3) > 128) ? "black" : "white";
         }
     }
 }
