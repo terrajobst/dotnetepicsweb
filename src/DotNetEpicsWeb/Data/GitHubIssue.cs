@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using Humanizer;
 
 namespace DotNetEpicsWeb.Data
 {
@@ -23,6 +24,6 @@ namespace DotNetEpicsWeb.Data
         public string Url => $"https://github.com/{Id.Owner}/{Id.Repo}/issues/{Id.Number}";
 
         [JsonIgnore]
-        public string DetailText => $"{Id} opened {CreatedAt.FormatRelative()}";
+        public string DetailText => $"{Id} opened {CreatedAt.Humanize()}";
     }
 }
