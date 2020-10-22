@@ -31,17 +31,17 @@
             "CreatedAt": "2020-10-20T00:06:06+00:00",
             "CreatedBy": "samsp-msft",
             "IsClosed": false,
-            "Title": "Experience: Ship an extensible/customizable reverse proxy performant enough for cloud scale workloads",
+            "Title": "Ship an extensible/customizable reverse proxy performant enough for cloud scale workloads",
             "DescriptionMarkdown": "As a cloud native infrastructure/service developer (cohort 3), I want a reverse proxy solution that is customizable to my needs and performant enough for cloud scale workloads.\r\n\r\nThis includes the following user stories:\r\n\r\nConfiguration\r\n  - [x] Proxy supports static config files, with hot reload for handling changes #9 \r\n  - [x] Proxy supports dynamic configuration pulling from other sources #8\r\n    - [ ] Service fabric integration #257\r\n    - [ ] Kubernetes integration #200\r\n - [ ] Routes can be fully dynamic and discovered on a per request basis for hyper scale hosting  #46\r\n\r\nRouting\r\n- [ ] Proxy can front multiple sites and route based on SNI/Host #14 \r\n- [x] Proxy should enable routing based on header values #405\r\n- [ ] Proxy should have active health checks to confirm the state of destinations #228\r\n- [x] Proxy has session affinity #45 \r\n- [ ] Proxy can divert routes to support A/B testing, service rollout etc #126\r\n- [x] Proxy supports multiple algorithms for load balancing across destinations #58\r\n- [x] Proxy supports authentication / authorization for specific routes #122\r\n- [ ] Proxy can deliver static files directly #187 \r\n\r\nProxying\r\n- [x] Url can be transformed for destinations #207\r\n- [x] Requests and responses headers can be transformed #21 \r\n- [x] Http Methods can be transformed (eg POST to PUT) #445\r\n- [ ] Outbound http connections to destinations are configurable #282 \r\n- [x] Proxy adds standard headers related to request forwarding #13\r\n- [ ] Proxy can be used in a hosted datacenter environment with limitations such as SNAT #62\r\n- [ ] Support for Lets Encrypt for TLS termination #110\r\n- [ ] Proxy can handle gRPC traffic including streaming #118\r\n- [x] Proxy component can be used stand-alone for advanced scenarios #408  \r\n\r\nDiagnostics\r\n- [ ] Proxy supplies metrics for monitoring performance #61\r\n- [ ] Proxy supplies logs for with pertinent  info for each stage of the request #115\r\n- [ ] Proxy has an API for determining its health #125\r\n\r\nGeneral\r\n- [ ] Proxy is hardened so it can directly face the internet #16\r\n- [ ] Proxy has cloud scale performance, and is benchmarked in the lab #51  \r\n- [ ] Proxy has documentation #484\r\n- [ ] Customer can add middleware to customize the proxy functionality such as routing, header manipulation #114\r\n- [x] support for .NET 3.1 \u0026 5 #159\r\n- [ ] Support for back pressure #290\r\n\r\nPackaging\r\n- [x] Proxy can be consumed as a library so it can be readily extended and customized #143\r\n- [ ] Proxy is supplied as a project template for dotnet new #77\r\n- [ ] Proxy is supplied as a pre-built exe with a configuration file #261 \r\n- [ ] Proxy is supplied as a pre-built docker image #247 \r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n",
             "Milestone": null,
             "Assignees": [],
             "Labels": [
               {
-                "Name": "Experience",
-                "BackgroundColor": "5454c9"
+                "Name": "Epic",
+                "BackgroundColor": "c6415a"
               }
             ],
-            "Kind": 3,
+            "Kind": 1,
             "ProjectStatus": {
               "ProjectName": ".NET 6.0",
               "Column": "In progress"
@@ -67,7 +67,7 @@
                   },
                   {
                     "Name": "User Story",
-                    "BackgroundColor": "f9f06d"
+                    "BackgroundColor": "0e8a16"
                   }
                 ],
                 "Kind": 2,
@@ -99,7 +99,7 @@
                   },
                   {
                     "Name": "User Story",
-                    "BackgroundColor": "f9f06d"
+                    "BackgroundColor": "0e8a16"
                   }
                 ],
                 "Kind": 2,
@@ -113,7 +113,7 @@
                 "CreatedAt": "2020-06-19T22:43:15+00:00",
                 "CreatedBy": "davidni",
                 "IsClosed": false,
-                "Title": "Service Fabric integration (dynamic discovery)",
+                "Title": "Proxy has Service Fabric integration for dynamic discovery of routes",
                 "DescriptionMarkdown": "## Introduction\r\n\r\nAdds \u0060Microsoft.ReverseProxy.ServiceFabricIntegration\u0060 which implements dynamic discovery of Service Fabric services. The general architecture takes inspiration from [Traefik\u0027s Service Fabric integration](https://docs.traefik.io/v1.7/configuration/backends/servicefabric/), and is designed for easy and friction-free onboarding of multiple Service Fabric services operating behind YARP. Running multiple instances of YARP in the same cluster is possible, and an eventual consistency model helps avoid the need for any external storage except for the runtime Service Fabric queries used to dynamically discover services in the cluster.\r\n\r\nA Service Fabric service that wants to leverage YARP simply needs to add an \u0060\u003CExtension\u003E\u0060 element in their \u0060ServiceManifest\u0060, for example (see complete example further below):\r\n\r\n\u0060\u0060\u0060xml\r\n\u003CExtensions\u003E\r\n  \u003CExtension Name=\u0022YARP\u0022\u003E\r\n    \u003CLabels xmlns=\u0022http://schemas.microsoft.com/2015/03/fabact-no-schema\u0022\u003E\r\n      \u003CLabel Key=\u0022YARP.Enable\u0022\u003Etrue\u003C/Label\u003E\r\n      \u003CLabel Key=\u0022YARP.Routes.route1.Hosts\u0022\u003Eexample.com\u003C/Label\u003E\r\n    \u003C/Labels\u003E\r\n  \u003C/Extension\u003E\r\n\u003C/Extensions\u003E\r\n\u0060\u0060\u0060\r\n\r\n\r\n## Functional overview\r\nThis works by periodically querying Service Fabric for all applications in a Service Fabric cluster. For each application, we enumerate all services. For each service, we extract its _labels_ and, if the service has opted in to use YARP (\u0060YARP.Enable=true\u0060). If the service that has opted in to use YARP, we then enumerate all partitions, and all instances/replicas within each partition.\r\n\r\n\r\n### Service Fabric concepts mappings to YARP\r\n\r\nService Fabric terminology|YARP terminology\r\n-|-\r\nCluster|--\r\nApplication|--\r\nService (e.g. \u0060fabric:/App1/Svc2\u0060)|Cluster (ClusterId=ServiceName)\r\nInstance / replica|Destination (Address=instance\u0027 or replica\u0027s endpoint)\r\n\u0060YARP.Routes.\u003CrouteName\u003E.*\u0060 in ServiceManifest|ProxyRoute (id=ServiceName\u002BrouteName, Match=Hosts,Path extracted from the labels)\r\n\r\n\r\n### Dynamic configurability\r\nLabels defined in the Service Manifest support the following scenarios:\r\n* Arbitrary key / value pair. Only keys understood by us are honored, and unknown keys are ignored\r\n* Application parameter reference. If the label value is of the form \u0060[appParamName]\u0060, its value will be replaced at runtime with the value of the application parameter with the same name defined for the application the service belongs to\r\n* Naming Service overrides. If label \u0060YARP.EnableDynamicOverrides\u0060 is specified as \u0060true\u0060, we will also query Service Fabric Naming Service to discover any [named properties](https://docs.microsoft.com/en-us/rest/api/servicefabric/sfclient-index-property-management). Any _properties_ found for the service being enumerated take precedence over values specified in ServiceManifest. This functionality is opt-in, and disabled by default.\r\n\r\n\r\n### Designed for high availability\r\n\r\nWe keep a cache of the last discovery results obtained from Service Fabric. If at any point, for whatever reason, we are not able to retrieve an updated view of the cluster, we will continue to operate with last-known-good data. The cache is kept in memory, but could be extended to support permanent storage on disk to also survive reboots.\r\n\r\n\r\n### Designed for use by large teams\r\nThis integration is designed to support tens of Service Fabric services hosted behind YARP, and it provides additional features to help owners of those teams self-service their devops requirements relating to YARP. When we successfully discovered a service, we emit a [Service Fabric health report](https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-health-introduction) against the discovered service. If any config errors are encountered, a Warning health report is issued, which makes it easy for the service owners to observe the errors on Service Fabric Explorer and / or telemetry. This closes the loop and makes it easy for a service in Service Fabric to confirm that its configurations are being honored and to detect any issues.\r\n\r\n\r\n### Complete ServiceManifest example:\r\n\r\n\u0060\u0060\u0060xml\r\n\u003CServiceManifest Name=\u0022Service1Pkg\u0022 Version=\u00221.0.0\u0022 xmlns=\u0022http://schemas.microsoft.com/2011/01/fabric\u0022\u003E\r\n  \u003CServiceTypes\u003E\r\n    \u003CStatelessServiceType ServiceTypeName=\u0022Service1Type\u0022 \u003E\r\n      \u003CExtensions\u003E\r\n        \u003CExtension Name=\u0022YARP\u0022\u003E\r\n          \u003CLabels xmlns=\u0022http://schemas.microsoft.com/2015/03/fabact-no-schema\u0022\u003E\r\n            \u003CLabel Key=\u0022YARP.Enable\u0022\u003Etrue\u003C/Label\u003E\r\n            \u003CLabel Key=\u0022YARP.Routes.route1.Hosts\u0022\u003Eexample.com\u003C/Label\u003E\r\n            \u003C!-- Optional: enable health probes --\u003E\r\n            \u003CLabel Key=\u0027YARP.Backend.Healthcheck.Enabled\u0027\u003Etrue\u003C/Label\u003E\r\n            \u003CLabel Key=\u0027YARP.Backend.Healthcheck.Path\u0027\u003Eapi/health\u003C/Label\u003E\r\n            \u003CLabel Key=\u0027YARP.Backend.Healthcheck.Timeout\u0027\u003E30\u003C/Label\u003E\r\n            \u003CLabel Key=\u0027YARP.Backend.Healthcheck.Interval\u0027\u003E10\u003C/Label\u003E\r\n          \u003C/Labels\u003E\r\n        \u003C/Extension\u003E\r\n      \u003C/Extensions\u003E\r\n    \u003C/StatelessServiceType\u003E\r\n  \u003C/ServiceTypes\u003E\r\n\r\n  \u003C!-- ... --\u003E\r\n\u003C/ServiceManifest\u003E\r\n\u0060\u0060\u0060\r\n\r\n\r\n## Remaining work:\r\n\r\n* [x] \u0060ServiceDiscoveryConfigApplier\u0060 needs to be cleaned up and wired up. Without this, the Service Fabric integration code will not be invoked by YARP. The implementation of \u0060ServiceDiscoveryConfigApplier\u0060 in this PR is _meant to_ (but does not achieve that in its current state) support multiple service discovery mechanisms and to allow them to be specified by config.\r\n* [x] Organize and rename labels\r\n* [x] Add sample Service Fabric projects to exercise everything E2E\r\n",
                 "Milestone": null,
                 "Assignees": [],
@@ -124,7 +124,7 @@
                   },
                   {
                     "Name": "User Story",
-                    "BackgroundColor": "f9f06d"
+                    "BackgroundColor": "0e8a16"
                   }
                 ],
                 "Kind": 2,
@@ -138,7 +138,7 @@
                 "CreatedAt": "2020-05-22T23:35:12+00:00",
                 "CreatedBy": "galvesribeiro",
                 "IsClosed": false,
-                "Title": "Kubernetes Ingress Controller",
+                "Title": "Proxy can act as a Kubernetes Ingress Controller",
                 "DescriptionMarkdown": "Hello folks!\r\n\r\nFirst of all, great work! Congratz for the first preview release! It is indeed something .Net Community was lagging behind and had for too long to deal with clumsy things like nginx.\r\n\r\nSo, I\u0027m coming to a point where I\u0027d like to make a POC with YARP for a controlled small set of microservices in Kubernetes and that comes to a need to make it an ingestion controller.\r\n\r\nWith that in mind, I would like to ask if the Kube integration is something you guys plan to have on this repo, on some other under MSFT umbrella, or if it is something that the community will have to implemente for their own needs.\r\n\r\nIf it is something MSFT will (or already is) develop, ok, all we have todo is wait. If that is something that community will have to build, is that something that would be acceptable on this repo as a PR? If we should go to this PR, I\u0027de like to use this issue to discuss the approach we should take to contribute it.\r\n\r\nThanks! Keep it going!",
                 "Milestone": "1.0.0",
                 "Assignees": [],
@@ -149,7 +149,7 @@
                   },
                   {
                     "Name": "User Story",
-                    "BackgroundColor": "f9f06d"
+                    "BackgroundColor": "0e8a16"
                   }
                 ],
                 "Kind": 2,
@@ -174,7 +174,7 @@
                   },
                   {
                     "Name": "User Story",
-                    "BackgroundColor": "f9f06d"
+                    "BackgroundColor": "0e8a16"
                   }
                 ],
                 "Kind": 2,
@@ -199,7 +199,7 @@
                   },
                   {
                     "Name": "User Story",
-                    "BackgroundColor": "f9f06d"
+                    "BackgroundColor": "0e8a16"
                   },
                   {
                     "Name": "tenet-performance",
@@ -234,7 +234,7 @@
                   },
                   {
                     "Name": "User Story",
-                    "BackgroundColor": "f9f06d"
+                    "BackgroundColor": "0e8a16"
                   }
                 ],
                 "Kind": 2,
@@ -265,7 +265,7 @@
                   },
                   {
                     "Name": "User Story",
-                    "BackgroundColor": "f9f06d"
+                    "BackgroundColor": "0e8a16"
                   }
                 ],
                 "Kind": 2,
@@ -292,7 +292,7 @@
                   },
                   {
                     "Name": "User Story",
-                    "BackgroundColor": "f9f06d"
+                    "BackgroundColor": "0e8a16"
                   }
                 ],
                 "Kind": 2,
@@ -321,7 +321,7 @@
                   },
                   {
                     "Name": "User Story",
-                    "BackgroundColor": "f9f06d"
+                    "BackgroundColor": "0e8a16"
                   }
                 ],
                 "Kind": 2,
@@ -346,7 +346,7 @@
                   },
                   {
                     "Name": "User Story",
-                    "BackgroundColor": "f9f06d"
+                    "BackgroundColor": "0e8a16"
                   }
                 ],
                 "Kind": 2,
@@ -442,7 +442,7 @@
                   },
                   {
                     "Name": "User Story",
-                    "BackgroundColor": "f9f06d"
+                    "BackgroundColor": "0e8a16"
                   }
                 ],
                 "Kind": 2,
@@ -471,7 +471,7 @@
                   },
                   {
                     "Name": "User Story",
-                    "BackgroundColor": "f9f06d"
+                    "BackgroundColor": "0e8a16"
                   }
                 ],
                 "Kind": 2,
@@ -496,7 +496,7 @@
                   },
                   {
                     "Name": "User Story",
-                    "BackgroundColor": "f9f06d"
+                    "BackgroundColor": "0e8a16"
                   }
                 ],
                 "Kind": 2,
@@ -544,7 +544,7 @@
                   },
                   {
                     "Name": "User Story",
-                    "BackgroundColor": "f9f06d"
+                    "BackgroundColor": "0e8a16"
                   },
                   {
                     "Name": "help wanted",
@@ -580,9 +580,13 @@
                   {
                     "Name": "Type: Tracking",
                     "BackgroundColor": "0075ca"
+                  },
+                  {
+                    "Name": "User Story",
+                    "BackgroundColor": "0e8a16"
                   }
                 ],
-                "Kind": 3,
+                "Kind": 2,
                 "ProjectStatus": null
               },
               "Children": []
@@ -606,7 +610,7 @@
                   },
                   {
                     "Name": "User Story",
-                    "BackgroundColor": "f9f06d"
+                    "BackgroundColor": "0e8a16"
                   }
                 ],
                 "Kind": 2,
@@ -629,7 +633,7 @@
                 "Labels": [
                   {
                     "Name": "User Story",
-                    "BackgroundColor": "f9f06d"
+                    "BackgroundColor": "0e8a16"
                   }
                 ],
                 "Kind": 2,
@@ -675,7 +679,7 @@
                   },
                   {
                     "Name": "User Story",
-                    "BackgroundColor": "f9f06d"
+                    "BackgroundColor": "0e8a16"
                   }
                 ],
                 "Kind": 2,
@@ -704,7 +708,7 @@
                   },
                   {
                     "Name": "User Story",
-                    "BackgroundColor": "f9f06d"
+                    "BackgroundColor": "0e8a16"
                   }
                 ],
                 "Kind": 2,
@@ -740,9 +744,13 @@
                   {
                     "Name": "Type: Enhancement",
                     "BackgroundColor": "0075ca"
+                  },
+                  {
+                    "Name": "User Story",
+                    "BackgroundColor": "0e8a16"
                   }
                 ],
-                "Kind": 3,
+                "Kind": 2,
                 "ProjectStatus": null
               },
               "Children": []
@@ -766,7 +774,7 @@
                   },
                   {
                     "Name": "User Story",
-                    "BackgroundColor": "f9f06d"
+                    "BackgroundColor": "0e8a16"
                   }
                 ],
                 "Kind": 2,
@@ -791,7 +799,7 @@
                   },
                   {
                     "Name": "User Story",
-                    "BackgroundColor": "f9f06d"
+                    "BackgroundColor": "0e8a16"
                   }
                 ],
                 "Kind": 2,
@@ -816,7 +824,7 @@
                   },
                   {
                     "Name": "User Story",
-                    "BackgroundColor": "f9f06d"
+                    "BackgroundColor": "0e8a16"
                   }
                 ],
                 "Kind": 2,
@@ -841,7 +849,7 @@
                   },
                   {
                     "Name": "User Story",
-                    "BackgroundColor": "f9f06d"
+                    "BackgroundColor": "0e8a16"
                   }
                 ],
                 "Kind": 2,
@@ -958,14 +966,14 @@
                 "CreatedAt": "2020-10-21T20:58:26+00:00",
                 "CreatedBy": "samsp-msft",
                 "IsClosed": false,
-                "Title": "Documentation",
+                "Title": "Proxy has Documentation",
                 "DescriptionMarkdown": "This is a collective tracking of what is needed for documentation.\r\n\r\n- [ ]  How to customize YARP with pipleine modules #452, #114 \r\n- [ ] Authentication #416 \r\n- [ ] Configuring https #305 \r\n- [ ] configuration #183",
                 "Milestone": null,
                 "Assignees": [],
                 "Labels": [
                   {
                     "Name": "User Story",
-                    "BackgroundColor": "f9f06d"
+                    "BackgroundColor": "0e8a16"
                   }
                 ],
                 "Kind": 2,
@@ -1099,7 +1107,7 @@
                   },
                   {
                     "Name": "User Story",
-                    "BackgroundColor": "f9f06d"
+                    "BackgroundColor": "0e8a16"
                   }
                 ],
                 "Kind": 2,
@@ -1126,7 +1134,7 @@
                   },
                   {
                     "Name": "User Story",
-                    "BackgroundColor": "f9f06d"
+                    "BackgroundColor": "0e8a16"
                   }
                 ],
                 "Kind": 2,
@@ -1155,7 +1163,7 @@
                   },
                   {
                     "Name": "User Story",
-                    "BackgroundColor": "f9f06d"
+                    "BackgroundColor": "0e8a16"
                   }
                 ],
                 "Kind": 2,
@@ -1199,7 +1207,7 @@
                   },
                   {
                     "Name": "User Story",
-                    "BackgroundColor": "f9f06d"
+                    "BackgroundColor": "0e8a16"
                   }
                 ],
                 "Kind": 2,
@@ -1213,7 +1221,7 @@
                 "CreatedAt": "2020-06-23T18:34:23+00:00",
                 "CreatedBy": "samsp-msft",
                 "IsClosed": false,
-                "Title": "Create a standalone exe for YARP",
+                "Title": "Proxy is supplied as a pre-built exe with core functionality available via configuration",
                 "DescriptionMarkdown": "The original issue #247 got hijacked as a request for docker, so forking this as an issue for creating an exe.\r\n\r\n\u003E We\u0027ve proposed shipping YARP in three formats:\r\n\u003E \r\n\u003E * A library - https://www.nuget.org/packages/Microsoft.ReverseProxy/\r\n\u003E * A template - #77\r\n\u003E * A pre-built application exe (this issue)\r\n\u003E \r\n\u003E The pre-built app should:\r\n\u003E \r\n\u003E * Read from a config file\r\n\u003E * Cover basic scenarios\r\n\u003E * Support a variety of platforms\r\n\u003E \r\n\u003E # Scenarios\r\n\u003E * Config based routes, clusters, \u0026 backends\r\n\u003E * Remote route config? E.g. load from a database, service fabric, k8?\r\n\u003E * Dashboards?  #123\r\n\u003E * Health checks for the proxy itself.\r\n\u003E * Static files? #187\r\n\u003E * Auth?\r\n\u003E * Multi-instance?\r\n\u003E   \r\n\u003E   * Data protection (Session Affinity)\r\n\u003E * Single-file exe with linking: #7\r\n\u003E * Config UI? #184\r\n\u003E \r\n\u003E # Config\r\n\u003E The library already supports loading routes from a config file. However, an app will need to expose additional config for the scenarios described above.\r\n\u003E \r\n\u003E # Platforms\r\n\u003E * Windows, Mac, Linux\r\n\u003E * Builds for both runtime dependent and standalone (servicing?)\r\n\u003E \r\n\u003E # Acquisition\r\n\u003E * Microsoft download center?",
                 "Milestone": "1.0.0",
                 "Assignees": [],
@@ -1224,7 +1232,7 @@
                   },
                   {
                     "Name": "User Story",
-                    "BackgroundColor": "f9f06d"
+                    "BackgroundColor": "0e8a16"
                   }
                 ],
                 "Kind": 2,
@@ -1238,7 +1246,7 @@
                 "CreatedAt": "2020-06-16T19:13:22+00:00",
                 "CreatedBy": "Tratcher",
                 "IsClosed": false,
-                "Title": "Create a proxy docker image",
+                "Title": "Proxy is supplied as a pre-built docker image",
                 "DescriptionMarkdown": "We\u0027ve proposed shipping YARP in three formats:\r\n- A library - https://www.nuget.org/packages/Microsoft.ReverseProxy/\r\n- A template - https://github.com/microsoft/reverse-proxy/issues/77\r\n- A pre-built application exe #261\r\n- A docker image (this issue)\r\n\r\nThe pre-built app should:\r\n- Read from a config file\r\n- Cover basic scenarios\r\n- Support a variety of platforms\r\n\r\n# Scenarios\r\n- Config based routes, clusters, \u0026 backends\r\n- Remote route config? E.g. load from a database, service fabric, k8?\r\n- Dashboards?  https://github.com/microsoft/reverse-proxy/issues/123\r\n- Health checks for the proxy itself.\r\n- Static files? https://github.com/microsoft/reverse-proxy/issues/187\r\n- Auth?\r\n- Multi-instance?\r\n  - Data protection (Session Affinity)\r\n- Single-file exe with linking: https://github.com/microsoft/reverse-proxy/issues/7\r\n- Config UI? https://github.com/microsoft/reverse-proxy/issues/184\r\n\r\n# Config\r\nThe library already supports loading routes from a config file. However, an app will need to expose additional config for the scenarios described above.\r\n\r\n# Platforms\r\n- Windows, Mac, Linux\r\n- Builds for both runtime dependent and standalone (servicing?)\r\n\r\n# Acquisition\r\n- Microsoft download center?",
                 "Milestone": "1.0.0",
                 "Assignees": [],
@@ -1249,7 +1257,7 @@
                   },
                   {
                     "Name": "User Story",
-                    "BackgroundColor": "f9f06d"
+                    "BackgroundColor": "0e8a16"
                   }
                 ],
                 "Kind": 2,
@@ -1268,7 +1276,7 @@
         "CreatedBy": "bradygaster",
         "IsClosed": false,
         "Title": "Meeting Developer Expectations",
-        "DescriptionMarkdown": ".NET 5 introduced more incremental improvements for applications to realize faster startup times and smaller exe sizes using single file and app trimming. As we look ahead on how we continue to make .NET a compelling platform for developers to build their modern apps on, we will continue to evolve the platform by building on top of what .NET 5 has brought to the ecosystem.\r\n\r\nExperiences under this epic:\r\n\r\n- [ ] Experience: Make .NET a good choice for environments that require single file and AOT https://github.com/dotnet/runtime/issues/43538\r\n- [ ] Experience: Deliver on the remaining .NET Core customer promises from .NET 5 #5395\r\n- [ ] Experience: Increase coverage of Machine Learning models for ML.NET\r\n- [ ] Enable APIs to be discoverable and integrated in the Power Platform\r\n  - [ ] Experience: Enabling Power Platform Scenarios with HTTP APIs #5367\r\n  - [ ] Experience: HTTP API Testing Tools #5368",
+        "DescriptionMarkdown": ".NET 5 introduced more incremental improvements for applications to realize faster startup times and smaller exe sizes using single file and app trimming. As we look ahead on how we continue to make .NET a compelling platform for developers to build their modern apps on, we will continue to evolve the platform by building on top of what .NET 5 has brought to the ecosystem.\r\n\r\nEpics under this theme:\r\n\r\n- [ ] Epic: Make .NET a good choice for environments that require single file and AOT https://github.com/dotnet/runtime/issues/43538\r\n- [ ] Epic: Deliver on the remaining .NET Core customer promises from .NET 5 #5395\r\n- [ ] Epic: Democratize Machine Learning for .NET developer https://github.com/dotnet/machinelearning-modelbuilder/issues/1053\r\n- [ ] Enable APIs to be discoverable and integrated in the Power Platform\r\n  - [ ] Epic: Enabling Power Platform Scenarios with HTTP APIs #5367\r\n  - [ ] Epic: HTTP API Testing Tools #5368",
         "Milestone": null,
         "Assignees": [
           "cathysull"
@@ -1292,7 +1300,7 @@
             "CreatedAt": "2020-10-16T21:25:31+00:00",
             "CreatedBy": "samsp-msft",
             "IsClosed": false,
-            "Title": "Experience: Make .NET a good choice for environments that require single file and AOT",
+            "Title": "Make .NET a good choice for environments that require single file and AOT",
             "DescriptionMarkdown": "# Why\r\n.NET 5 introduced more incremental improvements for applications to realize faster startup times and smaller exe sizes using single file and app trimming. As we look ahead on how we continue to make .NET a compelling platform for developers to build their modern apps on, we need to continue to evolve the platform by building on top of what .NET 5 has brought to the ecosystem. AOT in particular, is an area where we need to start to make more investments, which will likely span across several upcoming releases of .NET. Many developers want a specific solution when they refer to \u201CAOT.\u201D They want a solution that has the following characteristics: extremely fast startup, no IL present (for size and obfuscation reasons), a JIT is (at most) optional, and binary size is as small as it can be. We use the term \u201Cnative AOT\u201D to describe that point on the AOT spectrum. The single file solution we have in .NET 5.0 doesn\u2019t satisfy this definition of AOT. It\u2019s a big step forward, but it isn\u2019t \u201Cnative AOT.\u201D\r\n\r\nA recent [Native AOT community survey](https://github.com/dotnet/runtime/issues/41522), showed us that there\u2019s more of a need to officially support native AOT in .NET. 52% of our survey respondents (n=1,344) told us that they would like to write more projects in .NET (but can\u2019t) or have written .NET projects in a different environment (Rust and Go) because of missing native AOT options.\r\n\r\n# Summary\r\nThis objective describes the continued investment and evolution in the features and integration of single file, trimming, and source generators (to name just a few). Many of these areas are complimentary to each other such that a characteristic of source generators for example is that it can help remove major barriers to linker-based and AOT (ahead-of-time) compilation optimizations.\r\n\r\nMany of these areas will require ecosystem and library authors to participate in as well (i.e. trimming) and we will need to build specific tooling to enable these features to be utilized in libraries and will need an outreach program for them as well. We\u2019ve also identified that many of the top NuGet packages people make heavy use of reflection to discover types at runtime. Incorporating these packages is essential for most .NET apps, so the \u201Clinkability\u201D and ability for your code to make use of AOT compiler optimizations is greatly affected. We\u2019re looking forward to working with our wonderful OSS community to see how these packages could use source generators and improve the overall .NET ecosystem.\r\n\r\n# User Stories\r\n\r\n- [ ] Start the journey to enable Native AOT in runtimelabs https://github.com/dotnet/runtimelab/issues/248\r\n- [ ] Developers can confidently generate single file apps that work for the supported target platforms #43540\r\n- [ ] Annotate more .NET libraries (trimming) and guidance for library authors #43543\r\n- [ ] Expand .NET WebAssembly Capabilities\r\n- [ ] Support assembly load context throughout the product #43544\r\n- [ ] Source generators continue to assist with runtime and framework features #43545",
             "Milestone": null,
             "Assignees": [],
@@ -1537,7 +1545,7 @@
                 "CreatedAt": "2020-10-16T22:27:17+00:00",
                 "CreatedBy": "samsp-msft",
                 "IsClosed": false,
-                "Title": "Annotate more .NET libraries (trimming) and guidance for library authors",
+                "Title": ".NET libraries are annotated to support trimming and we provide trimming guidance for library authors",
                 "DescriptionMarkdown": "The trimming story is a journey where we are improving the capabilities release to release. With .NET 5, we have added the linker capability for trimming and started the annotation effort for the framework.\r\n\r\nFor an application to be correctly fully trimmable, we need to know all the places where dynamic code patterns such as reflection and reflection emit are used. Along with that we will provide annotations for the linker so that it knows how to find the required types so that they are not trimmed, provide a source generator equivalent, or if the functionality is inherently supportable in conjunction with trimming then to provide an error to the app developer.\r\n\r\n# Goals\r\n\r\n* Developers should have clarity on whether the application will be trimmable\r\n* Trimming should be possible for all mainline scenarios. Work with owners for each of the workloads to:\r\n  * define the mainline scenarios\r\n  * remove / mitigate issues in libraries for the mainline scenarios\r\n  * supply representative apps for validation\r\n* Linker should produce an error for every case where trimming will fail\r\n* Remove \u0022Preview\u0022 tag from the trimmer\r\n* Enable trimming for the following app types:\r\n  * Blazor\r\n  * Mobile apps\r\n  * ASP.NET\r\n  * Console apps\r\n  * Ideally an additional UI framework (e.g. WinForms or WPF)\r\n\r\n## Annotating the framework\r\n\r\nThis is a recursive initiative as each layer of the onion will potentially increase the surface area that can be trimmable and uncover additional APIs that need to be annotated. Decisions on which APIs should be focused on should be driven by usage stats (if we have them).\r\n\r\n## Annotating Libraries\r\n\r\nMost customer applications make use of libraries from third parties, commonly via NuGet, those also need to be annotated for trimming. We need to provide tooling to assist the developers in determining which of their APIs need to be annotated, and how to annotate them. The current library analysis uses hidden command line switches and needed to be augmented with custom tools created by the engineer currently working on annotations. The experience needs to be exposed in Visual Studio for both library consumers and library authors, with the ability to drill into the specifics of which API dependencies are causing issues.\r\n\r\nWe will need an outreach program for library authors, and probably have a way to filter out packages that are not trimmable from NuGet searches.\r\n\r\n## AOT annotations\r\n\r\nAll the annotations for trimming also assist in native AOT scenarios, as that has the same problem with not being able to determine dependencies when reflection is used. There are some additional limitations of native AOT that needs similar annotations to the attributes used for trimming. This should be added early so that the annotation exercise can consider both scenarios.\r\n\r\n\r\n# Work Items\r\n\r\n- [ ] TBD",
                 "Milestone": null,
                 "Assignees": [
@@ -1644,7 +1652,7 @@
             "CreatedAt": "2020-10-19T22:54:17+00:00",
             "CreatedBy": "cathysull",
             "IsClosed": false,
-            "Title": "Experience: Deliver on the remaining .NET Core customer promises from .NET 5",
+            "Title": "Deliver on the remaining .NET Core customer promises from .NET 5",
             "DescriptionMarkdown": "# Why\r\nIn .NET 5, many factors contributed to the fact that some features were developed in one area, and were not always supported across the entire stack or for all workloads. While many of these features are dialable, investing in finishing these promises will both help .NET developers to better adopt these platform features as we continue to evolve the .NET platform. \r\n\r\n# Summary\r\nFinishing the remaining promises from .NET 5 includes features that support cross-cutting platform enablement and ensure that we have a more complete end-to-end experience in the .NET platform. Many of these features will require more definition and scoping during .NET 6 planning beyond what is described in the User Stories below.\r\n\r\n# User Stories\r\n\r\n- [ ] Expand platform compat annotations to cover more configurations https://github.com/dotnet/runtime/issues/43616\r\n- [ ] Support more Analyzers \u0026 Code Fixers https://github.com/dotnet/runtime/issues/43617\r\n- [ ] Complete Nullable annotations for more of the framework https://github.com/dotnet/runtime/issues/43619\r\n- [ ] Expanding Linker tooling in VS\r\n- [ ] Finish System.Text.Json https://github.com/dotnet/runtime/issues/43620\r\n- [ ] Support HTTP3 in .NET 6 https://github.com/dotnet/runtime/issues/43546",
             "Milestone": null,
             "Assignees": [
@@ -1886,11 +1894,32 @@
         },
         {
           "Issue": {
+            "Id": "dotnet/machinelearning-modelbuilder#1053",
+            "CreatedAt": "2020-10-21T21:06:39+00:00",
+            "CreatedBy": "briacht",
+            "IsClosed": false,
+            "Title": "Democratize Machine Learning for .NET developers",
+            "DescriptionMarkdown": "# Why\r\n\r\n\r\n# Summary\r\n\r\n\r\n# User Stories",
+            "Milestone": null,
+            "Assignees": [],
+            "Labels": [
+              {
+                "Name": "Epic",
+                "BackgroundColor": "c6415a"
+              }
+            ],
+            "Kind": 1,
+            "ProjectStatus": null
+          },
+          "Children": []
+        },
+        {
+          "Issue": {
             "Id": "dotnet/core#5367",
             "CreatedAt": "2020-10-15T22:53:09+00:00",
             "CreatedBy": "bradygaster",
             "IsClosed": false,
-            "Title": "Experience: Enable Power Platform Scenarios with HTTP APIs",
+            "Title": "Enable Power Platform Scenarios with HTTP APIs",
             "DescriptionMarkdown": "Since November 2019, we\u2019ve done significant work to improve the overall end-to-end experience for developers who need to extend PowerApps (or any other Power Platform resource). The goals of this multi-organization partnership spanning DevDiv, Azure, and Power Platform, have been to enable the following application development scenario: \r\n\r\n1. A citizen developer needs to build a business app using PowerApps. \r\n2. The PowerApp needs to use existing application infrastructure, so the citizen dev works with a .NET developer who is either building or who has already built and deployed an existing HTTP API. \r\n3. The API developer creates a PowerApps Custom Connector to give the citizen developer a connection to the HTTP API. \r\n4. The citizen developer uses the connection to the HTTP API to build their PowerApp. \r\n5. The citizen developer makes the PowerApp available to users in their enterprise via Teams. \r\n\r\nSince the partnership began in November, we\u2019ve accomplished significant strides across all partner teams, and now ASP.NET Core Web API customers have a clear path to getting HTTP APIs published into Azure API Management, which makes them easy to ingest into PowerApps.  \r\n\r\nUser Stories under this Experience:",
             "Milestone": null,
             "Assignees": [
@@ -1916,7 +1945,7 @@
             "CreatedAt": "2020-10-15T23:02:48+00:00",
             "CreatedBy": "bradygaster",
             "IsClosed": false,
-            "Title": "Experience: HTTP API Testing Tools",
+            "Title": "HTTP API Testing Tools",
             "DescriptionMarkdown": "As the investments we make into building out HTTP APIs for use in the Power Platform take shape, an interesting by-product is that we\u2019re hearing from more developers that they need a way to call their APIs from clients hosted somewhere else. Consider the following scenarios in which developers are building HTTP APIs for use by either Azure or Power Platform clients: \r\n\r\n1. A developer needs to create an Azure Function that, given an ID, gets an order from a database and sends an adaptive card to a Teams channel representing the products in the order. The Function will be called within a Logic App.  \r\n2. A citizen developer is building a mobile app to replace an internal supply chain implemented using an intranet site. The product database page will be replicated as an HTTP API that will be called from a PowerApp. \r\n\r\nIn both scenarios a developer needs to build a \u201Cclient\u201D for an API on which they\u2019re also developing. In the Logic App scenario, a developer needs to be able to debug an HTTP API running on localhost but call that HTTP API from a Logic App running in Azure. In the PowerApp scenario, a citizen dev using the PowerApps maker experience \u2013 a web-based IDE \u2013 will be building and testing a app in a web browser.  \r\n\r\nIn both scenarios, the \u201Cclient\u201D will need to call the API, and the API developer will need a way to receive those calls and to step through their code using the rich debugging tools present in the Visual Studio family of products. But in both scenarios, the \u201Cclient\u201D will need a tunnel to localhost, as both are running on the open internet.  \r\n\r\nDevelopers need an \u201CF5 to Localhost Tunnel\u201D experience to answer this problem. \r\nUser Stories under this Experience:",
             "Milestone": null,
             "Assignees": [
@@ -1970,7 +1999,7 @@
             "CreatedBy": "jamshedd",
             "IsClosed": false,
             "Title": "Enterprises have a first class experience acquiring and deploying .NET 6.0",
-            "DescriptionMarkdown": "User Stories under this Experience:\r\n\r\n- [ ] [As an IT Pro I have easy access to .NET Core installer release information and scripts in my air gapped environment so I can use this to determine which updates need to be deployed](https://github.com/dotnet/core/issues/5241).\r\n",
+            "DescriptionMarkdown": "User Stories under this Epic:\r\n\r\n- [ ] [As an IT Pro I have easy access to .NET Core installer release information and scripts in my air gapped environment so I can use this to determine which updates need to be deployed](https://github.com/dotnet/core/issues/5241).\r\n",
             "Milestone": null,
             "Assignees": [
               "jamshedd"
@@ -2023,7 +2052,7 @@
             "CreatedBy": "jamshedd",
             "IsClosed": false,
             "Title": "Enterprises get first-class support when using .NET 6.0 on Linux",
-            "DescriptionMarkdown": "\r\n\r\nUser Stories under this Experience:\r\n\r\n- [ ] [Title of the linked User Story](hyperlink to the User Story issue).\r\n",
+            "DescriptionMarkdown": "\r\nUser Stories under this Epic:\r\n\r\n- [ ] [Title of the linked User Story](hyperlink to the User Story issue).\r\n",
             "Milestone": null,
             "Assignees": [
               "jamshedd"
@@ -2100,7 +2129,7 @@
         "Id": "dotnet/runtime#41313",
         "CreatedAt": "2020-08-25T03:03:59+00:00",
         "CreatedBy": "layomia",
-        "IsClosed": false,
+        "IsClosed": true,
         "Title": "JsonSerializer improvements in .NET 5",
         "DescriptionMarkdown": "In 5.0, we have added new features to \u0060JsonSerializer\u0060, improved performance and reliability, and made the serializer work on more platforms. This list goes over the most user-facing improvements.\r\n\r\n| Issue  | Description                                                                   | Category               |\r\n|--------|-------------------------------------------------------------------------------|------------------------|\r\n| #30820 | Add mechanism to preserve object references when (de)serializing              | Feature                |\r\n| #32937 | Add extension methods for HttpClient that allow (de)serializing JSON          | Feature                |\r\n| #30255 | Support (de)serializing quoted numbers                                        | Feature                |\r\n| #29895 | Support deserializing objects using parameterized constructors                | Feature                |\r\n| #876   | Support (de)serializing fields                                                | Feature                |\r\n| #779   | Support ignoring value-type defaults | Feature |\r\n| #30687 | Support conditionally ignoring properties (always, never, when null/default)  | Feature                |\r\n| #30524 | Support non-string dictionary keys                                            | Feature                |\r\n| #29743 | Allow using non-public property accessors for (de)serialization               | Feature                |\r\n| #34439 | Provide opt-in for custom converters to handle null                           | Feature                |\r\n| #38539 | Support new C# record types | Feature |\r\n| #30445 | Add a copy constructor to JsonSerializerOptions                               | Feature                |\r\n| #34626 | Add constructor to JsonSerializerOptions that takes serialization defaults    | Feature                |\r\n| #2259  | Improve (de)serialization performance for collections             | Performance            |\r\n| #36635 | Improve serialization performance for small or value-type POCOS (TechEmpower) | Performance            |\r\n| #35848 | Improve deserialization perf for case-insensitive and missing-property cases  | Performance            |\r\n| https://github.com/dotnet/corefx/pull/41845 | Improve perf for deserializing long JSON strings              | Performance            |\r\n| #31326 | Enable JsonSerializer to work on Xamarin iOS/Android                          | Platform support       |\r\n\r\nCheck out demos for the new features: https://github.com/layomia/NET5JsonDemos.",
         "Milestone": "Future",
@@ -2113,35 +2142,6 @@
           {
             "Name": "area-System.Text.Json",
             "BackgroundColor": "d4c5f9"
-          }
-        ],
-        "Kind": 1,
-        "ProjectStatus": null
-      },
-      "Children": []
-    },
-    {
-      "Issue": {
-        "Id": "dotnet/runtime#40359",
-        "CreatedAt": "2020-08-05T02:21:38+00:00",
-        "CreatedBy": "benaadams",
-        "IsClosed": false,
-        "Title": "FileStream\u0027s performance is disappointing and buggy",
-        "DescriptionMarkdown": "(Note \u0060.CopyToAsync\u0060 is pretty good; for certain combinations of flags)\r\n\r\n\r\n\r\nIssues:\r\n\r\n* Read{Async} and Write{Async} etc call \u0060SeekCore\u0060 which on Windows calls the blocking api \u0060SetFilePointerEx\u0060 which the \u0022Windows Server Performance Team Blog: Designing Applications for High Performance \u2013 Part III\u0022 (June 25, 2008) says about\r\n  \u003E The old DOS SetFilePointer API is an anachronism. One should specify the file offset in the overlapped structure even for synchronous I/O.\r\n\r\n* Avoid unnecessary allocations when using FileStream #15088\r\n* Win32 FileStream turns async reads into sync reads #16341\r\n* Win32 FileStream will issue a seek on every ReadAsync call #16354\r\n* FileStream.SetLength doesn\u0027t return file pointer to original value on failure #8307\r\n* FileStream.FlushAsync ends up doing synchronous writes #27643\r\n* Asynchronous random file access with FileStream Read vs ReadAsync in a loop / parallel (ReadAsync is slow) #27047\r\n* FileStream.Windows useAsync WriteAsync calls blocking apis #25905\r\n* File.ReadAllTextAsync not behaving asynchronously when called on inaccessible network files #25314\r\n* Use PreallocatedOverlapped when internal FileStream buffer isn\u0027t being used on Windows #25074\r\n* File.WriteAllTextAsync performance issues #23196\r\n* Asynchronous FileStream I/O can throw in the completion port callback thread #13658\r\n* FileStream.Lock(Int64, Int64) failure on Linux - always uses \u0027F_WRLCK\u0027. #29173\r\n* FileStream.Flush(true) doesn\u0027t flush device buffer on macOS, while it does so on Windows #28444\r\n\r\nRosyln has [their own workarounds](https://github.com/dotnet/roslyn/blob/cb7bdffa1b17b2684083f5201153a976c04dd580/src/Workspaces/Core/Portable/Workspace/FileTextLoader.cs#L108-L173) for FileStream issues; and NuGet recently moved to mmap for better performance https://github.com/NuGet/NuGet.Client/pull/3524",
-        "Milestone": "Future",
-        "Assignees": [],
-        "Labels": [
-          {
-            "Name": "Epic",
-            "BackgroundColor": "c6415a"
-          },
-          {
-            "Name": "area-System.IO",
-            "BackgroundColor": "d4c5f9"
-          },
-          {
-            "Name": "tenet-performance",
-            "BackgroundColor": "c2e0c6"
           }
         ],
         "Kind": 1,

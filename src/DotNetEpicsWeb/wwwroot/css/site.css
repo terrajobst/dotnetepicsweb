@@ -316,6 +316,24 @@ app {
         border-radius: 0 0 0 5px;
     }
 
+.tree-toggle {
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    color: #ccc;
+    margin-left: -5px;
+    margin-right: 5px;
+    padding: 2px;
+    font-size: 11px;
+    height: 19px;
+    width: 19px;
+    cursor: pointer;
+}
+
+    .tree-toggle:hover {
+        border-color: darkgray;
+        color: darkgray;
+    }
+
 /*ul.tree > li:first-child::before {
     display: none;
 }

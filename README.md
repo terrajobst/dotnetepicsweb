@@ -5,6 +5,5 @@ It provides a hierarchical over the entire product.
 
 ## Features
 
-* Add expand & collapse
 * Expose filters as URL
 * Expose user's display name

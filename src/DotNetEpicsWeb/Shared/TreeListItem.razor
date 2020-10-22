@@ -1,83 +1,67 @@
-﻿@{
-    var nodes = Nodes.Where(n => Filter(n)).ToList();
-    var index = 0;
-
-    while (index < nodes.Count)
-    {
-        var node = nodes[index];
-        if (Skip(node))
-        {
-            nodes.RemoveAt(index);
-            nodes.InsertRange(index, node.Children.Where(c => Filter(c)));
-        }
-        else
-        {
-            index++;
-        }
-    }
-}
-
-@if (nodes.Any())
+﻿@if (Nodes.Any())
 {
     <ul class="tree">
-        @foreach (var node in nodes)
+        @foreach (var node in Nodes)
         {
             <li>
                 @{
-                    var issueClass = IsIndirectlyVisible(node) ? "muted" : "";
+                    var issueClass = Owner.IsMuted(node) ? "muted" : "";
+                    var issue = node.IssueNode.Issue;
                 }
                 <div class="gh-issue @issueClass d-flex flex-row">
-                    <div class="gh-issue-kind-header @node.Issue.Kind.ToString().ToLower()" />
+                    @{
+                        var visibleClass = node.Children.Count == 0 ? "invisible" : "";
+                        var glyph = Owner.IsExpanded(node) ? "oi-minus" : "oi-plus";
+                    }
+                    <span class="oi @glyph tree-toggle @visibleClass" @onclick="() => Owner.ToggleNode(node)"></span>
+                    <div class="gh-issue-kind-header @issue.Kind.ToString().ToLower()" />
                     <div>
                         <div>
-                            <a class="gh-issue-title" href="@node.Issue.Url" target="_blank">@node.Issue.Title</a>
+                            <a class="gh-issue-title" href="@issue.Url" target="_blank">@issue.Title</a>
                             <span>
-                                @foreach (var label in node.Issue.Labels)
+                                @foreach (var label in issue.Labels)
                                 {
                                     <span class="gh-label"
                                           style="background: @("#" + label.BackgroundColor); color: @label.ForegroundColor">@label.Name</span>
-                                    }
+                                }
                             </span>
                         </div>
                         <div class="gh-details-cell">
-                            @if (node.Issue.ProjectStatus != null)
+                            @if (issue.ProjectStatus != null)
                             {
-                                <span class="gh-project-status">@node.Issue.ProjectStatus.Column for @node.Issue.ProjectStatus.ProjectName</span>
+                                <span class="gh-project-status">@issue.ProjectStatus.Column for @issue.ProjectStatus.ProjectName</span>
                             }
 
-                            @node.Issue.DetailText
+                            @issue.DetailText
 
-                            @if (node.Issue.Milestone != null)
+                            @if (issue.Milestone != null)
                             {
-                                <span class="ml-2 mr-1 oi oi-signpost text-muted" aria-hidden="true"></span>@node.Issue.Milestone
+                                <span class="ml-2 mr-1 oi oi-signpost text-muted" aria-hidden="true"></span>@issue.Milestone
                             }
 
-                            @if (node.Issue.Assignees.Any())
+                            @if (issue.Assignees.Any())
                             {
-                                var assigneeList = string.Join(", ", node.Issue.Assignees);
+                                var assigneeList = string.Join(", ", issue.Assignees);
                                 <span class="ml-2 mr-1 oi oi-person text-muted" aria-hidden="true"></span>@assigneeList
                             }
                         </div>
                     </div>
                 </div>
 
-                <TreeListItem Nodes="@node.Children" Filter="@Filter" Skip="@Skip" IsIndirectlyVisible="@IsIndirectlyVisible" />
+                @if (Owner.IsExpanded(node))
+                {
+                    <TreeListItem Owner="@Owner" Nodes="@node.Children" />
+                }
             </li>
         }
     </ul>
 }
 
 @code {
-    [Parameter]
-    public IReadOnlyList<GitHubIssueNode> Nodes { get; set; }
 
     [Parameter]
-    public Predicate<GitHubIssueNode> Filter { get; set; }
+    public Pages.Index Owner { get; set; }
 
     [Parameter]
-    public Predicate<GitHubIssueNode> Skip { get; set; }
-
-    [Parameter]
-    public Predicate<GitHubIssueNode> IsIndirectlyVisible { get; set; }
-
+    public IReadOnlyList<DotNetEpicsWeb.Pages.PageNode> Nodes { get; set; }
 }
