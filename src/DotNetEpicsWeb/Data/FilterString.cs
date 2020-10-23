@@ -158,6 +158,16 @@ namespace DotNetEpicsWeb.Data
                 needsSeparator = true;
             }
 
+            // Now remove all whitespace from the end
+
+            for (var i = filteredTokens.Count - 1; i >= 0; i--)
+            {
+                var isSeparator = string.IsNullOrWhiteSpace(filteredTokens[i].RawText);
+                if (isSeparator)
+                    filteredTokens.RemoveAt(i);
+                else
+                    break;
+            }
 
             return new FilterString(filteredTokens);
         }
@@ -233,7 +243,7 @@ namespace DotNetEpicsWeb.Data
 
         private static string Unescape(string value)
         {
-            if (!string.IsNullOrEmpty(value) && value.StartsWith("\"") && value.EndsWith("\""))
+            if (!string.IsNullOrEmpty(value) && value.Length > 1 && value.StartsWith("\"") && value.EndsWith("\""))
                 return value[1..^1];
 
             return value;

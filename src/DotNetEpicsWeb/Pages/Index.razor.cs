@@ -367,34 +367,35 @@ namespace DotNetEpicsWeb.Pages
             if (string.IsNullOrEmpty(Filter))
                 return true;
 
-            if (issue.Title.Contains(Filter, StringComparison.OrdinalIgnoreCase))
-                return true;
+            var filters = FilterString.Parse(Filter)
+                                      .Where(t => string.IsNullOrEmpty(t.Key) && !string.IsNullOrWhiteSpace(t.Value))
+                                      .Select(t => t.Value)
+                                      .ToArray();
 
-            if (issue.Id.ToString().Contains(Filter, StringComparison.OrdinalIgnoreCase))
-                return true;
+            var hasUnmatchedFilter = false;
 
-            if (issue.Assignees.Any(a => a.Contains(Filter, StringComparison.OrdinalIgnoreCase)))
-                return true;
-
-            if (issue.Milestone != null && issue.Milestone.Contains(Filter, StringComparison.OrdinalIgnoreCase))
-                return true;
-
-            if (issue.ProjectStatus != null)
+            foreach (var f in filters)
             {
-                if (issue.ProjectStatus.ProjectName.Contains(Filter, StringComparison.OrdinalIgnoreCase))
-                    return true;
+                if (issue.Title.Contains(f, StringComparison.OrdinalIgnoreCase))
+                    continue;
+                else if (issue.Id.ToString().Contains(f, StringComparison.OrdinalIgnoreCase))
+                    continue;
+                else if (issue.Assignees.Any(a => a.Contains(f, StringComparison.OrdinalIgnoreCase)))
+                    continue;
+                else if (issue.Milestone != null && issue.Milestone.Contains(f, StringComparison.OrdinalIgnoreCase))
+                    continue;
+                else if (issue.ProjectStatus != null && issue.ProjectStatus.ProjectName.Contains(f, StringComparison.OrdinalIgnoreCase))
+                    continue;
+                else if (issue.ProjectStatus != null && issue.ProjectStatus.Column.Contains(f, StringComparison.OrdinalIgnoreCase))
+                    continue;
+                else if (issue.Labels.Any(l => l.Name.Contains(f, StringComparison.OrdinalIgnoreCase)))
+                    continue;
 
-                if (issue.ProjectStatus.Column.Contains(Filter, StringComparison.OrdinalIgnoreCase))
-                    return true;
+                hasUnmatchedFilter = true;
+                break;
             }
 
-            foreach (var label in issue.Labels)
-            {
-                if (label.Name.Contains(Filter, StringComparison.OrdinalIgnoreCase))
-                    return true;
-            }
-
-            return false;
+            return !hasUnmatchedFilter;
         }
 
         private bool IsIndirectlyVisible(GitHubIssueNode node)
