@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+
+using Blazored.LocalStorage;
 
 using DotNetEpicsWeb.Data;
 
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.JSInterop;
@@ -52,6 +56,9 @@ namespace DotNetEpicsWeb.Pages
         {
             _defaultFilter = BuildFilterString();
         }
+
+        [Inject]
+        public ILocalStorageService LocalStorageService { get; set; }
 
         [Inject]
         public IJSRuntime JSRuntime { get; set; }
@@ -176,8 +183,15 @@ namespace DotNetEpicsWeb.Pages
             }
         }
 
-        protected override void OnInitialized()
+        protected override async Task OnInitializedAsync()
         {
+            var collapsedIds = await LocalStorageService.GetItemAsync<string[]>("collapsedIds") ?? Array.Empty<string>();
+            foreach (var idText in collapsedIds)
+            {
+                if (GitHubIssueId.TryParse(idText, out var id))
+                    _nodeStates[id] = false;
+            }
+
             TreeManager.Changed += TreeChanged;
 
             var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
@@ -426,6 +440,11 @@ namespace DotNetEpicsWeb.Pages
         public void ToggleNode(PageNode node)
         {
             _nodeStates[node.IssueNode.Issue.Id] = !IsExpanded(node);
+
+            var collapsedIds = _nodeStates.Where(kv => kv.Value == false)
+                                          .Select(kv => kv.Key.ToString())
+                                          .ToArray();
+            LocalStorageService.SetItemAsync("collapsedIds", collapsedIds);
         }
 
         public void ExpandAll()

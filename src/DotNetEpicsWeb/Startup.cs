@@ -1,3 +1,5 @@
+using Blazored.LocalStorage;
+
 using DotNetEpicsWeb.Data;
 
 using Microsoft.AspNetCore.Builder;
@@ -29,6 +31,7 @@ namespace DotNetEpicsWeb
             services.AddSingleton<GitHubClientFactory>();
             services.AddSingleton<GitHubTreeManager>();
             services.AddSingleton<GitHubTreePersistence>();
+            services.AddBlazoredLocalStorage();
 
             if (_environment.IsDevelopment())
             {
