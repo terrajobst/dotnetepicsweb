@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
 
 using DotNetEpicsWeb.Data;
 
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.JSInterop;
 
 namespace DotNetEpicsWeb.Pages
 {
@@ -34,6 +35,8 @@ namespace DotNetEpicsWeb.Pages
     public partial class Index
     {
         private readonly Dictionary<GitHubIssueId, bool> _nodeStates = new Dictionary<GitHubIssueId, bool>();
+        private readonly FilterString _defaultFilter;
+
         private bool _showOpen = true;
         private string _filter;
         private bool _includeThemes = true;
@@ -44,6 +47,17 @@ namespace DotNetEpicsWeb.Pages
         private string _selectedState;
         private string _selectedAssignee;
         private string _selectedMilestone;
+
+        public Index()
+        {
+            _defaultFilter = BuildFilterString();
+        }
+
+        [Inject]
+        public IJSRuntime JSRuntime { get; set; }
+
+        [Inject]
+        public NavigationManager NavigationManager { get; set; }
 
         [Inject]
         public GitHubTreeManager TreeManager { get; set; }
@@ -59,6 +73,7 @@ namespace DotNetEpicsWeb.Pages
             {
                 _showOpen = value;
                 RebuildPageTree();
+                UpdateUrl();
             }
         }
 
@@ -69,6 +84,7 @@ namespace DotNetEpicsWeb.Pages
             {
                 _filter = value;
                 RebuildPageTree();
+                UpdateUrl();
             }
         }
 
@@ -79,6 +95,7 @@ namespace DotNetEpicsWeb.Pages
             {
                 _includeThemes = value;
                 RebuildPageTree();
+                UpdateUrl();
             }
         }
 
@@ -89,6 +106,7 @@ namespace DotNetEpicsWeb.Pages
             {
                 _includeEpics = value;
                 RebuildPageTree();
+                UpdateUrl();
             }
         }
 
@@ -99,6 +117,7 @@ namespace DotNetEpicsWeb.Pages
             {
                 _includeUserStories = value;
                 RebuildPageTree();
+                UpdateUrl();
             }
         }
 
@@ -109,6 +128,7 @@ namespace DotNetEpicsWeb.Pages
             {
                 _includeIssues = value;
                 RebuildPageTree();
+                UpdateUrl();
             }
         }
 
@@ -119,6 +139,7 @@ namespace DotNetEpicsWeb.Pages
             {
                 _selectedRelease = value;
                 RebuildPageTree();
+                UpdateUrl();
             }
         }
 
@@ -129,6 +150,7 @@ namespace DotNetEpicsWeb.Pages
             {
                 _selectedState = value;
                 RebuildPageTree();
+                UpdateUrl();
             }
         }
 
@@ -139,6 +161,7 @@ namespace DotNetEpicsWeb.Pages
             {
                 _selectedAssignee = value;
                 RebuildPageTree();
+                UpdateUrl();
             }
         }
 
@@ -149,12 +172,32 @@ namespace DotNetEpicsWeb.Pages
             {
                 _selectedMilestone = value;
                 RebuildPageTree();
+                UpdateUrl();
             }
         }
 
         protected override void OnInitialized()
         {
             TreeManager.Changed += TreeChanged;
+
+            var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+
+            if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("q", out var q))
+            {
+                var filterString = FilterString.Parse(q);
+                var kinds = filterString.GetValue("kinds") ?? _defaultFilter.GetValue("kinds");
+                _filter = filterString.ClearKeys().ToString();
+                _showOpen = filterString.GetValues("is").Any(v => string.Equals(v, "open", StringComparison.OrdinalIgnoreCase));
+                _includeThemes = kinds.Contains('t');
+                _includeEpics = kinds.Contains('e');
+                _includeUserStories = kinds.Contains('u');
+                _includeIssues = kinds.Contains('i');
+                _selectedRelease = filterString.GetValue("release");
+                _selectedState = filterString.GetValue("state");
+                _selectedAssignee = filterString.GetValue("assignee");
+                _selectedMilestone = filterString.GetValue("milestone");
+            }
+
             RebuildPageTree();
         }
 
@@ -224,6 +267,57 @@ namespace DotNetEpicsWeb.Pages
                     RebuildNodes(node.Children, issueNode.Children);
                 }
             }
+        }
+
+        private void UpdateUrl()
+        {
+            var filterString = BuildFilterString();
+
+            var queryString = filterString != _defaultFilter
+                ? "?q=" + filterString
+                : "";
+
+            var uri = new UriBuilder(NavigationManager.Uri)
+            {
+                Query = queryString
+            }.ToString();
+
+            JSRuntime.InvokeAsync<object>("changeUrl", uri);
+        }
+
+        private FilterString BuildFilterString()
+        {
+            var filterString = FilterString.Parse(Filter ?? "");
+
+            if (ShowOpen)
+                filterString = filterString.SetValue("is", "open");
+            else
+                filterString = filterString.SetValue("is", "closed");
+
+            var kinds = "";
+            if (IncludeThemes)
+                kinds += "t";
+            if (IncludeEpics)
+                kinds += "e";
+            if (IncludeUserStories)
+                kinds += "u";
+            if (IncludeIssues)
+                kinds += "i";
+
+            filterString = filterString.SetValue("kinds", kinds);
+
+            if (SelectedRelease != null)
+                filterString = filterString.SetValue("release", SelectedRelease);
+
+            if (SelectedState != null)
+                filterString = filterString.SetValue("state", SelectedState);
+
+            if (SelectedAssignee != null)
+                filterString = filterString.SetValue("assignee", SelectedAssignee);
+
+            if (SelectedMilestone != null)
+                filterString = filterString.SetValue("milestone", SelectedMilestone);
+            return filterString;
         }
 
         private bool IsVisible(GitHubIssueNode node)
