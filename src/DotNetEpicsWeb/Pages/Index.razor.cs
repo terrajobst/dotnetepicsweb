@@ -185,12 +185,7 @@ namespace DotNetEpicsWeb.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            var collapsedIds = await LocalStorageService.GetItemAsync<string[]>("collapsedIds") ?? Array.Empty<string>();
-            foreach (var idText in collapsedIds)
-            {
-                if (GitHubIssueId.TryParse(idText, out var id))
-                    _nodeStates[id] = false;
-            }
+            await LoadCollapsedIds();
 
             TreeManager.Changed += TreeChanged;
 
@@ -441,22 +436,41 @@ namespace DotNetEpicsWeb.Pages
         {
             _nodeStates[node.IssueNode.Issue.Id] = !IsExpanded(node);
 
-            var collapsedIds = _nodeStates.Where(kv => kv.Value == false)
-                                          .Select(kv => kv.Key.ToString())
-                                          .ToArray();
-            LocalStorageService.SetItemAsync("collapsedIds", collapsedIds);
+            SaveCollapsedIds();
         }
 
         public void ExpandAll()
         {
             foreach (var issueId in GetAllIssueIds())
                 _nodeStates[issueId] = true;
+
+            SaveCollapsedIds();
         }
 
         public void CollapseAll()
         {
             foreach (var issueId in GetAllIssueIds())
                 _nodeStates[issueId] = false;
+
+            SaveCollapsedIds();
+        }
+
+        private async Task LoadCollapsedIds()
+        {
+            var collapsedIds = await LocalStorageService.GetItemAsync<string[]>("collapsedIds") ?? Array.Empty<string>();
+            foreach (var idText in collapsedIds)
+            {
+                if (GitHubIssueId.TryParse(idText, out var id))
+                    _nodeStates[id] = false;
+            }
+        }
+
+        private void SaveCollapsedIds()
+        {
+            var collapsedIds = _nodeStates.Where(kv => kv.Value == false)
+                                          .Select(kv => kv.Key.ToString())
+                                          .ToArray();
+            LocalStorageService.SetItemAsync("collapsedIds", collapsedIds);
         }
     }
 }
