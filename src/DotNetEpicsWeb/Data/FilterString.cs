@@ -193,6 +193,9 @@ namespace DotNetEpicsWeb.Data
 
         public static FilterString Parse(string text)
         {
+            if (string.IsNullOrEmpty(text))
+                return Empty;
+
             var tokens = new List<FilterStringToken>();
 
             var matches = Regex.Matches(text, "(?<text>(?<key>[a-z]+):(?<value>\"[^\"]+\"|\\S+))|(?<text>\"[^\"]+\")|(?<text>\\S+)|(?<text>\\s+)");

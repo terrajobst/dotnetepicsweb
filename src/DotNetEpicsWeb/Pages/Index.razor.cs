@@ -364,13 +364,9 @@ namespace DotNetEpicsWeb.Pages
             if (SelectedMilestone != null && SelectedMilestone != (node.Issue.Milestone ?? ""))
                 return false;
 
-            if (string.IsNullOrEmpty(Filter))
-                return true;
-
             var filters = FilterString.Parse(Filter)
                                       .Where(t => string.IsNullOrEmpty(t.Key) && !string.IsNullOrWhiteSpace(t.Value))
-                                      .Select(t => t.Value)
-                                      .ToArray();
+                                      .Select(t => t.Value);
 
             var hasUnmatchedFilter = false;
 
