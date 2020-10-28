@@ -69,20 +69,28 @@ namespace DotNetEpicsWeb.Data
                 var issue = issueQueue.Dequeue();
                 Console.WriteLine($"Processing {issue.Id}...");
 
-                var links = ParseIssueLinks(issue.Id.Owner, issue.Id.Repo, issue.DescriptionMarkdown);
-                var children = new List<GitHubIssue>();
-                issueChildren.Add(issue, children);
+                var links = ParseIssueLinks(issue.Id.Owner, issue.Id.Repo, issue.DescriptionMarkdown).ToArray();
+                issueChildren.Add(issue, new List<GitHubIssue>());
 
-                foreach (var link in links)
+                foreach (var (type, linkedId) in links)
                 {
-                    if (!issueById.TryGetValue(link, out var linkedIssue))
+                    if (!issueById.TryGetValue(linkedId, out var linkedIssue))
                     {
-                        linkedIssue = await GetIssueAsync(client, repoCache, link);
-                        issueById.Add(link, linkedIssue);
+                        linkedIssue = await GetIssueAsync(client, repoCache, linkedId);
+                        issueById.Add(linkedId, linkedIssue);
                         issueQueue.Enqueue(linkedIssue);
                     }
 
-                    children.Add(linkedIssue);
+                    var parent = type == IssueLinkType.Parent ? linkedIssue : issue;
+                    var child = type == IssueLinkType.Child ? linkedIssue : issue;
+
+                    if (!issueChildren.TryGetValue(parent, out var children))
+                    {
+                        children = new List<GitHubIssue>();
+                        issueChildren.Add(issue, children);
+                    }
+
+                    children.Add(child);
                 }
             }
 
@@ -273,7 +281,7 @@ namespace DotNetEpicsWeb.Data
             return result;
         }
 
-        private static IReadOnlyList<GitHubIssueId> ParseIssueLinks(string owner, string repo, string markdown)
+        private static IEnumerable<(IssueLinkType, GitHubIssueId)> ParseIssueLinks(string owner, string repo, string markdown)
         {
             var pipeline = new MarkdownPipelineBuilder()
                 .UseTaskLists()
@@ -281,8 +289,22 @@ namespace DotNetEpicsWeb.Data
                 .Build();
 
             var document = MarkdownParser.Parse(markdown, pipeline);
+
+            var parentLinks = document.Descendants<LinkInline>()
+                                      .Where(l => !l.ContainsParentOfType<TaskList>())
+                                      .Where(l => (l.FirstChild?.ToString()?.Trim() ?? string.Empty).StartsWith("Parent"))
+                                      .ToArray();
+
+            foreach (var parentLink in parentLinks)
+            {
+                if (GitHubIssueId.TryParse(parentLink.Url, out var id))
+                {
+                    yield return (IssueLinkType.Parent, id);
+                    break;
+                }
+            }
+
             var taskLinkItems = document.Descendants<TaskList>().Select(t => t.Parent);
-            var result = new List<GitHubIssueId>();
 
             foreach (var taskListItem in taskLinkItems)
             {
@@ -335,10 +357,8 @@ namespace DotNetEpicsWeb.Data
                 }
 
                 if (id != null)
-                    result.Add(id.Value);
+                    yield return (IssueLinkType.Child, id.Value);
             }
-
-            return result;
         }
 
         private sealed class RepoCache
@@ -362,6 +382,12 @@ namespace DotNetEpicsWeb.Data
 
                 return result;
             }
+        }
+
+        private enum IssueLinkType
+        {
+            Parent,
+            Child
         }
     }
 }
