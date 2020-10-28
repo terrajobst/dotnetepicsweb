@@ -69,8 +69,6 @@ namespace DotNetEpicsWeb
                             var isMember = await GitHubAuthHelpers.IsMemberOfTeamAsync(accessToken, orgName, teamName, userName);
                             if (isMember)
                                 context.Identity.AddClaim(new Claim(context.Identity.RoleClaimType, DotNetEpicsConstants.ProductTeamRole));
-
-                            context.Identity.AddClaim(new Claim(DotNetEpicsConstants.TokenClaim, accessToken));
                         };
                     });
         }
