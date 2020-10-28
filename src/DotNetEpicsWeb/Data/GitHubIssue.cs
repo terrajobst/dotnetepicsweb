@@ -8,6 +8,7 @@ namespace DotNetEpicsWeb.Data
     public sealed class GitHubIssue
     {
         public GitHubIssueId Id { get; set; }
+        public bool IsPrivate { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
         public string CreatedBy { get; set; }
         public bool IsClosed { get; set; }

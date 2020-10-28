@@ -7,8 +7,8 @@ using Blazored.LocalStorage;
 
 using DotNetEpicsWeb.Data;
 
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.JSInterop;
 
@@ -58,6 +58,9 @@ namespace DotNetEpicsWeb.Pages
         }
 
         [Inject]
+        public AuthenticationStateProvider AuthenticationStateProvider { get; set; }
+
+        [Inject]
         public ILocalStorageService LocalStorageService { get; set; }
 
         [Inject]
@@ -72,6 +75,8 @@ namespace DotNetEpicsWeb.Pages
         public PageTree PageTree { get; set; }
 
         public GitHubIssueTree Tree => PageTree?.IssueTree;
+
+        public bool CanSeePrivateIssues { get; set; }
 
         public bool ShowOpen
         {
@@ -185,6 +190,9 @@ namespace DotNetEpicsWeb.Pages
 
         protected override async Task OnInitializedAsync()
         {
+            var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            CanSeePrivateIssues = state.User.IsInRole(DotNetEpicsConstants.ProductTeamRole);
+
             await LoadCollapsedIds();
 
             TreeManager.Changed += TreeChanged;
@@ -262,6 +270,9 @@ namespace DotNetEpicsWeb.Pages
         {
             foreach (var issueNode in issueNodes)
             {
+                if (issueNode.Issue.IsPrivate && !CanSeePrivateIssues)
+                    continue;
+
                 if (!IsVisible(issueNode))
                     continue;
 

@@ -17,7 +17,14 @@
                     <div class="gh-issue-kind-header @issue.Kind.ToString().ToLower()" />
                     <div>
                         <div>
-                            <a class="gh-issue-title" href="@issue.Url" target="_blank">@issue.Title</a>
+                            <a class="gh-issue-title" href="@issue.Url" target="_blank">
+                                @if (issue.IsPrivate)
+                                {
+                                    <span class="mr-1 oi oi-lock-locked"></span>
+                                }
+
+                                @issue.Title
+                            </a>
                             <span>
                                 @foreach (var label in issue.Labels)
                                 {

@@ -1,7 +1,11 @@
+using System.Security.Claims;
+
 using Blazored.LocalStorage;
 
 using DotNetEpicsWeb.Data;
 
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -41,6 +45,34 @@ namespace DotNetEpicsWeb
             {
                 services.AddSingleton<IGitHubTreeService, GitHubTreeService>();
             }
+
+            services.AddAuthentication(options =>
+                    {
+                        options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    })
+                    .AddCookie(options =>
+                    {
+                        options.LoginPath = "/signin";
+                        options.LogoutPath = "/signout";
+                    })
+                    .AddGitHub(options =>
+                    {
+                        options.ClientId = Configuration["GitHubClientId"];
+                        options.ClientSecret = Configuration["GitHubClientSecret"];
+                        options.ClaimActions.MapJsonKey(DotNetEpicsConstants.GitHubAvatarUrl, DotNetEpicsConstants.GitHubAvatarUrl);
+                        options.Events.OnCreatingTicket = async context =>
+                        {
+                            var accessToken = context.AccessToken;
+                            var orgName = DotNetEpicsConstants.ProductTeamOrg;
+                            var teamName = DotNetEpicsConstants.ProductTeamSlug;
+                            var userName = context.Identity.Name;
+                            var isMember = await GitHubAuthHelpers.IsMemberOfTeamAsync(accessToken, orgName, teamName, userName);
+                            if (isMember)
+                                context.Identity.AddClaim(new Claim(context.Identity.RoleClaimType, DotNetEpicsConstants.ProductTeamRole));
+
+                            context.Identity.AddClaim(new Claim(DotNetEpicsConstants.TokenClaim, accessToken));
+                        };
+                    });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -60,6 +92,9 @@ namespace DotNetEpicsWeb
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

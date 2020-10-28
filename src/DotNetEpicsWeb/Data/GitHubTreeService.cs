@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -20,40 +21,36 @@ namespace DotNetEpicsWeb.Data
     {
         private readonly GitHubRepoId[] _repos;
         private readonly GitHubClientFactory _gitHubClientFactory;
-        private readonly GitHubTreePersistence _persistence;
 
         public GitHubTreeService(IConfiguration configuration,
-                                 GitHubClientFactory gitHubClientFactory,
-                                 GitHubTreePersistence persistence)
+                                 GitHubClientFactory gitHubClientFactory)
         {
             _repos = configuration["Repos"].Split(",").Select(GitHubRepoId.Parse).ToArray();
             _gitHubClientFactory = gitHubClientFactory;
-            _persistence = persistence;
         }
 
         public async Task<GitHubIssueTree> GetIssueTreeAsync()
         {
             var client = await _gitHubClientFactory.CreateAsync();
             var tree = await GetIssueTreeAsync(client);
-
-            await _persistence.SaveAsync(tree);
-
             return tree;
         }
 
         private async Task<GitHubIssueTree> GetIssueTreeAsync(GitHubClient client)
         {
+            var repoCache = new RepoCache(client);
+
             var cardsTask = GetIssueCards(client);
 
             // Get root issues
 
             var issueTasks = new List<Task<IReadOnlyList<GitHubIssue>>>();
 
-            foreach (var repo in _repos)
+            foreach (var repoId in _repos)
             {
                 foreach (var label in DotNetEpicsConstants.Labels)
                 {
-                    var task = GetIssuesAsync(client, repo.Owner, repo.Name, label);
+                    var task = GetIssuesAsync(client, repoCache, repoId, label);
                     issueTasks.Add(task);
                 }
             }
@@ -80,7 +77,7 @@ namespace DotNetEpicsWeb.Data
                 {
                     if (!issueById.TryGetValue(link, out var linkedIssue))
                     {
-                        linkedIssue = await GetIssueAsync(client, link);
+                        linkedIssue = await GetIssueAsync(client, repoCache, link);
                         issueById.Add(link, linkedIssue);
                         issueQueue.Enqueue(linkedIssue);
                     }
@@ -200,35 +197,39 @@ namespace DotNetEpicsWeb.Data
             return issueCards.ToArray();
         }
 
-        private static async Task<IReadOnlyList<GitHubIssue>> GetIssuesAsync(GitHubClient client, string owner, string repo, string label)
+        private static async Task<IReadOnlyList<GitHubIssue>> GetIssuesAsync(GitHubClient client, RepoCache repoCache, GitHubRepoId repoId, string label)
         {
+            var repository = await repoCache.GetRepoAsync(repoId);
+
             var issueRequest = new RepositoryIssueRequest();
             issueRequest.State = ItemStateFilter.All;
             issueRequest.Labels.Add(label);
-            var issues = await client.Issue.GetAllForRepository(owner, repo, issueRequest);
+            var issues = await client.Issue.GetAllForRepository(repoId.Owner, repoId.Name, issueRequest);
 
             var result = new List<GitHubIssue>();
 
             foreach (var issue in issues)
             {
-                var gitHubIssue = CreateGitHubIssue(owner, repo, issue);
+                var gitHubIssue = CreateGitHubIssue(repoId.Owner, repoId.Name, repository.Private, issue);
                 result.Add(gitHubIssue);
             }
 
             return result;
         }
 
-        private static async Task<GitHubIssue> GetIssueAsync(GitHubClient client, GitHubIssueId id)
+        private static async Task<GitHubIssue> GetIssueAsync(GitHubClient client, RepoCache repoCache, GitHubIssueId id)
         {
+            var repo = await repoCache.GetRepoAsync(new GitHubRepoId(id.Owner, id.Repo));
             var issue = await client.Issue.Get(id.Owner, id.Repo, id.Number);
-            return CreateGitHubIssue(id.Owner, id.Repo, issue);
+            return CreateGitHubIssue(id.Owner, id.Repo, repo.Private, issue);
         }
 
-        private static GitHubIssue CreateGitHubIssue(string owner, string repo, Issue issue)
+        private static GitHubIssue CreateGitHubIssue(string owner, string repo, bool isPrivate, Issue issue)
         {
             var result = new GitHubIssue
             {
                 Id = new GitHubIssueId(owner, repo, issue.Number),
+                IsPrivate = isPrivate,
                 CreatedAt = issue.CreatedAt,
                 CreatedBy = issue.User.Login,
                 IsClosed = issue.ClosedAt != null,
@@ -338,6 +339,29 @@ namespace DotNetEpicsWeb.Data
             }
 
             return result;
+        }
+
+        private sealed class RepoCache
+        {
+            private readonly GitHubClient _client;
+            private readonly ConcurrentDictionary<GitHubRepoId, Repository> _repos = new ConcurrentDictionary<GitHubRepoId, Repository>();
+
+            public RepoCache(GitHubClient client)
+            {
+                _client = client;
+            }
+
+            public async Task<Repository> GetRepoAsync(GitHubRepoId id)
+            {
+                if (!_repos.TryGetValue(id, out var result))
+                {
+                    result = await _client.Repository.Get(id.Owner, id.Name);
+                    if (!_repos.TryAdd(id, result))
+                        result = _repos[id];
+                }
+
+                return result;
+            }
         }
     }
 }

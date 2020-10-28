@@ -6,6 +6,33 @@
 
 <div class="main">
     <div class="top-row px-4">
+        <AuthorizeView>
+            <Authorized>
+                <div class="dropdown">
+                    <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        @{
+                            var avatarUrl = context.User.FindFirst("avatar_url");
+                            if (avatarUrl != null)
+                            {
+                                <img src="@avatarUrl.Value"
+                                     class="mr-1"
+                                     alt="@context.User.Identity.Name"
+                                     style="border-radius: 50%"
+                                     width="20"
+                                     height="20" />
+                            }
+                        }
+                        @context.User.Identity.Name
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="signout">Sign out</a>
+                    </div>
+                </div>
+            </Authorized>
+            <NotAuthorized>
+                <a class="btn btn-link" href="signin">Sign in</a>
+            </NotAuthorized>
+        </AuthorizeView>
     </div>
 
     <div class="content px-4">
