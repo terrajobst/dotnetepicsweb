@@ -51,8 +51,11 @@ namespace DotNetEpicsWeb.Data
                 else
                     workItem.Priority = -1;
 
+                if (item.Fields.TryGetValue<IdentityRef>("System.AssignedTo", out var assignedTo))
+                    workItem.AssignedTo = GetAlias(assignedTo);
+
                 workItem.CreatedAt = (DateTime)item.Fields["System.CreatedDate"];
-                workItem.CreatedBy = ((IdentityRef)item.Fields["System.CreatedBy"]).UniqueName;
+                workItem.CreatedBy = GetAlias((IdentityRef)item.Fields["System.CreatedBy"]);
                 workItem.Url = item.Links.Links.Where(l => l.Key == "html")
                                                .Select(l => l.Value)
                                                .OfType<ReferenceLink>()
@@ -134,7 +137,9 @@ namespace DotNetEpicsWeb.Data
                 // IsClosed = 
                 Title = azureNode.Title,
                 // Milestone =
-                Assignees = Array.Empty<string>(),
+                Assignees = string.IsNullOrEmpty(azureNode.AssignedTo) 
+                                ? Array.Empty<string>()
+                                : new[] { azureNode.AssignedTo },
                 Labels = CreateLabels(azureNode),
                 Kind = ConvertKind(azureNode.Type),
                 ReleaseInfo = new TreeNodeStatus { Release = "", Status = azureNode.State },
@@ -211,6 +216,15 @@ namespace DotNetEpicsWeb.Data
                 return TreeNodeKind.Issue;
         }
 
+        private static string GetAlias(IdentityRef identityRef)
+        {
+            var email = identityRef.UniqueName;
+            var indexOfAt = email.IndexOf('@');
+            return indexOfAt >= 0 
+                ? email.Substring(0, indexOfAt)
+                : email;
+        }
+
         private sealed class AzureWorkItem
         {
             public int Id { get; set; }
@@ -220,6 +234,7 @@ namespace DotNetEpicsWeb.Data
             public long Priority { get; set; }
             public DateTime CreatedAt { get; set; }
             public string CreatedBy { get; set; }
+            public string AssignedTo { get; set; }
             public string Url { get; set; }
             public AzureWorkItem Parent { get; set; }
             public List<AzureWorkItem> Children { get; } = new List<AzureWorkItem>();
