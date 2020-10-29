@@ -97,31 +97,6 @@
         background-color: darkgray;
     }
 
-.gh-issue-kind {
-    color: white;
-    border: 1px;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 14px;
-}
-
-    .gh-issue-kind.theme {
-        background-color: purple;
-    }
-
-    .gh-issue-kind.epic {
-        background-color: #c6415a;
-    }
-
-    .gh-issue-kind.userstory {
-        background-color: #0e8a16;
-    }
-
-    .gh-issue-kind.issue {
-        color: black;
-        background-color: darkgray;
-    }
-
 /* Tree */
 .tree ul {
     margin-left: 0px;

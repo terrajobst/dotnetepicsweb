@@ -145,7 +145,7 @@ namespace DotNetEpicsWeb.Data
                                 : new[] { azureNode.AssignedTo },
                 Labels = CreateLabels(azureNode),
                 Kind = ConvertKind(azureNode.Type),
-                ReleaseInfo = new TreeNodeStatus { Release = "", Status = azureNode.State },
+                ReleaseInfo = new TreeNodeStatus { Status = azureNode.State },
                 Url = azureNode.Url
             };
             return treeNode;

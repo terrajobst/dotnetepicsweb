@@ -389,9 +389,9 @@ namespace DotNetEpicsWeb.Pages
                     continue;
                 else if (node.Milestone != null && node.Milestone.Contains(f, StringComparison.OrdinalIgnoreCase))
                     continue;
-                else if (node.ReleaseInfo != null && node.ReleaseInfo.Release.Contains(f, StringComparison.OrdinalIgnoreCase))
+                else if (node.ReleaseInfo?.Release != null && node.ReleaseInfo.Release.Contains(f, StringComparison.OrdinalIgnoreCase))
                     continue;
-                else if (node.ReleaseInfo != null && node.ReleaseInfo.Status.Contains(f, StringComparison.OrdinalIgnoreCase))
+                else if (node.ReleaseInfo?.Status != null && node.ReleaseInfo.Status.Contains(f, StringComparison.OrdinalIgnoreCase))
                     continue;
                 else if (node.Labels.Any(l => l.Name.Contains(f, StringComparison.OrdinalIgnoreCase)))
                     continue;

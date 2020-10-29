@@ -13,39 +13,25 @@ else
     <div class="form-group row">
 
         <div class="col-auto">
-            <button class="btn btn-sm btn-light" @onclick="ExpandAll">
-                <span class="oi oi-plus"></span>
+            <div class="btn-group" role="group" aria-label="Third group">
+                <button class="btn btn-sm btn-secondary" @onclick="ExpandAll">
+                    <span class="oi oi-plus"></span>
+                </button>
+                <button class="btn btn-sm btn-secondary" @onclick="CollapseAll">
+                    <span class="oi oi-minus"></span>
+                </button>
+            </div>
+        </div>
+
+        <div class="dropdown col-auto">
+            <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="releasesDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Type
             </button>
-            <button class="btn btn-sm btn-light" @onclick="CollapseAll">
-                <span class="oi oi-minus"></span>
-            </button>
-        </div>
-
-        <div class="col-auto">
-            <div class="m-0 form-check form-check-inline gh-issue-kind theme">
-                <input class="form-check-input" type="checkbox" id="inlineCheckbox1" @bind="IncludeThemes">
-                <label class="form-check-label" for="inlineCheckbox1">Themes</label>
-            </div>
-        </div>
-
-        <div class="col-auto">
-            <div class="m-0 form-check form-check-inline gh-issue-kind epic">
-                <input class="form-check-input" type="checkbox" id="inlineCheckbox2" @bind="IncludeEpics">
-                <label class="form-check-label" for="inlineCheckbox2">Epics</label>
-            </div>
-        </div>
-
-        <div class="col-auto">
-            <div class="m-0 form-check form-check-inline gh-issue-kind userstory">
-                <input class="form-check-input" type="checkbox" id="inlineCheckbox3" @bind="IncludeUserStories">
-                <label class="form-check-label" for="inlineCheckbox3">User Stories</label>
-            </div>
-        </div>
-
-        <div class="col-auto">
-            <div class="m-0 form-check form-check-inline gh-issue-kind issue">
-                <input class="form-check-input" type="checkbox" id="inlineCheckbox4" @bind="IncludeIssues">
-                <label class="form-check-label" for="inlineCheckbox4">Issues</label>
+            <div class="dropdown-menu" aria-labelledby="releasesDropdown">
+                <a class="dropdown-item mr-5" href="#" @onclick="() => IncludeThemes = !IncludeThemes" @onclick:preventDefault><span class="oi oi-check mr-2 @(IncludeThemes ? "" : "invisible")"></span>Themes</a>
+                <a class="dropdown-item mr-5" href="#" @onclick="() => IncludeEpics = !IncludeEpics" @onclick:preventDefault><span class="oi oi-check mr-2 @(IncludeEpics ? "" : "invisible")"></span>Epics</a>
+                <a class="dropdown-item mr-5" href="#" @onclick="() => IncludeUserStories = !IncludeUserStories" @onclick:preventDefault><span class="oi oi-check mr-2 @(IncludeUserStories ? "" : "invisible")"></span>User Stories</a>
+                <a class="dropdown-item mr-5" href="#" @onclick="() => IncludeIssues = !IncludeIssues" @onclick:preventDefault><span class="oi oi-check mr-2 @(IncludeIssues ? "" : "invisible")"></span>Issues</a>
             </div>
         </div>
 
@@ -141,7 +127,7 @@ else
             </div>
         </div>
 
-        <div class="dropdown col-auto">
+        <div class="dropdown col-auto ml-auto">
             <button class="btn btn-success btn-sm dropdown-toggle" type="button" id="newDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 New Issue
             </button>
