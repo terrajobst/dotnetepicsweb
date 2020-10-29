@@ -21,7 +21,7 @@ namespace DotNetEpicsWeb.Data
 
         public async Task InvalidateAsync()
         {
-            var gitHubTreeTask = _githubTreeProvider.GetIssueTreeAsync();
+            var gitHubTreeTask = _githubTreeProvider.GetTreeAsync();
             var azureTreeTask = _azureTreeProvider.GetTreeAsync();
             await Task.WhenAll(gitHubTreeTask, azureTreeTask);
 

@@ -32,7 +32,7 @@ namespace DotNetEpicsWeb.Data
             _gitHubClientFactory = gitHubClientFactory;
         }
 
-        public async Task<Tree> GetIssueTreeAsync()
+        public async Task<Tree> GetTreeAsync()
         {
             var client = await _gitHubClientFactory.CreateAsync();
             var repoCache = new RepoCache(client);
