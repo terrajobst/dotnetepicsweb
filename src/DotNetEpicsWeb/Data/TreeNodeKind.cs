@@ -1,6 +1,6 @@
 ﻿namespace DotNetEpicsWeb.Data
 {
-    public enum GitHubIssueKind
+    public enum TreeNodeKind
     {
         Theme,
         Epic,

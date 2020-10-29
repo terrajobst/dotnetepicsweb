@@ -1,24 +1,37 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace DotNetEpicsWeb.Data
 {
     public sealed class GitHubTreeManager
     {
-        private readonly IGitHubTreeService _treeService;
-        private GitHubIssueTree _tree;
+        private readonly GitHubTreeProvider _githubTreeProvider;
+        private readonly AzureDevOpsTreeProvider _azureTreeProvider;
 
-        public GitHubTreeManager(IGitHubTreeService treeService)
+        private Tree _tree;
+
+        public GitHubTreeManager(GitHubTreeProvider gitHubTreeProvider, AzureDevOpsTreeProvider azureTreeProvider)
         {
-            _treeService = treeService;
+            _githubTreeProvider = gitHubTreeProvider;
+            _azureTreeProvider = azureTreeProvider;
         }
 
-        public GitHubIssueTree Tree => _tree;
+        public Tree Tree => _tree;
 
         public async Task InvalidateAsync()
         {
-            _tree = await _treeService.GetIssueTreeAsync();
+            var gitHubTreeTask = _githubTreeProvider.GetIssueTreeAsync();
+            var azureTreeTask = _azureTreeProvider.GetTreeAsync();
+            await Task.WhenAll(gitHubTreeTask, azureTreeTask);
+
+            _tree = MergeTrees(gitHubTreeTask.Result, azureTreeTask.Result);
             Changed?.Invoke(this, EventArgs.Empty);
+        }
+
+        private Tree MergeTrees(Tree result1, Tree result2)
+        {
+            return new Tree(result1.Roots.Concat(result2.Roots));
         }
 
         public event EventHandler Changed;

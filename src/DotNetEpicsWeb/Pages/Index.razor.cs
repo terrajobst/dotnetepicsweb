@@ -16,29 +16,29 @@ namespace DotNetEpicsWeb.Pages
 {
     public sealed class PageTree
     {
-        public PageTree(GitHubIssueTree issueTree)
+        public PageTree(Tree tree)
         {
-            IssueTree = issueTree;
+            Tree = tree;
         }
 
-        public GitHubIssueTree IssueTree { get; }
+        public Tree Tree { get; }
         public List<PageNode> Roots { get; } = new List<PageNode>();
     }
 
     public sealed class PageNode
     {
-        public PageNode(GitHubIssueNode issueNode)
+        public PageNode(TreeNode treeNode)
         {
-            IssueNode = issueNode;
+            TreeNode = treeNode;
         }
 
-        public GitHubIssueNode IssueNode { get; }
+        public TreeNode TreeNode { get; }
         public List<PageNode> Children { get; } = new List<PageNode>();
     }
 
     public partial class Index
     {
-        private readonly Dictionary<GitHubIssueId, bool> _nodeStates = new Dictionary<GitHubIssueId, bool>();
+        private readonly Dictionary<string, bool> _nodeStates = new Dictionary<string, bool>();
         private readonly FilterString _defaultFilter;
 
         private bool _showOpen = true;
@@ -74,7 +74,7 @@ namespace DotNetEpicsWeb.Pages
 
         public PageTree PageTree { get; set; }
 
-        public GitHubIssueTree Tree => PageTree?.IssueTree;
+        public Tree Tree => PageTree?.Tree;
 
         public bool CanSeePrivateIssues { get; set; }
 
@@ -243,13 +243,13 @@ namespace DotNetEpicsWeb.Pages
             });
         }
 
-        public IEnumerable<GitHubIssueId> GetAllIssueIds()
+        public IEnumerable<string> GetAllIssueIds()
         {
             if (PageTree == null)
-                return Enumerable.Empty<GitHubIssueId>();
+                return Enumerable.Empty<string>();
 
-            return PageTree.IssueTree.Roots.SelectMany(r => r.DescendantsAndSelf())
-                                     .Select(n => n.Issue.Id);
+            return PageTree.Tree.Roots.SelectMany(r => r.DescendantsAndSelf())
+                                      .Select(n => n.Id);
         }
 
         private void RebuildPageTree()
@@ -261,16 +261,16 @@ namespace DotNetEpicsWeb.Pages
             else
             {
                 var pageTree = new PageTree(TreeManager.Tree);
-                RebuildNodes(pageTree.Roots, pageTree.IssueTree.Roots);
+                RebuildNodes(pageTree.Roots, pageTree.Tree.Roots);
                 PageTree = pageTree;
             }
         }
 
-        private void RebuildNodes(List<PageNode> nodes, List<GitHubIssueNode> issueNodes)
+        private void RebuildNodes(List<PageNode> pageNodes, IEnumerable<TreeNode> treeNodes)
         {
-            foreach (var issueNode in issueNodes)
+            foreach (var issueNode in treeNodes)
             {
-                if (issueNode.Issue.IsPrivate && !CanSeePrivateIssues)
+                if (issueNode.IsPrivate && !CanSeePrivateIssues)
                     continue;
 
                 if (!IsVisible(issueNode))
@@ -278,12 +278,12 @@ namespace DotNetEpicsWeb.Pages
 
                 if (SkipNode(issueNode))
                 {
-                    RebuildNodes(nodes, issueNode.Children);
+                    RebuildNodes(pageNodes, issueNode.Children);
                 }
                 else
                 {
                     var node = new PageNode(issueNode);
-                    nodes.Add(node);
+                    pageNodes.Add(node);
                     RebuildNodes(node.Children, issueNode.Children);
                 }
             }
@@ -340,39 +340,37 @@ namespace DotNetEpicsWeb.Pages
             return filterString;
         }
 
-        private bool IsVisible(GitHubIssueNode node)
+        private bool IsVisible(TreeNode node)
         {
             return IsDirectlyVisible(node) ||
                    IsIndirectlyVisible(node);
         }
 
-        private bool IsDirectlyVisible(GitHubIssueNode node)
+        private bool IsDirectlyVisible(TreeNode node)
         {
-            var issue = node.Issue;
-
-            if (ShowOpen && issue.IsClosed || !ShowOpen && !issue.IsClosed)
+            if (ShowOpen && node.IsClosed || !ShowOpen && !node.IsClosed)
                 return false;
 
-            if (SelectedRelease != null && SelectedRelease != (node.Issue.ProjectStatus?.ProjectName ?? ""))
+            if (SelectedRelease != null && SelectedRelease != (node.ReleaseInfo?.Release ?? ""))
                 return false;
 
-            if (SelectedState != null && SelectedState != (node.Issue.ProjectStatus?.Column ?? ""))
+            if (SelectedState != null && SelectedState != (node.ReleaseInfo?.Status ?? ""))
                 return false;
 
             if (SelectedAssignee != null)
             {
                 if (SelectedAssignee == "")
                 {
-                    if (node.Issue.Assignees.Any())
+                    if (node.Assignees.Any())
                         return false;
                 }
-                else if (!node.Issue.Assignees.Contains(SelectedAssignee))
+                else if (!node.Assignees.Contains(SelectedAssignee))
                 {
                     return false;
                 }
             }
 
-            if (SelectedMilestone != null && SelectedMilestone != (node.Issue.Milestone ?? ""))
+            if (SelectedMilestone != null && SelectedMilestone != (node.Milestone ?? ""))
                 return false;
 
             var filters = FilterString.Parse(Filter)
@@ -383,19 +381,19 @@ namespace DotNetEpicsWeb.Pages
 
             foreach (var f in filters)
             {
-                if (issue.Title.Contains(f, StringComparison.OrdinalIgnoreCase))
+                if (node.Title.Contains(f, StringComparison.OrdinalIgnoreCase))
                     continue;
-                else if (issue.Id.ToString().Contains(f, StringComparison.OrdinalIgnoreCase))
+                else if (node.Id.ToString().Contains(f, StringComparison.OrdinalIgnoreCase))
                     continue;
-                else if (issue.Assignees.Any(a => a.Contains(f, StringComparison.OrdinalIgnoreCase)))
+                else if (node.Assignees.Any(a => a.Contains(f, StringComparison.OrdinalIgnoreCase)))
                     continue;
-                else if (issue.Milestone != null && issue.Milestone.Contains(f, StringComparison.OrdinalIgnoreCase))
+                else if (node.Milestone != null && node.Milestone.Contains(f, StringComparison.OrdinalIgnoreCase))
                     continue;
-                else if (issue.ProjectStatus != null && issue.ProjectStatus.ProjectName.Contains(f, StringComparison.OrdinalIgnoreCase))
+                else if (node.ReleaseInfo != null && node.ReleaseInfo.Release.Contains(f, StringComparison.OrdinalIgnoreCase))
                     continue;
-                else if (issue.ProjectStatus != null && issue.ProjectStatus.Column.Contains(f, StringComparison.OrdinalIgnoreCase))
+                else if (node.ReleaseInfo != null && node.ReleaseInfo.Status.Contains(f, StringComparison.OrdinalIgnoreCase))
                     continue;
-                else if (issue.Labels.Any(l => l.Name.Contains(f, StringComparison.OrdinalIgnoreCase)))
+                else if (node.Labels.Any(l => l.Name.Contains(f, StringComparison.OrdinalIgnoreCase)))
                     continue;
 
                 hasUnmatchedFilter = true;
@@ -405,23 +403,23 @@ namespace DotNetEpicsWeb.Pages
             return !hasUnmatchedFilter;
         }
 
-        private bool IsIndirectlyVisible(GitHubIssueNode node)
+        private bool IsIndirectlyVisible(TreeNode node)
         {
             return !IsDirectlyVisible(node) && node.Descendants().Any(n => !SkipNode(n) && IsDirectlyVisible(n));
         }
 
-        private bool SkipNode(GitHubIssueNode node)
+        private bool SkipNode(TreeNode node)
         {
-            if (!IncludeThemes && node.Issue.Kind == GitHubIssueKind.Theme)
+            if (!IncludeThemes && node.Kind == TreeNodeKind.Theme)
                 return true;
 
-            if (!IncludeEpics && node.Issue.Kind == GitHubIssueKind.Epic)
+            if (!IncludeEpics && node.Kind == TreeNodeKind.Epic)
                 return true;
 
-            if (!IncludeUserStories && node.Issue.Kind == GitHubIssueKind.UserStory)
+            if (!IncludeUserStories && node.Kind == TreeNodeKind.UserStory)
                 return true;
 
-            if (!IncludeIssues && node.Issue.Kind == GitHubIssueKind.Issue)
+            if (!IncludeIssues && node.Kind == TreeNodeKind.Issue)
                 return true;
 
             return false;
@@ -429,12 +427,12 @@ namespace DotNetEpicsWeb.Pages
 
         public bool IsMuted(PageNode node)
         {
-            return IsIndirectlyVisible(node.IssueNode);
+            return IsIndirectlyVisible(node.TreeNode);
         }
 
         public bool IsExpanded(PageNode node)
         {
-            if (_nodeStates.TryGetValue(node.IssueNode.Issue.Id, out var state))
+            if (_nodeStates.TryGetValue(node.TreeNode.Id, out var state))
                 return state;
 
             return true;
@@ -442,7 +440,7 @@ namespace DotNetEpicsWeb.Pages
 
         public void ToggleNode(PageNode node)
         {
-            _nodeStates[node.IssueNode.Issue.Id] = !IsExpanded(node);
+            _nodeStates[node.TreeNode.Id] = !IsExpanded(node);
 
             SaveCollapsedIds();
         }
@@ -466,11 +464,8 @@ namespace DotNetEpicsWeb.Pages
         private async Task LoadCollapsedIds()
         {
             var collapsedIds = await LocalStorageService.GetItemAsync<string[]>("collapsedIds") ?? Array.Empty<string>();
-            foreach (var idText in collapsedIds)
-            {
-                if (GitHubIssueId.TryParse(idText, out var id))
-                    _nodeStates[id] = false;
-            }
+            foreach (var id in collapsedIds)
+                _nodeStates[id] = false;
         }
 
         private void SaveCollapsedIds()

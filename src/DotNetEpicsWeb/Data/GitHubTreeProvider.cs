@@ -2,8 +2,11 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+
+using Humanizer;
 
 using Markdig;
 using Markdig.Extensions.TaskLists;
@@ -17,30 +20,24 @@ using Octokit;
 
 namespace DotNetEpicsWeb.Data
 {
-    public sealed class GitHubTreeService : IGitHubTreeService
+    public sealed class GitHubTreeProvider
     {
         private readonly GitHubRepoId[] _repos;
         private readonly GitHubClientFactory _gitHubClientFactory;
 
-        public GitHubTreeService(IConfiguration configuration,
-                                 GitHubClientFactory gitHubClientFactory)
+        public GitHubTreeProvider(IConfiguration configuration,
+                                  GitHubClientFactory gitHubClientFactory)
         {
             _repos = configuration["Repos"].Split(",").Select(GitHubRepoId.Parse).ToArray();
             _gitHubClientFactory = gitHubClientFactory;
         }
 
-        public async Task<GitHubIssueTree> GetIssueTreeAsync()
+        public async Task<Tree> GetIssueTreeAsync()
         {
             var client = await _gitHubClientFactory.CreateAsync();
-            var tree = await GetIssueTreeAsync(client);
-            return tree;
-        }
-
-        private async Task<GitHubIssueTree> GetIssueTreeAsync(GitHubClient client)
-        {
             var repoCache = new RepoCache(client);
 
-            var cardsTask = GetIssueCards(client);
+            var cardsTask = GetIssueCardsAsync(client);
 
             // Get root issues
 
@@ -62,15 +59,14 @@ namespace DotNetEpicsWeb.Data
             var rootIssues = issueTasks.SelectMany(t => t.Result).ToArray();
             var issueQueue = new Queue<GitHubIssue>(rootIssues);
             var issueById = rootIssues.ToDictionary(i => i.Id);
-            var issueChildren = new Dictionary<GitHubIssue, List<GitHubIssue>>();
+            var issueChildren = new Dictionary<string, List<GitHubIssue>>();
 
             while (issueQueue.Count > 0)
             {
                 var issue = issueQueue.Dequeue();
-                Console.WriteLine($"Processing {issue.Id}...");
 
                 var links = ParseIssueLinks(issue.Id.Owner, issue.Id.Repo, issue.DescriptionMarkdown).ToArray();
-                issueChildren.Add(issue, new List<GitHubIssue>());
+                issueChildren.Add(issue.Id.ToString(), new List<GitHubIssue>());
 
                 foreach (var (type, linkedId) in links)
                 {
@@ -84,37 +80,14 @@ namespace DotNetEpicsWeb.Data
                     var parent = type == IssueLinkType.Parent ? linkedIssue : issue;
                     var child = type == IssueLinkType.Child ? linkedIssue : issue;
 
-                    if (!issueChildren.TryGetValue(parent, out var children))
+                    if (!issueChildren.TryGetValue(parent.Id.ToString(), out var children))
                     {
                         children = new List<GitHubIssue>();
-                        issueChildren.Add(issue, children);
+                        issueChildren.Add(parent.Id.ToString(), children);
                     }
 
                     children.Add(child);
                 }
-            }
-
-            // Now build the tree out of that
-
-            var nodeByIssue = issueById.Values.ToDictionary(i => i, i => new GitHubIssueNode { Issue = i });
-
-            foreach (var node in nodeByIssue.Values.OrderBy(n => n.Issue.Id))
-            {
-                foreach (var linkedIssue in issueChildren[node.Issue])
-                {
-                    var linkedNode = nodeByIssue[linkedIssue];
-                    node.Children.Add(linkedNode);
-
-                    if (linkedNode.Parent == null)
-                        linkedNode.Parent = node;
-                }
-            }
-
-            foreach (var node in nodeByIssue.Values)
-            {
-                // In case where somone created a cycle, let's remove
-                // the nodes that are already part of someone else.
-                node.Children.RemoveAll(n => n.Parent != node);
             }
 
             // Associate project status with issues
@@ -138,28 +111,56 @@ namespace DotNetEpicsWeb.Data
                     issue.Title = issue.Title.Substring(match.Length).Trim();
             }
 
+            // Now build the tree out of that
+
+            var nodeByIssue = issueById.Values.ToDictionary(i => i, i => ConvertToNode(i));
+
+            foreach (var node in nodeByIssue.Values.OrderBy(n => n.Id))
+            {
+                foreach (var linkedIssue in issueChildren[node.Id])
+                {
+                    var linkedNode = nodeByIssue[linkedIssue];
+                    node.Children.Add(linkedNode);
+
+                    if (linkedNode.Parent == null)
+                        linkedNode.Parent = node;
+                }
+            }
+
+            foreach (var node in nodeByIssue.Values)
+            {
+                // In case where somone created a cycle, let's remove
+                // the nodes that are already part of someone else.
+                node.Children.RemoveAll(n => n.Parent != node);
+            }
+
             var roots = nodeByIssue.Values.Where(n => n.Parent == null);
-            var assignees = new SortedSet<string>(roots.SelectMany(r => r.DescendantsAndSelf()).SelectMany(n => n.Issue.Assignees));
-            var milestones = new SortedSet<string>(roots.SelectMany(r => r.DescendantsAndSelf()).Select(n => n.Issue.Milestone));
-            var releases = new SortedSet<string>(roots.SelectMany(r => r.DescendantsAndSelf()).Select(n => n.Issue.ProjectStatus?.ProjectName));
-            var states = new SortedSet<string>(roots.SelectMany(r => r.DescendantsAndSelf()).Select(n => n.Issue.ProjectStatus?.Column));
-
-            assignees.Add(null);
-            milestones.Add(null);
-            releases.Add(null);
-            states.Add(null);
-
-            var tree = new GitHubIssueTree();
-            tree.Roots.AddRange(roots);
-            tree.Assignees = assignees;
-            tree.Milestones = milestones;
-            tree.Releases = releases;
-            tree.States = states;
-            return tree;
+            return new Tree(roots);
         }
 
-        private async Task<IReadOnlyList<GitHubIssueCard>> GetIssueCards(GitHubClient client)
-        {           
+        private TreeNode ConvertToNode(GitHubIssue issue)
+        {
+            var treeNode = new TreeNode
+            {
+                Id = issue.Id.ToString(),
+                IsPrivate = issue.IsPrivate,
+                CreatedAt = issue.CreatedAt,
+                CreatedBy = issue.CreatedBy,
+                IsClosed = issue.IsClosed,
+                Title = issue.Title,
+                Milestone = issue.Milestone,
+                Assignees = issue.Assignees,
+                Labels = issue.Labels,
+                Kind = (TreeNodeKind)issue.Kind,
+                ReleaseInfo = issue.ProjectStatus,
+                Url = issue.Url
+            };
+
+            return treeNode;
+        }
+
+        private async Task<IReadOnlyList<GitHubIssueCard>> GetIssueCardsAsync(GitHubClient client)
+        {
             var issueCards = new List<GitHubIssueCard>();
 
             static bool IsDotNetReleaseProject(string name)
@@ -188,7 +189,7 @@ namespace DotNetEpicsWeb.Data
                     foreach (var column in columns)
                     {
                         var cards = await client.Repository.Project.Card.GetAll(column.Id);
-                        
+
                         foreach (var card in cards)
                         {
                             if (GitHubIssueId.TryParse(card.ContentUrl, out var issueId) ||
@@ -245,10 +246,10 @@ namespace DotNetEpicsWeb.Data
                 DescriptionMarkdown = issue.Body,
                 Assignees = issue.Assignees.Select(a => a.Login).ToArray(),
                 Milestone = issue.Milestone?.Title,
-                Labels = issue.Labels.Select(l => CreateGitHubLabel(l)).ToArray()
+                Labels = issue.Labels.Select(l => CreateLabel(l)).ToArray()
             };
 
-            bool SetKindWhenContainsLabel(GitHubIssueKind kind, string labelName, bool force = false)
+            bool SetKindWhenContainsLabel(TreeNodeKind kind, string labelName, bool force = false)
             {
                 if (force || result.Labels.Any(l => string.Equals(l.Name, labelName, StringComparison.OrdinalIgnoreCase)))
                 {
@@ -259,13 +260,13 @@ namespace DotNetEpicsWeb.Data
                 return false;
             }
 
-            if (!SetKindWhenContainsLabel(GitHubIssueKind.Theme, DotNetEpicsConstants.LabelTheme))
+            if (!SetKindWhenContainsLabel(TreeNodeKind.Theme, DotNetEpicsConstants.LabelTheme))
             {
-                if (!SetKindWhenContainsLabel(GitHubIssueKind.Epic, DotNetEpicsConstants.LabelEpic))
+                if (!SetKindWhenContainsLabel(TreeNodeKind.Epic, DotNetEpicsConstants.LabelEpic))
                 {
-                    if (!SetKindWhenContainsLabel(GitHubIssueKind.UserStory, DotNetEpicsConstants.LabelUserStory))
+                    if (!SetKindWhenContainsLabel(TreeNodeKind.UserStory, DotNetEpicsConstants.LabelUserStory))
                     {
-                        SetKindWhenContainsLabel(GitHubIssueKind.Issue, DotNetEpicsConstants.LabelIssue, force: true);
+                        SetKindWhenContainsLabel(TreeNodeKind.Issue, DotNetEpicsConstants.LabelIssue, force: true);
                     }
                 }
             }
@@ -273,9 +274,9 @@ namespace DotNetEpicsWeb.Data
             return result;
         }
 
-        private static GitHubLabel CreateGitHubLabel(Label label)
+        private static TreeNodeLabel CreateLabel(Label label)
         {
-            var result = new GitHubLabel();
+            var result = new TreeNodeLabel();
             result.Name = label.Name;
             result.BackgroundColor = label.Color;
             return result;
@@ -388,6 +389,45 @@ namespace DotNetEpicsWeb.Data
         {
             Parent,
             Child
+        }
+
+        private sealed class GitHubIssue
+        {
+            public GitHubIssueId Id { get; set; }
+            public bool IsPrivate { get; set; }
+            public DateTimeOffset CreatedAt { get; set; }
+            public string CreatedBy { get; set; }
+            public bool IsClosed { get; set; }
+            public string Title { get; set; }
+            public string DescriptionMarkdown { get; set; }
+            public string Milestone { get; set; }
+            public IReadOnlyList<string> Assignees { get; set; }
+            public IReadOnlyList<TreeNodeLabel> Labels { get; set; }
+
+            public TreeNodeKind Kind { get; set; }
+            public TreeNodeStatus ProjectStatus { get; set; }
+            public string Url => $"https://github.com/{Id.Owner}/{Id.Repo}/issues/{Id.Number}";
+        }
+
+        private sealed class GitHubIssueCard
+        {
+            public GitHubIssueCard(GitHubIssueId id, string projectName, string column)
+            {
+                Id = id;
+                Status = new TreeNodeStatus
+                {
+                    Release = projectName,
+                    Status = column
+                };
+            }
+
+            public GitHubIssueId Id { get; }
+            public TreeNodeStatus Status { get; }
+
+            public override string ToString()
+            {
+                return $"{Id} - {Status}";
+            }
         }
     }
 }

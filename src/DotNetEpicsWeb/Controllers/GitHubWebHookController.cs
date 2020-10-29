@@ -72,7 +72,7 @@ namespace DotNetEpicsWeb.Controllers
                 return BadRequest();
             }
 
-            var knownIds = _treeManager.Tree?.Roots.SelectMany(r => r.DescendantsAndSelf()).Select(n => n.Issue.Id).ToHashSet() ?? new HashSet<GitHubIssueId>();
+            var knownIds = GetKnownIds().ToHashSet();
 
             var isRelevant = IsRelevant(typedPayload, knownIds);
             var payloadResult = new { IsRelevant = isRelevant, Payload = payload };
@@ -85,6 +85,19 @@ namespace DotNetEpicsWeb.Controllers
             }
 
             return Ok(isRelevant);
+        }
+
+        private IEnumerable<GitHubIssueId> GetKnownIds()
+        {
+            var tree = _treeManager.Tree;
+            if (tree != null)
+            {
+                foreach (var node in tree.Roots.SelectMany(r => r.DescendantsAndSelf()))
+                {
+                    if (GitHubIssueId.TryParse(node.Id, out var id))
+                        yield return id;
+                }
+            }
         }
 
         private static bool IsRelevant(WebHookPayload payload, HashSet<GitHubIssueId> knownIds)

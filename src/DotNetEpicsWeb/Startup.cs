@@ -16,12 +16,9 @@ namespace DotNetEpicsWeb
 {
     public class Startup
     {
-        private readonly IWebHostEnvironment _environment;
-
-        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
+        public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-            _environment = environment;
         }
 
         public IConfiguration Configuration { get; }
@@ -34,17 +31,10 @@ namespace DotNetEpicsWeb
             services.AddHostedService<GitHubTreeManagerWarmUp>();
             services.AddSingleton<GitHubClientFactory>();
             services.AddSingleton<GitHubTreeManager>();
-            services.AddSingleton<GitHubTreePersistence>();
-            services.AddBlazoredLocalStorage();
+            services.AddSingleton<AzureDevOpsTreeProvider>();
+            services.AddSingleton<GitHubTreeProvider>();
 
-            if (_environment.IsDevelopment())
-            {
-                services.AddSingleton<IGitHubTreeService, FakeTreeService>();
-            }
-            else
-            {
-                services.AddSingleton<IGitHubTreeService, GitHubTreeService>();
-            }
+            services.AddBlazoredLocalStorage();
 
             services.AddAuthentication(options =>
                     {

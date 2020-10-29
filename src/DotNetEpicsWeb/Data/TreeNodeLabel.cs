@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace DotNetEpicsWeb.Data
 {
-    public sealed class GitHubLabel
+    public sealed class TreeNodeLabel
     {
         private string _foregroundColor;
 

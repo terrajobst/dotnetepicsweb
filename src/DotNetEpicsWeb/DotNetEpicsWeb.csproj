@@ -10,6 +10,8 @@
     <PackageReference Include="Blazored.LocalStorage" Version="3.0.0" />
     <PackageReference Include="Humanizer" Version="2.8.26" />
     <PackageReference Include="Markdig" Version="0.22.0" />
+    <PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="16.153.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Services.Client" Version="16.153.0" />
     <PackageReference Include="Octokit" Version="0.48.0" />
     <PackageReference Include="Octokit.GraphQL" Version="0.1.6-beta" />
     <PackageReference Include="GitHubJwt" Version="0.0.4" />

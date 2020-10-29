@@ -6,7 +6,7 @@
             <li>
                 @{
                     var issueClass = Owner.IsMuted(node) ? "muted" : "";
-                    var issue = node.IssueNode.Issue;
+                    var treeNode = node.TreeNode;
                 }
                 <div class="gh-issue @issueClass d-flex flex-row">
                     @{
@@ -14,19 +14,19 @@
                         var glyph = Owner.IsExpanded(node) ? "oi-minus" : "oi-plus";
                     }
                     <span class="oi @glyph tree-toggle @visibleClass" @onclick="() => Owner.ToggleNode(node)"></span>
-                    <div class="gh-issue-kind-header @issue.Kind.ToString().ToLower()" />
+                    <div class="gh-issue-kind-header @treeNode.Kind.ToString().ToLower()" />
                     <div>
                         <div>
-                            <a class="gh-issue-title" href="@issue.Url" target="_blank">
-                                @if (issue.IsPrivate)
+                            <a class="gh-issue-title" href="@treeNode.Url" target="_blank">
+                                @if (treeNode.IsPrivate)
                                 {
                                     <span class="mr-1 oi oi-lock-locked"></span>
                                 }
 
-                                @issue.Title
+                                @treeNode.Title
                             </a>
                             <span>
-                                @foreach (var label in issue.Labels)
+                                @foreach (var label in treeNode.Labels)
                                 {
                                     <span class="gh-label"
                                           style="background: @("#" + label.BackgroundColor); color: @label.ForegroundColor">@label.Name</span>
@@ -34,21 +34,28 @@
                             </span>
                         </div>
                         <div class="gh-details-cell">
-                            @if (issue.ProjectStatus != null)
+                            @if (treeNode.ReleaseInfo != null)
                             {
-                                <span class="gh-project-status">@issue.ProjectStatus.Column for @issue.ProjectStatus.ProjectName</span>
+                                if (string.IsNullOrEmpty(treeNode.ReleaseInfo.Release))
+                                {
+                                    <span class="gh-project-status">@treeNode.ReleaseInfo.Status</span>
+                                }
+                                else
+                                {
+                                    <span class="gh-project-status">@treeNode.ReleaseInfo.Status for @treeNode.ReleaseInfo.Release</span>
+                                }
                             }
 
-                            @issue.DetailText
+                            @treeNode.DetailText
 
-                            @if (issue.Milestone != null)
+                            @if (treeNode.Milestone != null)
                             {
-                                <span class="ml-2 mr-1 oi oi-signpost text-muted" aria-hidden="true"></span>@issue.Milestone
+                                <span class="ml-2 mr-1 oi oi-signpost text-muted" aria-hidden="true"></span>@treeNode.Milestone
                             }
 
-                            @if (issue.Assignees.Any())
+                            @if (treeNode.Assignees.Any())
                             {
-                                var assigneeList = string.Join(", ", issue.Assignees);
+                                var assigneeList = string.Join(", ", treeNode.Assignees);
                                 <span class="ml-2 mr-1 oi oi-person text-muted" aria-hidden="true"></span>@assigneeList
                             }
                         </div>
