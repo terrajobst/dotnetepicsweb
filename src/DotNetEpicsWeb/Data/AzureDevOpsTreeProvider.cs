@@ -26,26 +26,15 @@ namespace DotNetEpicsWeb.Data
             var token = _configuration["AzureDevOpsToken"];
             var connection = new VssConnection(url, new VssBasicCredential(string.Empty, token));
             var client = connection.GetClient<WorkItemTrackingHttpClient>();
-            var itemQuery = new Wiql
-            {
-                Query = @"
-                    SELECT  [System.Id]
-                    FROM    workitems
-                "
-            };
+            var itemQueryResults = await client.QueryByIdAsync(new Guid(_configuration["AzureDevOpsQueryId"]));
 
-            var itemQueryResults = await client.QueryByWiqlAsync(itemQuery);
-            var itemIds = itemQueryResults.WorkItems.Select(item => item.Id);
+            var itemIds = itemQueryResults.WorkItemRelations.Select(rel => rel.Target)
+                  .Concat(itemQueryResults.WorkItemRelations.Select(rel => rel.Source))
+                  .Where(r => r != null)
+                  .Select(r => r.Id)
+                  .ToHashSet();
+
             var items = await client.GetWorkItemsAsync(itemIds, expand: WorkItemExpand.All);
-
-            var linkQuery = new Wiql
-            {
-                Query = @"
-                    SELECT  [System.Id]
-                    FROM    WorkItemLinks
-                    WHERE   ([System.Links.LinkType] = 'Parent')
-                "
-            };
 
             var workItemById = new Dictionary<int, AzureWorkItem>();
 
@@ -56,7 +45,12 @@ namespace DotNetEpicsWeb.Data
                 workItem.Type = item.Fields["System.WorkItemType"].ToString();
                 workItem.Title = item.Fields["System.Title"].ToString();
                 workItem.State = item.Fields["System.State"].ToString();
-                workItem.Priority = (long)item.Fields["Microsoft.VSTS.Common.Priority"];
+
+                if (item.Fields.TryGetValue<long>("Microsoft.VSTS.Common.Priority", out var priority))
+                    workItem.Priority = priority;
+                else
+                    workItem.Priority = -1;
+
                 workItem.CreatedAt = (DateTime)item.Fields["System.CreatedDate"];
                 workItem.CreatedBy = ((IdentityRef)item.Fields["System.CreatedBy"]).UniqueName;
                 workItem.Url = item.Links.Links.Where(l => l.Key == "html")
@@ -66,27 +60,30 @@ namespace DotNetEpicsWeb.Data
                                                .SingleOrDefault();
 
                 workItemById.Add(workItem.Id, workItem);
-
             }
 
-            var linkQueryResults = await client.QueryByWiqlAsync(linkQuery);
-
-            foreach (var link in linkQueryResults.WorkItemRelations)
+            foreach (var link in itemQueryResults.WorkItemRelations)
             {
                 if (link.Source == null || link.Target == null)
                     continue;
 
-                var childId = link.Source.Id;
-                var parentId = link.Target.Id;
+                if (link.Rel != "System.LinkTypes.Hierarchy-Forward")
+                    continue;
+
+                var parentId = link.Source.Id;
+                var childId = link.Target.Id;
 
                 if (workItemById.TryGetValue(childId, out var child) &&
                     workItemById.TryGetValue(parentId, out var parent))
                 {
+                    child.Parent = parent;
                     parent.Children.Add(child);
                 }
             }
 
-            return workItemById.Values.OrderBy(v => v.Id).ToArray();
+            return workItemById.Values.OrderBy(v => v.Id)
+                                      .Where(n => n.Parent == null)
+                                      .ToArray();
         }
 
         public async Task<Tree> GetTreeAsync()
@@ -140,7 +137,7 @@ namespace DotNetEpicsWeb.Data
                 Assignees = Array.Empty<string>(),
                 Labels = CreateLabels(azureNode),
                 Kind = ConvertKind(azureNode.Type),
-                ReleaseInfo = new TreeNodeStatus { Status = azureNode.State },
+                ReleaseInfo = new TreeNodeStatus { Release = "", Status = azureNode.State },
                 Url = azureNode.Url
             };
             return treeNode;
@@ -206,9 +203,9 @@ namespace DotNetEpicsWeb.Data
 
         private static TreeNodeKind ConvertKind(string type)
         {
-            if (string.Equals(type, "Epic", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(type, "Scenario", StringComparison.OrdinalIgnoreCase))
                 return TreeNodeKind.Epic;
-            else if (string.Equals(type, "Feature", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(type, "Experience", StringComparison.OrdinalIgnoreCase))
                 return TreeNodeKind.UserStory;
             else
                 return TreeNodeKind.Issue;
@@ -224,6 +221,7 @@ namespace DotNetEpicsWeb.Data
             public DateTime CreatedAt { get; set; }
             public string CreatedBy { get; set; }
             public string Url { get; set; }
+            public AzureWorkItem Parent { get; set; }
             public List<AzureWorkItem> Children { get; } = new List<AzureWorkItem>();
         }
     }

@@ -1,10 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace DotNetEpicsWeb.Data
 {
     public sealed class Tree
     {
+        public static Tree Empty { get; } = new Tree(Array.Empty<TreeNode>());
+
         public Tree(IEnumerable<TreeNode> roots)
         {
             Roots = roots.ToArray();
