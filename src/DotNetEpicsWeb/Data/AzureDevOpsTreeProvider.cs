@@ -51,6 +51,9 @@ namespace DotNetEpicsWeb.Data
                 else
                     workItem.Priority = -1;
 
+                if (item.Fields.TryGetValue<string>("Microsoft.DevDiv.TshirtCosting", out var cost))
+                    workItem.Cost = cost;
+
                 if (item.Fields.TryGetValue<IdentityRef>("System.AssignedTo", out var assignedTo))
                     workItem.AssignedTo = GetAlias(assignedTo);
 
@@ -153,6 +156,8 @@ namespace DotNetEpicsWeb.Data
             var result = new List<TreeNodeLabel>();
             var kind = ConvertKind(azureNode.Type);
 
+            // Kind
+
             if (kind == TreeNodeKind.Epic)
             {
                 result.Add(new TreeNodeLabel
@@ -169,6 +174,8 @@ namespace DotNetEpicsWeb.Data
                     BackgroundColor = "0e8a16",
                 });
             }
+
+            // Priorities
 
             if (azureNode.Priority == 0)
             {
@@ -203,6 +210,41 @@ namespace DotNetEpicsWeb.Data
                 });
             }
 
+            // Cost
+
+            if (azureNode.Cost == "S")
+            {
+                result.Add(new TreeNodeLabel
+                {
+                    Name = $"Cost:S",
+                    BackgroundColor = "b60205",
+                });
+            }
+            else if (azureNode.Cost == "M")
+            {
+                result.Add(new TreeNodeLabel
+                {
+                    Name = $"Cost:M",
+                    BackgroundColor = "c2e0c6",
+                });
+            }
+            else if (azureNode.Cost == "L")
+            {
+                result.Add(new TreeNodeLabel
+                {
+                    Name = $"Cost:S",
+                    BackgroundColor = "0e8a16",
+                });
+            }
+            else if (azureNode.Cost == "XL")
+            {
+                result.Add(new TreeNodeLabel
+                {
+                    Name = $"Cost:S",
+                    BackgroundColor = "006b75",
+                });
+            }
+
             return result.ToArray();
         }
 
@@ -232,6 +274,7 @@ namespace DotNetEpicsWeb.Data
             public string Title { get; set; }
             public string State { get; set; }
             public long Priority { get; set; }
+            public string Cost { get; set; }
             public DateTime CreatedAt { get; set; }
             public string CreatedBy { get; set; }
             public string AssignedTo { get; set; }
