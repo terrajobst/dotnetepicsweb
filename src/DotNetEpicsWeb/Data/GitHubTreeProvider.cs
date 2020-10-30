@@ -148,15 +148,80 @@ namespace DotNetEpicsWeb.Data
                 CreatedBy = issue.CreatedBy,
                 IsClosed = issue.IsClosed,
                 Title = issue.Title,
+                Priority = ConvertPriority(issue),
+                Cost = ConvertCost(issue),
                 Milestone = issue.Milestone,
                 Assignees = issue.Assignees,
                 Labels = issue.Labels,
-                Kind = (TreeNodeKind)issue.Kind,
+                Kind = issue.Kind,
                 ReleaseInfo = issue.ProjectStatus,
                 Url = issue.Url
             };
 
             return treeNode;
+        }
+
+        private int? ConvertPriority(GitHubIssue issue)
+        {
+            var result = (int?)null;
+
+            foreach (var label in issue.Labels)
+            {
+                if (!TryParseColonSeparatedValue(label.Name, out var name, out var value))
+                    continue;
+
+                if (!int.TryParse(value, out var priority))
+                    continue;
+
+                if (result == null || result > priority)
+                    result = priority;
+            }
+
+            return result;
+        }
+
+        private TreeNodeCost? ConvertCost(GitHubIssue issue)
+        {
+            var result = (TreeNodeCost?)null;
+
+            foreach (var label in issue.Labels)
+            {
+                if (!TryParseColonSeparatedValue(label.Name, out var name, out var value))
+                    continue;
+
+                TreeNodeCost? cost = null;
+
+                if (string.Equals(value, "S", StringComparison.OrdinalIgnoreCase))
+                    cost = TreeNodeCost.Small;
+                else if (string.Equals(value, "M", StringComparison.OrdinalIgnoreCase))
+                    cost = TreeNodeCost.Medium;
+                else if (string.Equals(value, "L", StringComparison.OrdinalIgnoreCase))
+                    cost = TreeNodeCost.Large;
+                else if (string.Equals(value, "XL", StringComparison.OrdinalIgnoreCase))
+                    cost = TreeNodeCost.ExtraLarge;
+
+                if (cost != null)
+                {
+                    if (result == null || result < cost)
+                        result = cost;
+                }
+            }
+
+            return result;
+        }
+
+        private static bool TryParseColonSeparatedValue(string text, out string name, out string value)
+        {
+            name = null;
+            value = null;
+
+            var parts = text.Split(':');
+            if (parts.Length != 2)
+                return false;
+
+            name = parts[0].Trim();
+            value = parts[1].Trim();
+            return true;
         }
 
         private async Task<IReadOnlyList<GitHubIssueCard>> GetIssueCardsAsync(GitHubClient client)

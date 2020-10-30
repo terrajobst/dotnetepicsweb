@@ -16,6 +16,8 @@ namespace DotNetEpicsWeb.Data
             Milestones = new SortedSet<string>(allNodes.Select(n => n.Milestone)) { null };
             Releases = new SortedSet<string>(allNodes.Select(n => n.ReleaseInfo?.Release)) { null };
             States = new SortedSet<string>(allNodes.Select(n => n.ReleaseInfo?.Status)) { null };
+            Priorities = new SortedSet<int?>(allNodes.Select(n => n.Priority)) { null };
+            Costs = new SortedSet<TreeNodeCost?>(allNodes.Select(n => n.Cost)) { null };
         }
 
         public IReadOnlyCollection<TreeNode> Roots { get; }
@@ -23,5 +25,7 @@ namespace DotNetEpicsWeb.Data
         public IReadOnlyCollection<string> Milestones { get; }
         public IReadOnlyCollection<string> Releases { get; }
         public IReadOnlyCollection<string> States { get; }
+        public IReadOnlyCollection<int?> Priorities { get; }
+        public IReadOnlyCollection<TreeNodeCost?> Costs { get; }
     }
 }

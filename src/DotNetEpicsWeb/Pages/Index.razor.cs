@@ -51,6 +51,8 @@ namespace DotNetEpicsWeb.Pages
         private string _selectedState;
         private string _selectedAssignee;
         private string _selectedMilestone;
+        private string _selectedPriority;
+        private string _selectedCost;
 
         public Index()
         {
@@ -188,6 +190,28 @@ namespace DotNetEpicsWeb.Pages
             }
         }
 
+        public string SelectedPriority
+        {
+            get => _selectedPriority;
+            set
+            {
+                _selectedPriority = value;
+                RebuildPageTree();
+                UpdateUrl();
+            }
+        }
+
+        public string SelectedCost
+        {
+            get => _selectedCost;
+            set
+            {
+                _selectedCost = value;
+                RebuildPageTree();
+                UpdateUrl();
+            }
+        }
+
         protected override async Task OnInitializedAsync()
         {
             var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
@@ -213,6 +237,8 @@ namespace DotNetEpicsWeb.Pages
                 _selectedState = filterString.GetValue("state");
                 _selectedAssignee = filterString.GetValue("assignee");
                 _selectedMilestone = filterString.GetValue("milestone");
+                _selectedPriority = filterString.GetValue("priority");
+                _selectedCost = filterString.GetValue("cost");
             }
 
             RebuildPageTree();
@@ -337,6 +363,13 @@ namespace DotNetEpicsWeb.Pages
 
             if (SelectedMilestone != null)
                 filterString = filterString.SetValue("milestone", SelectedMilestone);
+
+            if (SelectedPriority != null)
+                filterString = filterString.SetValue("priority", SelectedPriority);
+
+            if (SelectedCost != null)
+                filterString = filterString.SetValue("cost", SelectedCost);
+
             return filterString;
         }
 
@@ -371,6 +404,12 @@ namespace DotNetEpicsWeb.Pages
             }
 
             if (SelectedMilestone != null && SelectedMilestone != (node.Milestone ?? ""))
+                return false;
+
+            if (SelectedPriority != null && SelectedPriority != (node.Priority?.ToString() ?? ""))
+                return false;
+
+            if (SelectedCost != null && SelectedCost != (node.Cost?.ToString() ?? ""))
                 return false;
 
             var filters = FilterString.Parse(Filter)

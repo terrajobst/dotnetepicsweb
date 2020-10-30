@@ -127,6 +127,52 @@ else
             </div>
         </div>
 
+        <div class="dropdown col-auto">
+            <button class="btn btn-light btn-sm dropdown-toggle" type="button" id="prioritiesDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Priority
+            </button>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="prioritiesDropdown">
+                @foreach (var p in Tree.Priorities)
+                {
+                    var value = p?.ToString() ?? "";
+                    var isChecked = SelectedPriority == value;
+                    var icon = isChecked ? "" : "invisible";
+                    var label = p?.ToString() ?? "(Unspecified)";
+                    var handler = new Action(() =>
+                    {
+                        if (isChecked)
+                            SelectedPriority = null;
+                        else
+                            SelectedPriority = value;
+                    });
+                    <a class="dropdown-item mr-5" href="#" @onclick="handler" @onclick:preventDefault><span class="oi oi-check mr-2 @icon"></span>@label</a>
+                }
+            </div>
+        </div>
+
+        <div class="dropdown col-auto">
+            <button class="btn btn-light btn-sm dropdown-toggle" type="button" id="costsDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Cost
+            </button>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="costsDropdown">
+                @foreach (var c in Tree.Costs)
+                {
+                    var value = c?.ToString() ?? "";
+                    var isChecked = SelectedCost == value;
+                    var icon = isChecked ? "" : "invisible";
+                    var label = c?.ToString() ?? "(Unassigned)";
+                    var handler = new Action(() =>
+                    {
+                        if (isChecked)
+                            SelectedCost = null;
+                        else
+                            SelectedCost = value;
+                    });
+                    <a class="dropdown-item mr-5" href="#" @onclick="handler" @onclick:preventDefault><span class="oi oi-check mr-2 @icon"></span>@label</a>
+                }
+            </div>
+        </div>
+
         <div class="dropdown col-auto ml-auto">
             <button class="btn btn-success btn-sm dropdown-toggle" type="button" id="newDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 New Issue

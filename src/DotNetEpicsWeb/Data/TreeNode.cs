@@ -16,6 +16,8 @@ namespace DotNetEpicsWeb.Data
         public bool IsClosed { get; set; }
         public string Title { get; set; }
         public string Milestone { get; set; }
+        public int? Priority { get; set; }
+        public TreeNodeCost? Cost { get; set; }
         public IReadOnlyList<string> Assignees { get; set; } = Array.Empty<string>();
         public IReadOnlyList<TreeNodeLabel> Labels { get; set; } = Array.Empty<TreeNodeLabel>();
         public TreeNodeKind Kind { get; set; }

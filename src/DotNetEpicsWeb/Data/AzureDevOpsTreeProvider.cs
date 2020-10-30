@@ -48,8 +48,6 @@ namespace DotNetEpicsWeb.Data
 
                 if (item.Fields.TryGetValue<long>("Microsoft.VSTS.Common.Priority", out var priority))
                     workItem.Priority = priority;
-                else
-                    workItem.Priority = -1;
 
                 if (item.Fields.TryGetValue<string>("Microsoft.DevDiv.TshirtCosting", out var cost))
                     workItem.Cost = cost;
@@ -140,6 +138,8 @@ namespace DotNetEpicsWeb.Data
                 // IsClosed = 
                 Title = azureNode.Title,
                 // Milestone =
+                Priority = ConvertPriority(azureNode.Priority),
+                Cost = ConvertCost(azureNode.Cost),
                 Assignees = string.IsNullOrEmpty(azureNode.AssignedTo) 
                                 ? Array.Empty<string>()
                                 : new[] { azureNode.AssignedTo },
@@ -155,6 +155,7 @@ namespace DotNetEpicsWeb.Data
         {
             var result = new List<TreeNodeLabel>();
             var kind = ConvertKind(azureNode.Type);
+            var cost = ConvertCost(azureNode.Cost);
 
             // Kind
 
@@ -181,7 +182,7 @@ namespace DotNetEpicsWeb.Data
             {
                 result.Add(new TreeNodeLabel
                 {
-                    Name = $"Priority: 0",
+                    Name = $"Priority:0",
                     BackgroundColor = "b60205",
                 });
             }
@@ -189,7 +190,7 @@ namespace DotNetEpicsWeb.Data
             {
                 result.Add(new TreeNodeLabel
                 {
-                    Name = $"Priority: 1",
+                    Name = $"Priority:1",
                     BackgroundColor = "d93f0b",
                 });
             }
@@ -197,7 +198,7 @@ namespace DotNetEpicsWeb.Data
             {
                 result.Add(new TreeNodeLabel
                 {
-                    Name = $"Priority: 2",
+                    Name = $"Priority:2",
                     BackgroundColor = "e99695",
                 });
             }
@@ -205,22 +206,22 @@ namespace DotNetEpicsWeb.Data
             {
                 result.Add(new TreeNodeLabel
                 {
-                    Name = $"Priority: 3",
+                    Name = $"Priority:3",
                     BackgroundColor = "f9d0c4",
                 });
             }
 
             // Cost
 
-            if (azureNode.Cost == "S")
+            if (cost == TreeNodeCost.Small)
             {
                 result.Add(new TreeNodeLabel
                 {
                     Name = $"Cost:S",
-                    BackgroundColor = "b60205",
+                    BackgroundColor = "bfdadc",
                 });
             }
-            else if (azureNode.Cost == "M")
+            else if (cost == TreeNodeCost.Medium)
             {
                 result.Add(new TreeNodeLabel
                 {
@@ -228,19 +229,19 @@ namespace DotNetEpicsWeb.Data
                     BackgroundColor = "c2e0c6",
                 });
             }
-            else if (azureNode.Cost == "L")
+            else if (cost == TreeNodeCost.Large)
             {
                 result.Add(new TreeNodeLabel
                 {
-                    Name = $"Cost:S",
+                    Name = $"Cost:L",
                     BackgroundColor = "0e8a16",
                 });
             }
-            else if (azureNode.Cost == "XL")
+            else if (cost == TreeNodeCost.ExtraLarge)
             {
                 result.Add(new TreeNodeLabel
                 {
-                    Name = $"Cost:S",
+                    Name = $"Cost:XL",
                     BackgroundColor = "006b75",
                 });
             }
@@ -258,6 +259,28 @@ namespace DotNetEpicsWeb.Data
                 return TreeNodeKind.Issue;
         }
 
+        private static int? ConvertPriority(long? priority)
+        {
+            if (priority >= 0 && priority <= 3)
+                return (int)priority;
+
+            return null;
+        }
+
+        private static TreeNodeCost? ConvertCost(string cost)
+        {
+            if (string.Equals(cost, "S", StringComparison.OrdinalIgnoreCase))
+                return TreeNodeCost.Small;
+            else if (string.Equals(cost, "M", StringComparison.OrdinalIgnoreCase))
+                return TreeNodeCost.Medium;
+            else if (string.Equals(cost, "L", StringComparison.OrdinalIgnoreCase))
+                return TreeNodeCost.Large;
+            else if (string.Equals(cost, "XL", StringComparison.OrdinalIgnoreCase))
+                return TreeNodeCost.ExtraLarge;
+            else
+                return null;
+        }
+
         private static string GetAlias(IdentityRef identityRef)
         {
             var email = identityRef.UniqueName;
@@ -273,7 +296,7 @@ namespace DotNetEpicsWeb.Data
             public string Type { get; set; }
             public string Title { get; set; }
             public string State { get; set; }
-            public long Priority { get; set; }
+            public long? Priority { get; set; }
             public string Cost { get; set; }
             public DateTime CreatedAt { get; set; }
             public string CreatedBy { get; set; }
