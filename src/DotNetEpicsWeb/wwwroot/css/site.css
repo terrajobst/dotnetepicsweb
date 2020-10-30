@@ -79,6 +79,7 @@
     margin-bottom: -0.15rem;
     width: .4rem;
     margin-right: .25rem;
+    flex-shrink: 0;
 }
 
     .gh-issue-kind-header.theme {
