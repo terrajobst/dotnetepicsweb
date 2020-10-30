@@ -28,9 +28,9 @@ namespace DotNetEpicsWeb
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddControllers();
-            services.AddHostedService<GitHubTreeManagerWarmUp>();
+            services.AddHostedService<TreeServiceWarmUp>();
             services.AddSingleton<GitHubClientFactory>();
-            services.AddSingleton<GitHubTreeManager>();
+            services.AddSingleton<TreeService>();
             services.AddSingleton<AzureDevOpsTreeProvider>();
             services.AddSingleton<GitHubTreeProvider>();
 

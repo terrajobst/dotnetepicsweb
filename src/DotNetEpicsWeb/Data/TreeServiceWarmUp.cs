@@ -5,18 +5,18 @@ using Microsoft.Extensions.Hosting;
 
 namespace DotNetEpicsWeb.Data
 {
-    internal sealed class GitHubTreeManagerWarmUp : IHostedService
+    internal sealed class TreeServiceWarmUp : IHostedService
     {
-        private readonly GitHubTreeManager _treeManager;
+        private readonly TreeService _treeService;
 
-        public GitHubTreeManagerWarmUp(GitHubTreeManager treeManager)
+        public TreeServiceWarmUp(TreeService treeService)
         {
-            _treeManager = treeManager;
+            _treeService = treeService;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            await _treeManager.InvalidateAsync();
+            await _treeService.InvalidateAsync();
         }
 
         public Task StopAsync(CancellationToken cancellationToken)

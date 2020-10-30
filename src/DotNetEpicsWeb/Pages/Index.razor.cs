@@ -72,7 +72,7 @@ namespace DotNetEpicsWeb.Pages
         public NavigationManager NavigationManager { get; set; }
 
         [Inject]
-        public GitHubTreeManager TreeManager { get; set; }
+        public TreeService TreeService { get; set; }
 
         public PageTree PageTree { get; set; }
 
@@ -219,7 +219,7 @@ namespace DotNetEpicsWeb.Pages
 
             await LoadCollapsedIds();
 
-            TreeManager.Changed += TreeChanged;
+            TreeService.Changed += TreeChanged;
 
             var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
 
@@ -246,7 +246,7 @@ namespace DotNetEpicsWeb.Pages
 
         public void Dispose()
         {
-            TreeManager.Changed -= TreeChanged;
+            TreeService.Changed -= TreeChanged;
         }
 
         private async void TreeChanged(object sender, EventArgs e)
@@ -280,13 +280,13 @@ namespace DotNetEpicsWeb.Pages
 
         private void RebuildPageTree()
         {
-            if (TreeManager.Tree == null)
+            if (TreeService.Tree == null)
             {
                 PageTree = null;
             }
             else
             {
-                var pageTree = new PageTree(TreeManager.Tree);
+                var pageTree = new PageTree(TreeService.Tree);
                 RebuildNodes(pageTree.Roots, pageTree.Tree.Roots);
                 PageTree = pageTree;
             }

@@ -41,12 +41,12 @@ namespace DotNetEpicsWeb.Controllers
         private static readonly HashSet<string> _relevantLabels = new HashSet<string>(DotNetEpicsConstants.Labels, StringComparer.OrdinalIgnoreCase);
 
         private readonly ILogger<GitHubWebHookController> _logger;
-        private readonly GitHubTreeManager _treeManager;
+        private readonly TreeService _treeService;
 
-        public GitHubWebHookController(ILogger<GitHubWebHookController> logger, GitHubTreeManager treeManager)
+        public GitHubWebHookController(ILogger<GitHubWebHookController> logger, TreeService treeService)
         {
             _logger = logger;
-            _treeManager = treeManager;
+            _treeService = treeService;
         }
 
         [HttpPost]
@@ -81,7 +81,7 @@ namespace DotNetEpicsWeb.Controllers
             if (isRelevant)
             {
                 // Don't await. Just kick of the work here so we don't time out.
-                _ = _treeManager.InvalidateAsync();
+                _ = _treeService.InvalidateAsync();
             }
 
             return Ok(isRelevant);
@@ -89,7 +89,7 @@ namespace DotNetEpicsWeb.Controllers
 
         private IEnumerable<GitHubIssueId> GetKnownIds()
         {
-            var tree = _treeManager.Tree;
+            var tree = _treeService.Tree;
             if (tree != null)
             {
                 foreach (var node in tree.Roots.SelectMany(r => r.DescendantsAndSelf()))

@@ -4,14 +4,14 @@ using System.Threading.Tasks;
 
 namespace DotNetEpicsWeb.Data
 {
-    public sealed class GitHubTreeManager
+    public sealed class TreeService
     {
         private readonly GitHubTreeProvider _githubTreeProvider;
         private readonly AzureDevOpsTreeProvider _azureTreeProvider;
 
         private Tree _tree;
 
-        public GitHubTreeManager(GitHubTreeProvider gitHubTreeProvider, AzureDevOpsTreeProvider azureTreeProvider)
+        public TreeService(GitHubTreeProvider gitHubTreeProvider, AzureDevOpsTreeProvider azureTreeProvider)
         {
             _githubTreeProvider = gitHubTreeProvider;
             _azureTreeProvider = azureTreeProvider;
