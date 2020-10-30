@@ -98,6 +98,7 @@
     }
 
 /* Tree */
+
 .tree ul {
     margin-left: 0px;
 }
@@ -156,31 +157,3 @@
         border-color: darkgray;
         color: darkgray;
     }
-
-/*ul.tree > li:first-child::before {
-    display: none;
-}
-
-ul.tree > li:first-child::after {
-    border-radius: 5px 0 0 0;
-}
-
-.tree li a {
-    border: 1px #ccc solid;
-    border-radius: 5px;
-    padding: 2px 5px;
-}
-
-    .tree li a:hover, .tree li a:hover + ul li a,
-    .tree li a:focus, .tree li a:focus + ul li a {
-        background: #ccc;
-        color: #000;
-        border: 1px solid #000;
-    }
-
-        .tree li a:hover + ul li::after, .tree li a:focus + ul li::after,
-        .tree li a:hover + ul li::before, .tree li a:focus + ul li::before
-        .tree li a:hover + ul::before, .tree li a:focus + ul::before
-        .tree li a:hover + ul ul::before, .tree li a:focus + ul ul::before {
-            border-color: #000;*/ /*connector color on hover*/
-        /*}*/
