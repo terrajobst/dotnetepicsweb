@@ -23,7 +23,7 @@ namespace DotNetEpicsWeb.Data
         public TreeNodeKind Kind { get; set; }
         public TreeNodeStatus ReleaseInfo { get; set; }
         public string Url { get; set; }
-        public List<TreeNode> Children { get; } = new List<TreeNode>();
+        public List<TreeNode> Children { get; set; } = new List<TreeNode>();
 
         [JsonIgnore]
         public TreeNode Parent { get; set; }

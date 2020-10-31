@@ -2,7 +2,7 @@
 {
     public enum TreeNodeCost
     {
-        Small,
+        Small = 1,
         Medium,
         Large,
         ExtraLarge
