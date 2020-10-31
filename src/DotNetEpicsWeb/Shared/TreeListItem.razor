@@ -17,14 +17,13 @@
                     <div class="gh-issue-kind-header @treeNode.Kind.ToString().ToLower()" />
                     <div>
                         <div>
-                            <a class="gh-issue-title" href="@treeNode.Url" target="_blank">
+                            <span class="gh-issue-title">
                                 @if (treeNode.IsPrivate)
                                 {
-                                    <span class="mr-1 oi oi-lock-locked"></span>
+                                    <span class="mr-1 oi oi-lock-locked text-muted small"></span>
                                 }
-
-                                @treeNode.Title
-                            </a>
+                                <a href="@treeNode.Url" target="_blank">@treeNode.Title</a>
+                            </span>
                             <span>
                                 @foreach (var label in treeNode.Labels)
                                 {

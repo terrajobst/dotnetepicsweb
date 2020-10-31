@@ -69,10 +69,16 @@
     }
 
 .gh-issue-title {
-    text-decoration: none !important;
-    color: black;
     font-weight: bold;
 }
+
+    .gh-issue-title a {
+        text-decoration: none !important;
+    }
+
+    .gh-issue-title a:not(:hover) {
+        color: black;
+    }
 
 .gh-issue-kind-header {
     display: block;
