@@ -70,15 +70,9 @@
 
 .gh-issue-title {
     font-weight: bold;
+    text-decoration: none !important;
+    color: black;
 }
-
-    .gh-issue-title a {
-        text-decoration: none !important;
-    }
-
-    .gh-issue-title a:not(:hover) {
-        color: black;
-    }
 
 .gh-issue-kind-header {
     display: block;
