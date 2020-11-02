@@ -34,7 +34,7 @@ namespace ThemesOfDotNet.Data
                   .Select(r => r.Id)
                   .ToHashSet();
 
-            var items = await client.GetWorkItemsAsync(itemIds, expand: WorkItemExpand.All);
+            var items = await GetWorkItemsAsync(client, itemIds);
 
             var workItemById = new Dictionary<int, AzureWorkItem>();
 
@@ -88,6 +88,36 @@ namespace ThemesOfDotNet.Data
             return workItemById.Values.OrderBy(v => v.Id)
                                       .Where(n => n.Parent == null)
                                       .ToArray();
+        }
+
+        private async Task<List<WorkItem>> GetWorkItemsAsync(WorkItemTrackingHttpClient client, IEnumerable<int> ids)
+        {
+            var result = new List<WorkItem>();
+            var batchedIds = Batch(ids, 200);
+            foreach (var batch in batchedIds)
+            {
+                var items = await client.GetWorkItemsAsync(batch, expand: WorkItemExpand.All);
+                result.AddRange(items);
+            }
+
+            return result;
+        }
+
+        private static IEnumerable<T[]> Batch<T>(IEnumerable<T> source, int batchSize)
+        {
+            var list = new List<T>(batchSize);
+
+            foreach (var item in source)
+            {
+                if (list.Count == batchSize)
+                {
+                    yield return list.ToArray();
+                    list.Clear();
+                }
+                list.Add(item);
+            }
+
+            yield return list.ToArray();
         }
 
         public async Task<Tree> GetTreeAsync()
