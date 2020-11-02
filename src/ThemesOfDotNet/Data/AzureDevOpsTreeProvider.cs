@@ -63,6 +63,11 @@ namespace ThemesOfDotNet.Data
                                                .Select(l => l.Href)
                                                .SingleOrDefault();
 
+                if (item.Fields.TryGetValue<string>("System.Tags", out var tagText))
+                    workItem.Tags = tagText.Split(';');
+                else
+                    workItem.Tags = Array.Empty<string>();
+
                 workItemById.Add(workItem.Id, workItem);
             }
 
@@ -276,6 +281,17 @@ namespace ThemesOfDotNet.Data
                 });
             }
 
+            // Tags
+
+            foreach (var tag in azureNode.Tags)
+            {
+                result.Add(new TreeNodeLabel
+                {
+                    Name = tag,
+                    BackgroundColor = "c5def5",
+                });
+            }
+
             return result.ToArray();
         }
 
@@ -332,6 +348,7 @@ namespace ThemesOfDotNet.Data
             public string CreatedBy { get; set; }
             public string AssignedTo { get; set; }
             public string Url { get; set; }
+            public string[] Tags { get; set; }
             public AzureWorkItem Parent { get; set; }
             public List<AzureWorkItem> Children { get; } = new List<AzureWorkItem>();
         }
