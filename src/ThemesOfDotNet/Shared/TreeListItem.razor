@@ -1,0 +1,80 @@
+﻿@if (Nodes.Any())
+{
+    <ul class="tree">
+        @foreach (var node in Nodes)
+        {
+            <li>
+                @{
+                    var issueClass = Owner.IsMuted(node) ? "muted" : "";
+                    var treeNode = node.TreeNode;
+                }
+                <div class="gh-issue @issueClass d-flex flex-row">
+                    @{
+                        var visibleClass = node.Children.Count == 0 ? "invisible" : "";
+                        var glyph = Owner.IsExpanded(node) ? "oi-minus" : "oi-plus";
+                    }
+                    <span class="oi @glyph tree-toggle @visibleClass" @onclick="() => Owner.ToggleNode(node)"></span>
+                    <div class="gh-issue-kind-header @treeNode.Kind.ToString().ToLower()" />
+                    <div>
+                        <div>
+                            <a class="gh-issue-title" href="@treeNode.Url" target="_blank">
+                                @if (treeNode.IsPrivate)
+                                {
+                                    <span class="oi oi-lock-locked text-muted small"></span>
+                                }
+                                @treeNode.Title
+                            </a>
+                            <span>
+                                @foreach (var label in treeNode.Labels)
+                                {
+                                    <span class="gh-label"
+                                          style="background: @("#" + label.BackgroundColor); color: @label.ForegroundColor">@label.Name</span>
+                                }
+                            </span>
+                        </div>
+                        <div class="gh-details-cell">
+                            @if (treeNode.ReleaseInfo != null)
+                            {
+                                if (string.IsNullOrEmpty(treeNode.ReleaseInfo.Release))
+                                {
+                                    <span class="gh-project-status">@treeNode.ReleaseInfo.Status</span>
+                                }
+                                else
+                                {
+                                    <span class="gh-project-status">@treeNode.ReleaseInfo.Status for @treeNode.ReleaseInfo.Release</span>
+                                }
+                            }
+
+                            @treeNode.DetailText
+
+                            @if (treeNode.Milestone != null)
+                            {
+                                <span class="ml-2 mr-1 oi oi-signpost text-muted" aria-hidden="true"></span>@treeNode.Milestone
+                            }
+
+                            @if (treeNode.Assignees.Any())
+                            {
+                                var assigneeList = string.Join(", ", treeNode.Assignees);
+                                <span class="ml-2 mr-1 oi oi-person text-muted" aria-hidden="true"></span>@assigneeList
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                @if (Owner.IsExpanded(node))
+                {
+                    <TreeListItem Owner="@Owner" Nodes="@node.Children" />
+                }
+            </li>
+        }
+    </ul>
+}
+
+@code {
+
+    [Parameter]
+    public Pages.Index Owner { get; set; }
+
+    [Parameter]
+    public IReadOnlyList<ThemesOfDotNet.Pages.PageNode> Nodes { get; set; }
+}
