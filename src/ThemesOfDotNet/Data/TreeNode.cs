@@ -11,6 +11,7 @@ namespace ThemesOfDotNet.Data
     {
         public string Id { get; set; }
         public bool IsPrivate { get; set; }
+        public bool IsBottomUp { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
         public string CreatedBy { get; set; }
         public bool IsClosed { get; set; }

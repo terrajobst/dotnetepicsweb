@@ -47,6 +47,7 @@ namespace ThemesOfDotNet.Pages
         private bool _includeEpics = true;
         private bool _includeUserStories;
         private bool _includeIssues;
+        private bool _includeBottomUp;
         private string _selectedRelease;
         private string _selectedState;
         private string _selectedAssignee;
@@ -146,6 +147,17 @@ namespace ThemesOfDotNet.Pages
             }
         }
 
+        public bool IncludeBottomUp
+        {
+            get => _includeBottomUp;
+            set
+            {
+                _includeBottomUp = value;
+                RebuildPageTree();
+                UpdateUrl();
+            }
+        }
+
         public string SelectedRelease
         {
             get => _selectedRelease;
@@ -233,6 +245,7 @@ namespace ThemesOfDotNet.Pages
                 _includeEpics = kinds.Contains('e');
                 _includeUserStories = kinds.Contains('u');
                 _includeIssues = kinds.Contains('i');
+                _includeBottomUp = kinds.Contains('b');
                 _selectedRelease = filterString.GetValue("release");
                 _selectedState = filterString.GetValue("state");
                 _selectedAssignee = filterString.GetValue("assignee");
@@ -349,6 +362,8 @@ namespace ThemesOfDotNet.Pages
                 kinds += "u";
             if (IncludeIssues)
                 kinds += "i";
+            if (IncludeBottomUp)
+                kinds += "b";
 
             filterString = filterString.SetValue("kinds", kinds);
 
@@ -459,6 +474,9 @@ namespace ThemesOfDotNet.Pages
                 return true;
 
             if (!IncludeIssues && node.Kind == TreeNodeKind.Issue)
+                return true;
+
+            if (!IncludeBottomUp && node.IsBottomUp)
                 return true;
 
             return false;

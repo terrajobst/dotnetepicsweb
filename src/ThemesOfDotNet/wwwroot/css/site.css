@@ -77,25 +77,29 @@
 .gh-issue-kind-header {
     display: block;
     margin-bottom: -0.15rem;
-    width: .4rem;
+    border-left: .4rem solid;
     margin-right: .25rem;
     flex-shrink: 0;
 }
 
+    .gh-issue-kind-header.bottom-up {
+        border-left-style: dashed;
+    }
+
     .gh-issue-kind-header.theme {
-        background-color: purple;
+        border-color: purple;
     }
 
     .gh-issue-kind-header.epic {
-        background-color: #c6415a;
+        border-color: #c6415a;
     }
 
     .gh-issue-kind-header.userstory {
-        background-color: #0e8a16;
+        border-color: #0e8a16;
     }
 
     .gh-issue-kind-header.issue {
-        background-color: darkgray;
+        border-color: darkgray;
     }
 
 /* Tree */

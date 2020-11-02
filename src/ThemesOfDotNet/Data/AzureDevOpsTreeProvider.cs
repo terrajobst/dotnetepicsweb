@@ -168,6 +168,7 @@ namespace ThemesOfDotNet.Data
             {
                 Id = $"azdo#{azureNode.Id}",
                 IsPrivate = true,
+                IsBottomUp = IsBottomUp(azureNode),
                 CreatedAt = azureNode.CreatedAt,
                 CreatedBy = azureNode.CreatedBy,
                 // IsClosed = 
@@ -184,6 +185,12 @@ namespace ThemesOfDotNet.Data
                 Url = azureNode.Url
             };
             return treeNode;
+        }
+
+        private static bool IsBottomUp(AzureWorkItem azureNode)
+        {
+            return azureNode.Tags.Any(t => string.Equals(t, ThemesOfDotNetConstants.LabelBottomUpWork) ||
+                                           string.Equals(t, ThemesOfDotNetConstants.LabelContinuousImprovement));
         }
 
         private static IReadOnlyList<TreeNodeLabel> CreateLabels(AzureWorkItem azureNode)

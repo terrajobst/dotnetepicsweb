@@ -11,10 +11,11 @@
                 <div class="gh-issue @issueClass d-flex flex-row">
                     @{
                         var visibleClass = node.Children.Count == 0 ? "invisible" : "";
+                        var bottomUpClass = treeNode.IsBottomUp ? "bottom-up" : "";
                         var glyph = Owner.IsExpanded(node) ? "oi-minus" : "oi-plus";
                     }
                     <span class="oi @glyph tree-toggle @visibleClass" @onclick="() => Owner.ToggleNode(node)"></span>
-                    <div class="gh-issue-kind-header @treeNode.Kind.ToString().ToLower()" />
+                    <div class="gh-issue-kind-header @treeNode.Kind.ToString().ToLower() @bottomUpClass" />
                     <div>
                         <div>
                             <a class="gh-issue-title" href="@treeNode.Url" target="_blank">

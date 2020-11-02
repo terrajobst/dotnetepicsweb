@@ -144,6 +144,7 @@ namespace ThemesOfDotNet.Data
             {
                 Id = issue.Id.ToString(),
                 IsPrivate = issue.IsPrivate,
+                IsBottomUp = ConvertIsBottomUp(issue),
                 CreatedAt = issue.CreatedAt,
                 CreatedBy = issue.CreatedBy,
                 IsClosed = issue.IsClosed,
@@ -159,6 +160,12 @@ namespace ThemesOfDotNet.Data
             };
 
             return treeNode;
+        }
+
+        private bool ConvertIsBottomUp(GitHubIssue issue)
+        {
+            return issue.Labels.Any(l => string.Equals(l.Name, ThemesOfDotNetConstants.LabelBottomUpWork) ||
+                                         string.Equals(l.Name, ThemesOfDotNetConstants.LabelContinuousImprovement));
         }
 
         private int? ConvertPriority(GitHubIssue issue)

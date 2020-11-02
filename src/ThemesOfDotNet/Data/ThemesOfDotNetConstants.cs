@@ -16,6 +16,8 @@ namespace ThemesOfDotNet.Data
         public const string LabelEpic = "Epic";
         public const string LabelUserStory = "User Story";
         public const string LabelIssue = "Issue";
+        public const string LabelContinuousImprovement = "Continuous Improvement";
+        public const string LabelBottomUpWork = "Bottom Up Work";
 
         public static IReadOnlyList<string> Labels => new[]
         {

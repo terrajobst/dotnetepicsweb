@@ -32,6 +32,8 @@ else
                 <a class="dropdown-item mr-5" href="#" @onclick="() => IncludeEpics = !IncludeEpics" @onclick:preventDefault><span class="oi oi-check mr-2 @(IncludeEpics ? "" : "invisible")"></span>Epics</a>
                 <a class="dropdown-item mr-5" href="#" @onclick="() => IncludeUserStories = !IncludeUserStories" @onclick:preventDefault><span class="oi oi-check mr-2 @(IncludeUserStories ? "" : "invisible")"></span>User Stories</a>
                 <a class="dropdown-item mr-5" href="#" @onclick="() => IncludeIssues = !IncludeIssues" @onclick:preventDefault><span class="oi oi-check mr-2 @(IncludeIssues ? "" : "invisible")"></span>Issues</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item mr-5" href="#" @onclick="() => IncludeBottomUp = !IncludeBottomUp" @onclick:preventDefault><span class="oi oi-check mr-2 @(IncludeBottomUp ? "" : "invisible")"></span>Bottom up work</a>
             </div>
         </div>
 
