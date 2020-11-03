@@ -164,8 +164,8 @@ namespace ThemesOfDotNet.Data
 
         private bool ConvertIsBottomUp(GitHubIssue issue)
         {
-            return issue.Labels.Any(l => string.Equals(l.Name, ThemesOfDotNetConstants.LabelBottomUpWork) ||
-                                         string.Equals(l.Name, ThemesOfDotNetConstants.LabelContinuousImprovement));
+            return issue.Labels.Any(l => string.Equals(l.Name, ThemesOfDotNetConstants.LabelBottomUpWork, StringComparison.OrdinalIgnoreCase) ||
+                                         string.Equals(l.Name, ThemesOfDotNetConstants.LabelContinuousImprovement, StringComparison.OrdinalIgnoreCase));
         }
 
         private int? ConvertPriority(GitHubIssue issue)

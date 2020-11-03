@@ -189,8 +189,8 @@ namespace ThemesOfDotNet.Data
 
         private static bool IsBottomUp(AzureWorkItem azureNode)
         {
-            return azureNode.Tags.Any(t => string.Equals(t, ThemesOfDotNetConstants.LabelBottomUpWork) ||
-                                           string.Equals(t, ThemesOfDotNetConstants.LabelContinuousImprovement));
+            return azureNode.Tags.Any(t => string.Equals(t, ThemesOfDotNetConstants.LabelBottomUpWork, StringComparison.OrdinalIgnoreCase) ||
+                                           string.Equals(t, ThemesOfDotNetConstants.LabelContinuousImprovement, StringComparison.OrdinalIgnoreCase));
         }
 
         private static IReadOnlyList<TreeNodeLabel> CreateLabels(AzureWorkItem azureNode)
