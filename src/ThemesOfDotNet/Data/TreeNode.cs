@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.Json.Serialization;
 
@@ -7,7 +8,7 @@ using Humanizer;
 
 namespace ThemesOfDotNet.Data
 {
-    public sealed class TreeNode
+    public sealed class TreeNode : IComparable<TreeNode>
     {
         public string Id { get; set; }
         public bool IsPrivate { get; set; }
@@ -47,6 +48,22 @@ namespace ThemesOfDotNet.Data
         public IEnumerable<TreeNode> Descendants()
         {
             return DescendantsAndSelf().Skip(1);
+        }
+
+        public int CompareTo([AllowNull] TreeNode other)
+        {
+            if (other == null)
+                return 1;
+
+            var result = Kind.CompareTo(other.Kind);
+            if (result == 0)
+            {
+                result = Title.CompareTo(other.Title);
+                if (result == 0)
+                    result = Id.CompareTo(other.Id);
+            }
+
+            return result;
         }
     }
 }

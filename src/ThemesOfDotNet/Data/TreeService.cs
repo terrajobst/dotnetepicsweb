@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -53,7 +54,7 @@ namespace ThemesOfDotNet.Data
             var gitHubTreeTask = _githubTreeProvider.GetTreeAsync();
             var azureTreeTask = _azureTreeProvider.GetTreeAsync();
             await Task.WhenAll(gitHubTreeTask, azureTreeTask);
-            return MergeTrees(gitHubTreeTask.Result, azureTreeTask.Result);
+            return SortTree(MergeTrees(gitHubTreeTask.Result, azureTreeTask.Result));
         }
 
         private async Task<Tree> LoadTreeFromCacheAsync()
@@ -81,6 +82,21 @@ namespace ThemesOfDotNet.Data
         private Tree MergeTrees(Tree result1, Tree result2)
         {
             return new Tree(result1.Roots.Concat(result2.Roots));
+        }
+
+        private Tree SortTree(Tree tree)
+        {
+            var roots = tree.Roots.ToList();
+            SortNodes(roots);
+            return new Tree(roots);
+        }
+
+        private void SortNodes(List<TreeNode> nodes)
+        {
+            nodes.Sort();
+
+            foreach (var node in nodes)
+                SortNodes(node.Children);
         }
 
         public event EventHandler Changed;
