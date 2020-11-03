@@ -27,9 +27,6 @@ namespace ThemesOfDotNet.Data
         public List<TreeNode> Children { get; set; } = new List<TreeNode>();
 
         [JsonIgnore]
-        public TreeNode Parent { get; set; }
-
-        [JsonIgnore]
         public string DetailText => $"{Id} opened {CreatedAt.Humanize()}";
 
         public IEnumerable<TreeNode> DescendantsAndSelf()

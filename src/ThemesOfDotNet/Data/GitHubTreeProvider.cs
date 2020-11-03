@@ -2,11 +2,8 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-
-using Humanizer;
 
 using Markdig;
 using Markdig.Extensions.TaskLists;
@@ -41,24 +38,25 @@ namespace ThemesOfDotNet.Data
 
             // Get root issues
 
-            var issueTasks = new List<Task<IReadOnlyList<GitHubIssue>>>();
+            var startingIssueTasks = new List<Task<IReadOnlyList<GitHubIssue>>>();
 
             foreach (var repoId in _repos)
             {
                 foreach (var label in ThemesOfDotNetConstants.Labels)
                 {
                     var task = GetIssuesAsync(client, repoCache, repoId, label);
-                    issueTasks.Add(task);
+                    startingIssueTasks.Add(task);
                 }
             }
 
-            await Task.WhenAll(issueTasks);
+            await Task.WhenAll(startingIssueTasks);
 
             // Now parse all issue bodies to find children
 
-            var rootIssues = issueTasks.SelectMany(t => t.Result).ToArray();
-            var issueQueue = new Queue<GitHubIssue>(rootIssues);
-            var issueById = rootIssues.ToDictionary(i => i.Id);
+            var startingIssues = startingIssueTasks.SelectMany(t => t.Result).ToArray();
+            var issueQueue = new Queue<GitHubIssue>(startingIssues);
+            var issueById = startingIssues.ToDictionary(i => i.Id);
+            var issues = new List<GitHubIssue>(startingIssues);
             var issueChildren = new Dictionary<string, List<GitHubIssue>>();
 
             while (issueQueue.Count > 0)
@@ -74,6 +72,7 @@ namespace ThemesOfDotNet.Data
                     {
                         linkedIssue = await GetIssueAsync(client, repoCache, linkedId);
                         issueById.Add(linkedId, linkedIssue);
+                        issues.Add(linkedIssue);
                         issueQueue.Enqueue(linkedIssue);
                     }
 
@@ -104,16 +103,90 @@ namespace ThemesOfDotNet.Data
 
             var regex = string.Join("|", ThemesOfDotNetConstants.Labels.Select(l => $" *^\\[?{l}\\]? *:? *"));
 
-            foreach (var issue in issueById.Values)
+            foreach (var issue in issues)
             {
                 var match = Regex.Match(issue.Title, regex);
                 if (match.Success)
                     issue.Title = issue.Title.Substring(match.Length).Trim();
             }
 
+            // Let's sort the issues by close state, kind, and then by ID.
+            // This ensures that when we remove cycles we prefer to remove
+            // them from closed issues and from "out of order" hierachies.
+            // For example, when a user story links to a theme, we want to
+            // sever the connection between the user story and the theme,
+            // rather than between the theme & epic or between the epic &
+            // user story.
+
+            issues.Sort((x, y) =>
+            {
+                var result = x.IsClosed.CompareTo(y.IsClosed);
+                if (result == 0)
+                {
+                    result = x.Kind.CompareTo(y.Kind);
+                    if (result == 0)
+                    {
+                        result = x.Title.CompareTo(y.Title);
+                        if (result == 0)
+                            result = x.Id.CompareTo(y.Id);
+                    }
+                }
+
+                return result;
+            });
+
+            // Detect & fix cycles
+
+            var ancestors = new HashSet<GitHubIssue>();
+
+            foreach (var issue in issues)
+            {
+                ancestors.Clear();
+                ancestors.Add(issue);
+                EnsureNoCyles(issue, issueChildren, ancestors);
+            }
+
+            static void EnsureNoCyles(GitHubIssue issue, Dictionary<string, List<GitHubIssue>> issueChildren, HashSet<GitHubIssue> ancestors)
+            {
+                var myChildren = issueChildren[issue.Id.ToString()];
+                for (var i = myChildren.Count - 1; i >= 0; i--)
+                {
+                    var myChild = myChildren[i];
+                    if (!ancestors.Add(myChild))
+                    {
+                        myChildren.RemoveAt(i);
+                    }
+                    else
+                    {
+                        EnsureNoCyles(myChild, issueChildren, ancestors);
+                        ancestors.Remove(myChild);
+                    }
+                }
+            }
+
+            // When open issues are contained in multiple parents, we want to prefer parents that are still open
+
+            var parentsByIssue = issues.SelectMany(parent => issueChildren[parent.Id.ToString()].Select(child => (parent, child)))
+                                       .ToLookup(t => t.child, t => t.parent);
+
+            foreach (var openChild in issues.Where(i => !i.IsClosed))
+            {
+                var hasOpenParents = parentsByIssue[openChild].Any(p => !p.IsClosed);
+
+                if (hasOpenParents)
+                {
+                    var closedParents = parentsByIssue[openChild].Where(p => p.IsClosed);
+                    foreach (var closedParent in closedParents)
+                    {
+                        var children = issueChildren[closedParent.Id.ToString()];
+                        children.Remove(openChild);
+                    }
+                }
+            }
+
             // Now build the tree out of that
 
-            var nodeByIssue = issueById.Values.ToDictionary(i => i, i => ConvertToNode(i));
+            var nodeByIssue = issues.ToDictionary(i => i, i => ConvertToNode(i));
 
             foreach (var node in nodeByIssue.Values.OrderBy(n => n.Id))
             {
@@ -121,20 +194,11 @@ namespace ThemesOfDotNet.Data
                 {
                     var linkedNode = nodeByIssue[linkedIssue];
                     node.Children.Add(linkedNode);
-
-                    if (linkedNode.Parent == null)
-                        linkedNode.Parent = node;
                 }
             }
 
-            foreach (var node in nodeByIssue.Values)
-            {
-                // In case where somone created a cycle, let's remove
-                // the nodes that are already part of someone else.
-                node.Children.RemoveAll(n => n.Parent != node);
-            }
-
-            var roots = nodeByIssue.Values.Where(n => n.Parent == null);
+            var roots = issues.Where(i => !parentsByIssue[i].Any())
+                              .Select(i => nodeByIssue[i]);
             return new Tree(roots);
         }
 
@@ -479,6 +543,11 @@ namespace ThemesOfDotNet.Data
             public TreeNodeKind Kind { get; set; }
             public TreeNodeStatus ProjectStatus { get; set; }
             public string Url => $"https://github.com/{Id.Owner}/{Id.Repo}/issues/{Id.Number}";
+
+            public override string ToString()
+            {
+                return $"{Id}: {Title}";
+            }
         }
 
         private sealed class GitHubIssueCard
