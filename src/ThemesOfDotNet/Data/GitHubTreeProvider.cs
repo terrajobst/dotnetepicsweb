@@ -481,12 +481,21 @@ namespace ThemesOfDotNet.Data
                         if (id != null)
                             break;
 
-                        foreach (Match match in Regex.Matches(literalInline.Content.ToString(), "#(?<number>[0-9]+)"))
+                        foreach (Match match in Regex.Matches(literalInline.Content.ToString(), "((?<owner>[a-zA-Z0-9-]+)/(?<repo>[a-zA-Z0-9-]+))?#(?<number>[0-9]+)"))
                         {
+                            var linkOwner = match.Groups["owner"].Value;
+                            var linkRepo = match.Groups["repo"].Value;
                             var numberText = match.Groups["number"].Value;
+
+                            if (string.IsNullOrEmpty(linkOwner))
+                            {
+                                linkOwner = owner;
+                                linkRepo = repo;
+                            }
+
                             if (int.TryParse(numberText, out var number))
                             {
-                                id = new GitHubIssueId(owner, repo, number);
+                                id = new GitHubIssueId(linkOwner, repo, number);
                                 break;
                             }
                         }
