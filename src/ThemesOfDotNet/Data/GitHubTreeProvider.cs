@@ -396,13 +396,20 @@ namespace ThemesOfDotNet.Data
 
         private static async Task<GitHubIssue> GetIssueAsync(GitHubClient client, RepoCache repoCache, GitHubIssueId id)
         {
-            var issue = await client.Issue.Get(id.Owner, id.Repo, id.Number);
-            if (issue.PullRequest != null)
-                return null;
+            try
+            {
+                var issue = await client.Issue.Get(id.Owner, id.Repo, id.Number);
+                if (issue.PullRequest != null)
+                    return null;
 
-            var effectiveIssueId = GitHubIssueId.Parse(issue.HtmlUrl);
-            var repo = await repoCache.GetRepoAsync(new GitHubRepoId(effectiveIssueId.Owner, effectiveIssueId.Repo));
+                var effectiveIssueId = GitHubIssueId.Parse(issue.HtmlUrl);
+                var repo = await repoCache.GetRepoAsync(new GitHubRepoId(effectiveIssueId.Owner, effectiveIssueId.Repo));
             return CreateGitHubIssue(repo.Private, issue);
+            }
+            catch (NotFoundException)
+            {
+                return null;
+            }
         }
 
         private static GitHubIssue CreateGitHubIssue(bool isPrivate, Issue issue)
