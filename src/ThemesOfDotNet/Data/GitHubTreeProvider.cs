@@ -71,9 +71,35 @@ namespace ThemesOfDotNet.Data
                     if (!issueById.TryGetValue(linkedId, out var linkedIssue))
                     {
                         linkedIssue = await GetIssueAsync(client, repoCache, linkedId);
-                        issueById.Add(linkedId, linkedIssue);
-                        issues.Add(linkedIssue);
-                        issueQueue.Enqueue(linkedIssue);
+
+                        var addIssue = true;
+
+                        if (linkedIssue.Id != linkedId)
+                        {
+                            // That means the issue got transferred. Let's try again with the new id.
+
+                            if (!issueById.TryGetValue(linkedIssue.Id, out var existingIssue))
+                            {
+                                // We haven't fetched the issue yet but, we still want to record it
+                                // under the new ID as well.
+                                issueById.Add(linkedIssue.Id, linkedIssue);
+                            }
+                            else
+                            {
+                                // OK, we already fetched the issue. Now let's just associate the old id
+                                // with the existing issue and not add the issue we just retrieved.
+                                issueById.Add(linkedId, existingIssue);
+                                linkedIssue = existingIssue;
+                                addIssue = false;
+                            }
+                        }
+
+                        if (addIssue)
+                        {
+                            issueById.Add(linkedId, linkedIssue);
+                            issues.Add(linkedIssue);
+                            issueQueue.Enqueue(linkedIssue);
+                        }
                     }
 
                     var parent = type == IssueLinkType.Parent ? linkedIssue : issue;
@@ -355,7 +381,7 @@ namespace ThemesOfDotNet.Data
 
             foreach (var issue in issues)
             {
-                var gitHubIssue = CreateGitHubIssue(repoId.Owner, repoId.Name, repository.Private, issue);
+                var gitHubIssue = CreateGitHubIssue(repository.Private, issue);
                 result.Add(gitHubIssue);
             }
 
@@ -364,16 +390,19 @@ namespace ThemesOfDotNet.Data
 
         private static async Task<GitHubIssue> GetIssueAsync(GitHubClient client, RepoCache repoCache, GitHubIssueId id)
         {
-            var repo = await repoCache.GetRepoAsync(new GitHubRepoId(id.Owner, id.Repo));
             var issue = await client.Issue.Get(id.Owner, id.Repo, id.Number);
-            return CreateGitHubIssue(id.Owner, id.Repo, repo.Private, issue);
+            var effectiveIssueId = GitHubIssueId.Parse(issue.HtmlUrl);
+            var repo = await repoCache.GetRepoAsync(new GitHubRepoId(effectiveIssueId.Owner, effectiveIssueId.Repo));
+            return CreateGitHubIssue(repo.Private, issue);
         }
 
-        private static GitHubIssue CreateGitHubIssue(string owner, string repo, bool isPrivate, Issue issue)
+        private static GitHubIssue CreateGitHubIssue(bool isPrivate, Issue issue)
         {
+            var id = GitHubIssueId.Parse(issue.HtmlUrl);
+
             var result = new GitHubIssue
             {
-                Id = new GitHubIssueId(owner, repo, issue.Number),
+                Id = id,
                 IsPrivate = isPrivate,
                 CreatedAt = issue.CreatedAt,
                 CreatedBy = issue.User.Login,
