@@ -112,7 +112,7 @@ namespace ThemesOfDotNet.Data
 
             // Let's sort the issues by close state, kind, and then by ID.
             // This ensures that when we remove cycles we prefer to remove
-            // them from closed issues and from "out of order" hierachies.
+            // them from closed issues and from "out of order" hierarchies.
             // For example, when a user story links to a theme, we want to
             // sever the connection between the user story and the theme,
             // rather than between the theme & epic or between the epic &
@@ -143,10 +143,10 @@ namespace ThemesOfDotNet.Data
             {
                 ancestors.Clear();
                 ancestors.Add(issue);
-                EnsureNoCyles(issue, issueChildren, ancestors);
+                EnsureNoCycles(issue, issueChildren, ancestors);
             }
 
-            static void EnsureNoCyles(GitHubIssue issue, Dictionary<string, List<GitHubIssue>> issueChildren, HashSet<GitHubIssue> ancestors)
+            static void EnsureNoCycles(GitHubIssue issue, Dictionary<string, List<GitHubIssue>> issueChildren, HashSet<GitHubIssue> ancestors)
             {
                 var myChildren = issueChildren[issue.Id.ToString()];
                 for (var i = myChildren.Count - 1; i >= 0; i--)
@@ -158,7 +158,7 @@ namespace ThemesOfDotNet.Data
                     }
                     else
                     {
-                        EnsureNoCyles(myChild, issueChildren, ancestors);
+                        EnsureNoCycles(myChild, issueChildren, ancestors);
                         ancestors.Remove(myChild);
                     }
                 }
