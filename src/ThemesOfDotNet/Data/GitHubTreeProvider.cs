@@ -495,7 +495,7 @@ namespace ThemesOfDotNet.Data
 
                             if (int.TryParse(numberText, out var number))
                             {
-                                id = new GitHubIssueId(linkOwner, repo, number);
+                                id = new GitHubIssueId(linkOwner, linkRepo, number);
                                 break;
                             }
                         }
