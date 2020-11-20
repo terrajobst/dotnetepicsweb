@@ -315,6 +315,9 @@ namespace ThemesOfDotNet.Pages
                 if (!IsVisible(issueNode))
                     continue;
 
+                if (!IncludeBottomUp && issueNode.IsBottomUp)
+                    continue;
+
                 if (SkipNode(issueNode))
                 {
                     RebuildNodes(pageNodes, issueNode.Children);
@@ -474,9 +477,6 @@ namespace ThemesOfDotNet.Pages
                 return true;
 
             if (!IncludeIssues && node.Kind == TreeNodeKind.Issue)
-                return true;
-
-            if (!IncludeBottomUp && node.IsBottomUp)
                 return true;
 
             return false;
