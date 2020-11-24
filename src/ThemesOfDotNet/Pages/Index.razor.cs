@@ -45,7 +45,7 @@ namespace ThemesOfDotNet.Pages
         private string _filter;
         private bool _includeThemes = true;
         private bool _includeEpics = true;
-        private bool _includeUserStories;
+        private bool _includeUserStories = true;
         private bool _includeIssues;
         private bool _includeBottomUp;
         private string _selectedRelease;
