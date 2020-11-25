@@ -54,6 +54,7 @@ namespace ThemesOfDotNet.Pages
         private string _selectedMilestone;
         private string _selectedPriority;
         private string _selectedCost;
+        private string _selectedTeam;
 
         public Index()
         {
@@ -224,6 +225,17 @@ namespace ThemesOfDotNet.Pages
             }
         }
 
+        public string SelectedTeam
+        {
+            get => _selectedTeam;
+            set
+            {
+                _selectedTeam = value;
+                RebuildPageTree();
+                UpdateUrl();
+            }
+        }
+
         protected override async Task OnInitializedAsync()
         {
             var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
@@ -252,6 +264,7 @@ namespace ThemesOfDotNet.Pages
                 _selectedMilestone = filterString.GetValue("milestone");
                 _selectedPriority = filterString.GetValue("priority");
                 _selectedCost = filterString.GetValue("cost");
+                _selectedTeam = filterString.GetValue("team");
             }
 
             RebuildPageTree();
@@ -388,6 +401,9 @@ namespace ThemesOfDotNet.Pages
             if (SelectedCost != null)
                 filterString = filterString.SetValue("cost", SelectedCost);
 
+            if (SelectedTeam != null)
+                filterString = filterString.SetValue("team", SelectedTeam);
+
             return filterString;
         }
 
@@ -429,6 +445,19 @@ namespace ThemesOfDotNet.Pages
 
             if (SelectedCost != null && SelectedCost != (node.Cost?.ToString() ?? ""))
                 return false;
+
+            if (SelectedTeam != null)
+            {
+                if (SelectedTeam == "")
+                {
+                    if (node.Teams.Any())
+                        return false;
+                }
+                else if (!node.Teams.Contains(SelectedTeam))
+                {
+                    return false;
+                }
+            }
 
             var filters = FilterString.Parse(Filter)
                                       .Where(t => string.IsNullOrEmpty(t.Key) && !string.IsNullOrWhiteSpace(t.Value))

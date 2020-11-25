@@ -175,6 +175,29 @@ else
             </div>
         </div>
 
+        <div class="dropdown col-auto">
+            <button class="btn @(SelectedTeam == null ? "btn-light" : "btn-info") btn-sm dropdown-toggle" type="button" id="teamDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Teams
+            </button>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="teamDropdown">
+                @foreach (var t in Tree.Teams)
+                {
+                    var value = t ?? "";
+                    var isChecked = SelectedTeam == value;
+                    var icon = isChecked ? "" : "invisible";
+                    var label = t?.ToString() ?? "(Unassigned)";
+                    var handler = new Action(() =>
+                    {
+                        if (isChecked)
+                            SelectedTeam = null;
+                        else
+                            SelectedTeam = value;
+                    });
+                    <a class="dropdown-item mr-5" href="#" @onclick="handler" @onclick:preventDefault><span class="oi oi-check mr-2 @icon"></span>@label</a>
+                }
+            </div>
+        </div>
+
         <div class="dropdown col-auto ml-auto">
             <button class="btn btn-success btn-sm dropdown-toggle" type="button" id="newDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 New Issue

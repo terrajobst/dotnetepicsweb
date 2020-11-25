@@ -34,6 +34,7 @@ namespace ThemesOfDotNet.Data
                 States = new SortedSet<string>(allNodes.Select(n => n.ReleaseInfo?.Status)) { null };
                 Priorities = new SortedSet<int?>(allNodes.Select(n => n.Priority)) { null };
                 Costs = new SortedSet<TreeNodeCost?>(allNodes.Select(n => n.Cost)) { null };
+                Teams = new SortedSet<string>(allNodes.SelectMany(n => n.Teams)) { null };
             }
         }
 
@@ -54,5 +55,8 @@ namespace ThemesOfDotNet.Data
 
         [JsonIgnore]
         public IReadOnlyCollection<TreeNodeCost?> Costs { get; private set; }
+
+        [JsonIgnore]
+        public IReadOnlyCollection<string> Teams { get; private set; }
     }
 }

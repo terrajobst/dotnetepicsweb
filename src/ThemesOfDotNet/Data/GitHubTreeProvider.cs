@@ -244,6 +244,7 @@ namespace ThemesOfDotNet.Data
                 Title = issue.Title,
                 Priority = ConvertPriority(issue),
                 Cost = ConvertCost(issue),
+                Teams = ConvertTeams(issue),
                 Milestone = issue.Milestone,
                 Assignees = issue.Assignees,
                 Labels = issue.Labels,
@@ -307,6 +308,31 @@ namespace ThemesOfDotNet.Data
                 }
             }
 
+            return result;
+        }
+
+        private IReadOnlyList<string> ConvertTeams(GitHubIssue issue)
+        {
+            var result = (List<string>)null;
+
+            foreach (var label in issue.Labels)
+            {
+                if (!TryParseColonSeparatedValue(label.Name, out var name, out var value))
+                    continue;
+
+                if (!string.Equals(name, "Team", StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                if (result == null)
+                    result = new List<string>();
+
+                result.Add(value);
+            }
+
+            if (result == null)
+                return Array.Empty<string>();
+
+            result.Sort();
             return result;
         }
 
