@@ -268,7 +268,7 @@ namespace ThemesOfDotNet.Data
 
             foreach (var label in issue.Labels)
             {
-                if (!TryParseColonSeparatedValue(label.Name, out var name, out var value))
+                if (!TryParseNamedValue(label.Name, "Priority", out var value))
                     continue;
 
                 if (!int.TryParse(value, out var priority))
@@ -287,7 +287,7 @@ namespace ThemesOfDotNet.Data
 
             foreach (var label in issue.Labels)
             {
-                if (!TryParseColonSeparatedValue(label.Name, out var name, out var value))
+                if (!TryParseNamedValue(label.Name, "Cost", out var value))
                     continue;
 
                 TreeNodeCost? cost = null;
@@ -317,10 +317,7 @@ namespace ThemesOfDotNet.Data
 
             foreach (var label in issue.Labels)
             {
-                if (!TryParseColonSeparatedValue(label.Name, out var name, out var value))
-                    continue;
-
-                if (!string.Equals(name, "Team", StringComparison.OrdinalIgnoreCase))
+                if (!TryParseNamedValue(label.Name, "Team", out var value))
                     continue;
 
                 if (result == null)
@@ -336,17 +333,21 @@ namespace ThemesOfDotNet.Data
             return result;
         }
 
-        private static bool TryParseColonSeparatedValue(string text, out string name, out string value)
+        private static bool TryParseNamedValue(string text, string name, out string value)
         {
-            name = null;
-            value = null;
+            value = default;
 
             var parts = text.Split(':');
             if (parts.Length != 2)
                 return false;
 
-            name = parts[0].Trim();
-            value = parts[1].Trim();
+            var n = parts[0].Trim();
+            var v = parts[1].Trim();
+
+            if (!string.Equals(n, name, StringComparison.OrdinalIgnoreCase))
+                return false;
+
+            value = v;
             return true;
         }
 
