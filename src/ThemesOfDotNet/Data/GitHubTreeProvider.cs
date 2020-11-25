@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Markdig;
@@ -29,12 +30,12 @@ namespace ThemesOfDotNet.Data
             _gitHubClientFactory = gitHubClientFactory;
         }
 
-        public async Task<Tree> GetTreeAsync()
+        public async Task<Tree> GetTreeAsync(CancellationToken cancellationToken)
         {
             var client = await _gitHubClientFactory.CreateAsync();
             var repoCache = new RepoCache(client);
 
-            var cardsTask = GetIssueCardsAsync(client);
+            var cardsTask = GetIssueCardsAsync(client, cancellationToken);
 
             // Get root issues
 
@@ -44,6 +45,8 @@ namespace ThemesOfDotNet.Data
             {
                 foreach (var label in ThemesOfDotNetConstants.Labels)
                 {
+                    cancellationToken.ThrowIfCancellationRequested();
+
                     var task = GetIssuesAsync(client, repoCache, repoId, label);
                     startingIssueTasks.Add(task);
                 }
@@ -61,6 +64,8 @@ namespace ThemesOfDotNet.Data
 
             while (issueQueue.Count > 0)
             {
+                cancellationToken.ThrowIfCancellationRequested();
+
                 var issue = issueQueue.Dequeue();
 
                 var links = ParseIssueLinks(issue.Id.Owner, issue.Id.Repo, issue.DescriptionMarkdown).ToArray();
@@ -68,6 +73,8 @@ namespace ThemesOfDotNet.Data
 
                 foreach (var (type, linkedId) in links)
                 {
+                    cancellationToken.ThrowIfCancellationRequested();
+
                     if (!issueById.TryGetValue(linkedId, out var linkedIssue))
                     {
                         linkedIssue = await GetIssueAsync(client, repoCache, linkedId);
@@ -351,7 +358,7 @@ namespace ThemesOfDotNet.Data
             return true;
         }
 
-        private async Task<IReadOnlyList<GitHubIssueCard>> GetIssueCardsAsync(GitHubClient client)
+        private async Task<IReadOnlyList<GitHubIssueCard>> GetIssueCardsAsync(GitHubClient client, CancellationToken cancellationToken)
         {
             var issueCards = new List<GitHubIssueCard>();
 
@@ -368,11 +375,15 @@ namespace ThemesOfDotNet.Data
 
             foreach (var org in orgs)
             {
+                cancellationToken.ThrowIfCancellationRequested();
+
                 var projectRequest = new ProjectRequest(ItemStateFilter.Open);
                 var projects = await client.Repository.Project.GetAllForOrganization(org, projectRequest);
 
                 foreach (var project in projects)
                 {
+                    cancellationToken.ThrowIfCancellationRequested();
+
                     if (!IsDotNetReleaseProject(project.Name))
                         continue;
 
@@ -380,6 +391,8 @@ namespace ThemesOfDotNet.Data
 
                     foreach (var column in columns)
                     {
+                        cancellationToken.ThrowIfCancellationRequested();
+
                         var cards = await client.Repository.Project.Card.GetAll(column.Id);
 
                         foreach (var card in cards)

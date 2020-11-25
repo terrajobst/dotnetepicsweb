@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Hosting;
@@ -15,8 +16,7 @@ namespace ThemesOfDotNet.Data
         private readonly IWebHostEnvironment _environment;
         private readonly GitHubTreeProvider _githubTreeProvider;
         private readonly AzureDevOpsTreeProvider _azureTreeProvider;
-
-        private Tree _tree;
+        private LoadTreeJob _loadTreeJob;
 
         public TreeService(IWebHostEnvironment environment, GitHubTreeProvider gitHubTreeProvider, AzureDevOpsTreeProvider azureTreeProvider)
         {
@@ -25,34 +25,77 @@ namespace ThemesOfDotNet.Data
             _azureTreeProvider = azureTreeProvider;
         }
 
-        public Tree Tree => _tree;
+        public Tree Tree => _loadTreeJob?.Tree;
 
-        public async Task InvalidateAsync()
+        private sealed class LoadTreeJob
         {
-            _tree = await LoadTree();
-            Changed?.Invoke(this, EventArgs.Empty);
+            private readonly Tree _oldTree;
+            private readonly CancellationTokenSource _cancellationTokenSource;
+            private readonly Task<Tree> _treeTask;
+            private Tree _tree;
+
+            public LoadTreeJob(Tree oldTree, Func<CancellationToken, Task<Tree>> treeLoader)
+            {
+                _oldTree = oldTree;
+                _cancellationTokenSource = new CancellationTokenSource();
+                _treeTask = treeLoader(_cancellationTokenSource.Token);
+            }
+
+            public void Cancel()
+            {
+                _cancellationTokenSource.Cancel();
+            }
+
+            public async Task<bool> WaitForLoad()
+            {
+                try
+                {
+                    _tree = await _treeTask;
+                    return true;
+                }
+                catch (TaskCanceledException)
+                {
+                    return false;
+                }
+            }
+
+            public Tree Tree => _tree ?? _oldTree;
         }
 
-        private async Task<Tree> LoadTree()
+        public async Task InvalidateAsync(bool force = false)
         {
-            if (!_environment.IsDevelopment())
+            var oldJob = _loadTreeJob;
+            var newJob = new LoadTreeJob(Tree, ct => LoadTree(force, ct));
+
+            if (oldJob != null)
+                oldJob.Cancel();
+
+            Interlocked.CompareExchange(ref _loadTreeJob, newJob, oldJob);
+
+            if (await newJob.WaitForLoad())
+                Changed?.Invoke(this, EventArgs.Empty);
+        }
+
+        private async Task<Tree> LoadTree(bool force, CancellationToken cancellationToken)
+        {
+            if (force || !_environment.IsDevelopment())
             {
-                return await LoadTreeFromProvidersAsync();
+                return await LoadTreeFromProvidersAsync(cancellationToken);
             }
             else
             {
                 var tree = await LoadTreeFromCacheAsync();
                 if (tree == null)
-                    tree = await LoadTreeFromProvidersAsync();
+                    tree = await LoadTreeFromProvidersAsync(cancellationToken);
                 await SaveTreeToCacheAsync(tree);
                 return tree;
             }
         }
 
-        private async Task<Tree> LoadTreeFromProvidersAsync()
+        private async Task<Tree> LoadTreeFromProvidersAsync(CancellationToken cancellationToken)
         {
-            var gitHubTreeTask = _githubTreeProvider.GetTreeAsync();
-            var azureTreeTask = _azureTreeProvider.GetTreeAsync();
+            var gitHubTreeTask = _githubTreeProvider.GetTreeAsync(cancellationToken);
+            var azureTreeTask = _azureTreeProvider.GetTreeAsync(cancellationToken);
             await Task.WhenAll(gitHubTreeTask, azureTreeTask);
             return SortTree(MergeTrees(gitHubTreeTask.Result, azureTreeTask.Result));
         }

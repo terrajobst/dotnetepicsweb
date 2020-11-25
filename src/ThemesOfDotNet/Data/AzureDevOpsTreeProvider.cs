@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Microsoft.Extensions.Configuration;
@@ -125,7 +126,7 @@ namespace ThemesOfDotNet.Data
             yield return list.ToArray();
         }
 
-        public async Task<Tree> GetTreeAsync()
+        public async Task<Tree> GetTreeAsync(CancellationToken cancellationToken)
         {
             var workItemRoots = await GetWorkItemRootsAsync();
             var themeNode = new TreeNode

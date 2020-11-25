@@ -14,9 +14,12 @@ namespace ThemesOfDotNet.Data
             _treeService = treeService;
         }
 
-        public async Task StartAsync(CancellationToken cancellationToken)
+        public Task StartAsync(CancellationToken cancellationToken)
         {
-            await _treeService.InvalidateAsync();
+            // Don't block the start up
+            _ = _treeService.InvalidateAsync();
+
+            return Task.CompletedTask;
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
