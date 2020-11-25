@@ -7,8 +7,6 @@ namespace ThemesOfDotNet.Data
 {
     public sealed class Tree
     {
-        private IReadOnlyCollection<TreeNode> _roots;
-
         public static Tree Empty { get; } = new Tree(Array.Empty<TreeNode>());
 
         public Tree()
@@ -19,44 +17,42 @@ namespace ThemesOfDotNet.Data
         public Tree(IEnumerable<TreeNode> roots)
         {
             Roots = roots.ToArray();
+            Initialize();
         }
 
-        public IReadOnlyCollection<TreeNode> Roots
+        public void Initialize()
         {
-            get => _roots;
-            set
-            {
-                _roots = value;
-                var allNodes = Roots?.SelectMany(r => r.DescendantsAndSelf()) ?? Array.Empty<TreeNode>();
-                Assignees = new SortedSet<string>(allNodes.SelectMany(n => n.Assignees)) { null };
-                Milestones = new SortedSet<string>(allNodes.Select(n => n.Milestone)) { null };
-                Releases = new SortedSet<string>(allNodes.Select(n => n.ReleaseInfo?.Release)) { null };
-                States = new SortedSet<string>(allNodes.Select(n => n.ReleaseInfo?.Status)) { null };
-                Priorities = new SortedSet<int?>(allNodes.Select(n => n.Priority)) { null };
-                Costs = new SortedSet<TreeNodeCost?>(allNodes.Select(n => n.Cost)) { null };
-                Teams = new SortedSet<string>(allNodes.SelectMany(n => n.Teams)) { null };
-            }
+            var allNodes = Roots?.SelectMany(r => r.DescendantsAndSelf()) ?? Array.Empty<TreeNode>();
+            Assignees = new SortedSet<string>(allNodes.SelectMany(n => n.Assignees)) { null };
+            Milestones = new SortedSet<string>(allNodes.Select(n => n.Milestone)) { null };
+            Releases = new SortedSet<string>(allNodes.Select(n => n.ReleaseInfo?.Release)) { null };
+            States = new SortedSet<string>(allNodes.Select(n => n.ReleaseInfo?.Status)) { null };
+            Priorities = new SortedSet<int?>(allNodes.Select(n => n.Priority)) { null };
+            Costs = new SortedSet<TreeNodeCost?>(allNodes.Select(n => n.Cost)) { null };
+            Teams = new SortedSet<string>(allNodes.SelectMany(n => n.Teams)) { null };
         }
 
-        [JsonIgnore]
-        public IReadOnlyCollection<string> Assignees { get; private set; }
+        public IReadOnlyCollection<TreeNode> Roots { get; set; }
 
         [JsonIgnore]
-        public IReadOnlyCollection<string> Milestones { get; private set; }
+        public IReadOnlyCollection<string> Assignees { get; private set; } = Array.Empty<string>();
 
         [JsonIgnore]
-        public IReadOnlyCollection<string> Releases { get; private set; }
+        public IReadOnlyCollection<string> Milestones { get; private set; } = Array.Empty<string>();
 
         [JsonIgnore]
-        public IReadOnlyCollection<string> States { get; private set; }
+        public IReadOnlyCollection<string> Releases { get; private set; } = Array.Empty<string>();
 
         [JsonIgnore]
-        public IReadOnlyCollection<int?> Priorities { get; private set; }
+        public IReadOnlyCollection<string> States { get; private set; } = Array.Empty<string>();
 
         [JsonIgnore]
-        public IReadOnlyCollection<TreeNodeCost?> Costs { get; private set; }
+        public IReadOnlyCollection<int?> Priorities { get; private set; } = Array.Empty<int?>();
 
         [JsonIgnore]
-        public IReadOnlyCollection<string> Teams { get; private set; }
+        public IReadOnlyCollection<TreeNodeCost?> Costs { get; private set; } = Array.Empty<TreeNodeCost?>();
+
+        [JsonIgnore]
+        public IReadOnlyCollection<string> Teams { get; private set; } = Array.Empty<string>();
     }
 }

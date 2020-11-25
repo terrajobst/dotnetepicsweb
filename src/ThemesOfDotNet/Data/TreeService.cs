@@ -64,7 +64,9 @@ namespace ThemesOfDotNet.Data
                 return null;
 
             using var stream = File.OpenRead(fileName);
-            return await JsonSerializer.DeserializeAsync<Tree>(stream);
+            var result = await JsonSerializer.DeserializeAsync<Tree>(stream);
+            result.Initialize();
+            return result;
         }
 
         private async Task SaveTreeToCacheAsync(Tree tree)
