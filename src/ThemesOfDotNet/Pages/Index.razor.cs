@@ -491,7 +491,11 @@ namespace ThemesOfDotNet.Pages
 
         private bool IsIndirectlyVisible(TreeNode node)
         {
-            return !IsDirectlyVisible(node) && node.Descendants().Any(n => !SkipNode(n) && IsDirectlyVisible(n));
+            if (IsDirectlyVisible(node))
+                return false;
+
+            return node.Descendants().Any(n => !SkipNode(n) && IsDirectlyVisible(n)) ||
+                   node.Ancestors().Any(n => IsDirectlyVisible(n));
         }
 
         private bool SkipNode(TreeNode node)

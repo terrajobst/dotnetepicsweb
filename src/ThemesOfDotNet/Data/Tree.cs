@@ -30,6 +30,12 @@ namespace ThemesOfDotNet.Data
             Priorities = new SortedSet<int?>(allNodes.Select(n => n.Priority)) { null };
             Costs = new SortedSet<TreeNodeCost?>(allNodes.Select(n => n.Cost)) { null };
             Teams = new SortedSet<string>(allNodes.SelectMany(n => n.Teams)) { null };
+
+            foreach (var parent in allNodes)
+            {
+                foreach (var child in parent.Children)
+                    child.Parents.Add(parent);
+            }          
         }
 
         public IReadOnlyCollection<TreeNode> Roots { get; set; }

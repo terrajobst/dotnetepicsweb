@@ -31,6 +31,29 @@ namespace ThemesOfDotNet.Data
         [JsonIgnore]
         public string DetailText => $"{Id} opened {CreatedAt.Humanize()}";
 
+        [JsonIgnore]
+        public List<TreeNode> Parents { get; set; } = new List<TreeNode>();
+
+        public IEnumerable<TreeNode> AncestorsAndSelf()
+        {
+            var stack = new Stack<TreeNode>();
+            stack.Push(this);
+
+            while (stack.Count > 0)
+            {
+                var node = stack.Pop();
+                yield return node;
+
+                foreach (var parent in node.Parents.AsEnumerable().Reverse())
+                    stack.Push(parent);
+            }
+        }
+
+        public IEnumerable<TreeNode> Ancestors()
+        {
+            return AncestorsAndSelf().Skip(1);
+        }
+
         public IEnumerable<TreeNode> DescendantsAndSelf()
         {
             var stack = new Stack<TreeNode>();
