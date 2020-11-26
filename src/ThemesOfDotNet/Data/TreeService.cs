@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -27,10 +28,15 @@ namespace ThemesOfDotNet.Data
 
         public Tree Tree => _loadTreeJob?.Tree;
 
+        public DateTimeOffset? LoadDateTime => _loadTreeJob?.LoadDateTime;
+
+        public TimeSpan? LoadDuration => _loadTreeJob?.LoadDuration;
+
         private sealed class LoadTreeJob
         {
             private readonly Tree _oldTree;
             private readonly CancellationTokenSource _cancellationTokenSource;
+            private readonly Stopwatch _stopwatch;
             private readonly Task<Tree> _treeTask;
             private Tree _tree;
 
@@ -38,7 +44,9 @@ namespace ThemesOfDotNet.Data
             {
                 _oldTree = oldTree;
                 _cancellationTokenSource = new CancellationTokenSource();
+                _stopwatch = Stopwatch.StartNew();
                 _treeTask = treeLoader(_cancellationTokenSource.Token);
+                LoadDateTime = DateTimeOffset.Now;
             }
 
             public void Cancel()
@@ -51,6 +59,7 @@ namespace ThemesOfDotNet.Data
                 try
                 {
                     _tree = await _treeTask;
+                    _stopwatch.Stop();
                     return true;
                 }
                 catch (TaskCanceledException)
@@ -58,6 +67,10 @@ namespace ThemesOfDotNet.Data
                     return false;
                 }
             }
+
+            public DateTimeOffset LoadDateTime { get; }
+
+            public TimeSpan? LoadDuration => _treeTask.IsCompleted ? _stopwatch.Elapsed : (TimeSpan?) null;
 
             public Tree Tree => _tree ?? _oldTree;
         }

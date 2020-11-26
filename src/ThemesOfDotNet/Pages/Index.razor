@@ -1,4 +1,7 @@
-﻿@page "/"
+﻿@using Humanizer;
+@using Microsoft.Extensions.Hosting;
+
+@page "/"
 
 @if (Tree == null)
 {
@@ -222,3 +225,23 @@ else
 
     <TreeListItem Owner="@this" Nodes="@PageTree.Roots" />
 }
+
+@if (TreeService.LoadDateTime != null)
+{
+    <hr />
+
+    if (@TreeService.LoadDuration == null)
+    {
+        <div class="text-muted small">Triggered refresh @(TreeService.LoadDateTime?.Humanize())...</div>
+    }
+    else
+    {
+        <div class="text-muted small">Last refreshed @(TreeService.LoadDateTime?.Humanize()), took @TreeService.LoadDuration?.Humanize(maxUnit: Humanizer.Localisation.TimeUnit.Second)</div>
+    }
+
+    if (Environment.IsDevelopment())
+    {
+        <button class="btn btn-sm btn-link p-0" @onclick="() => TreeService.InvalidateAsync(force: true)">Force refresh</button>
+    }
+}
+

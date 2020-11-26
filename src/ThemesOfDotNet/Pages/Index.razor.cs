@@ -9,6 +9,7 @@ using ThemesOfDotNet.Data;
 
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.JSInterop;
 
@@ -72,6 +73,9 @@ namespace ThemesOfDotNet.Pages
 
         [Inject]
         public NavigationManager NavigationManager { get; set; }
+
+        [Inject]
+        public IWebHostEnvironment Environment { get; set; }
 
         [Inject]
         public TreeService TreeService { get; set; }

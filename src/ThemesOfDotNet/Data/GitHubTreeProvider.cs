@@ -57,7 +57,8 @@ namespace ThemesOfDotNet.Data
             // Now parse all issue bodies to find children
 
             var startingIssues = startingIssueTasks.SelectMany(t => t.Result).ToArray();
-            var issueQueue = new Queue<GitHubIssue>(startingIssues);
+            var issueQueue = new Queue<GitHubIssue[]>();
+            issueQueue.Enqueue(startingIssues);
             var issueById = startingIssues.ToDictionary(i => i.Id);
             var issues = new List<GitHubIssue>(startingIssues);
             var issueChildren = new Dictionary<string, List<GitHubIssue>>();
@@ -66,63 +67,79 @@ namespace ThemesOfDotNet.Data
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                var issue = issueQueue.Dequeue();
+                var issueBatch = issueQueue.Dequeue();
+                var nextBatch = new List<GitHubIssue>();
 
-                var links = ParseIssueLinks(issue.Id.Owner, issue.Id.Repo, issue.DescriptionMarkdown).ToArray();
-                issueChildren.Add(issue.Id.ToString(), new List<GitHubIssue>());
+                var issueLinks = issueBatch.Select(i => (Issue: i, Links: ParseIssueLinks(i.Id.Owner, i.Id.Repo, i.DescriptionMarkdown).ToArray()))
+                                           .ToArray();
 
-                foreach (var (type, linkedId) in links)
+                var unknownIssueIds = issueLinks.SelectMany(l => l.Links)
+                                                .Select(l => l.LinkedId)
+                                                .Distinct()
+                                                .Where(id => !issueById.ContainsKey(id));
+
+                var newIssues = await GetIssuesBatchedAsync(client, repoCache, unknownIssueIds);
+
+                foreach (var (linkedId, issue) in newIssues)
                 {
-                    cancellationToken.ThrowIfCancellationRequested();
+                    var linkedIssue = issue;
+                    if (linkedIssue == null)
+                        continue;
 
-                    if (!issueById.TryGetValue(linkedId, out var linkedIssue))
+                    var addIssue = true;
+
+                    if (linkedIssue.Id != linkedId)
                     {
-                        linkedIssue = await GetIssueAsync(client, repoCache, linkedId);
+                        // That means the issue got transferred. Let's try again with the new id.
 
-                        if (linkedIssue == null)
-                            continue;
-
-                        var addIssue = true;
-
-                        if (linkedIssue.Id != linkedId)
+                        if (!issueById.TryGetValue(linkedIssue.Id, out var existingIssue))
                         {
-                            // That means the issue got transferred. Let's try again with the new id.
-
-                            if (!issueById.TryGetValue(linkedIssue.Id, out var existingIssue))
-                            {
-                                // We haven't fetched the issue yet but, we still want to record it
-                                // under the new ID as well.
-                                issueById.Add(linkedIssue.Id, linkedIssue);
-                            }
-                            else
-                            {
-                                // OK, we already fetched the issue. Now let's just associate the old id
-                                // with the existing issue and not add the issue we just retrieved.
-                                issueById.Add(linkedId, existingIssue);
-                                linkedIssue = existingIssue;
-                                addIssue = false;
-                            }
+                            // We haven't fetched the issue yet but, we still want to record it
+                            // under the new ID as well.
+                            issueById.Add(linkedIssue.Id, linkedIssue);
                         }
-
-                        if (addIssue)
+                        else
                         {
-                            issueById.Add(linkedId, linkedIssue);
-                            issues.Add(linkedIssue);
-                            issueQueue.Enqueue(linkedIssue);
+                            // OK, we already fetched the issue. Now let's just associate the old id
+                            // with the existing issue and not add the issue we just retrieved.
+                            issueById.Add(linkedId, existingIssue);
+                            linkedIssue = existingIssue;
+                            addIssue = false;
                         }
                     }
 
-                    var parent = type == IssueLinkType.Parent ? linkedIssue : issue;
-                    var child = type == IssueLinkType.Child ? linkedIssue : issue;
-
-                    if (!issueChildren.TryGetValue(parent.Id.ToString(), out var children))
+                    if (addIssue)
                     {
-                        children = new List<GitHubIssue>();
-                        issueChildren.Add(parent.Id.ToString(), children);
+                        issueById.Add(linkedId, linkedIssue);
+                        issues.Add(linkedIssue);
+                        nextBatch.Add(linkedIssue);
                     }
-
-                    children.Add(child);
                 }
+
+                foreach (var (issue, links) in issueLinks)
+                {
+                    issueChildren.Add(issue.Id.ToString(), new List<GitHubIssue>());
+
+                    foreach (var (linkType, linkedId) in links)
+                    {
+                        if (issueById.TryGetValue(linkedId, out var linkedIssue))
+                        {
+                            var parent = linkType == IssueLinkType.Parent ? linkedIssue : issue;
+                            var child = linkType == IssueLinkType.Child ? linkedIssue : issue;
+
+                            if (!issueChildren.TryGetValue(parent.Id.ToString(), out var children))
+                            {
+                                children = new List<GitHubIssue>();
+                                issueChildren.Add(parent.Id.ToString(), children);
+                            }
+
+                            children.Add(child);
+                        }
+                    }
+                }
+
+                if (nextBatch.Any())
+                    issueQueue.Enqueue(nextBatch.ToArray());
             }
 
             // Associate project status with issues
@@ -236,6 +253,25 @@ namespace ThemesOfDotNet.Data
             var roots = issues.Where(i => !parentsByIssue[i].Any())
                               .Select(i => nodeByIssue[i]);
             return new Tree(roots);
+        }
+
+        private async Task<IReadOnlyList<(GitHubIssueId IssueId, GitHubIssue Issue)>> GetIssuesBatchedAsync(GitHubClient client, RepoCache repoCache, IEnumerable<GitHubIssueId> ids)
+        {
+            const int BatchSize = 75;
+
+            var result = new List<(GitHubIssueId IssueId, GitHubIssue Issue)>();
+            var remainingIds = ids.ToList();
+
+            while (remainingIds.Any())
+            {
+                var batchTasks = remainingIds.Take(BatchSize).Select(id => (IssuedId: id, Task: GetIssueAsync(client, repoCache, id))).ToArray();
+
+                await Task.WhenAll(batchTasks.Select(t => t.Task));
+                result.AddRange(batchTasks.Select(t => (t.IssuedId, t.Task.Result)));
+                remainingIds.RemoveRange(0, Math.Min(remainingIds.Count, BatchSize));
+            }
+
+            return result.ToArray();
         }
 
         private TreeNode ConvertToNode(GitHubIssue issue)
@@ -444,7 +480,7 @@ namespace ThemesOfDotNet.Data
 
                 var effectiveIssueId = GitHubIssueId.Parse(issue.HtmlUrl);
                 var repo = await repoCache.GetRepoAsync(new GitHubRepoId(effectiveIssueId.Owner, effectiveIssueId.Repo));
-            return CreateGitHubIssue(repo.Private, issue);
+                return CreateGitHubIssue(repo.Private, issue);
             }
             catch (NotFoundException)
             {
@@ -503,7 +539,7 @@ namespace ThemesOfDotNet.Data
             return result;
         }
 
-        private static IEnumerable<(IssueLinkType, GitHubIssueId)> ParseIssueLinks(string owner, string repo, string markdown)
+        private static IEnumerable<(IssueLinkType LinkType, GitHubIssueId LinkedId)> ParseIssueLinks(string owner, string repo, string markdown)
         {
             var pipeline = new MarkdownPipelineBuilder()
                 .UseTaskLists()
