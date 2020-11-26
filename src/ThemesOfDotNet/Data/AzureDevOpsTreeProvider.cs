@@ -181,7 +181,7 @@ namespace ThemesOfDotNet.Data
                 IsBottomUp = IsBottomUp(azureNode),
                 CreatedAt = azureNode.CreatedAt,
                 CreatedBy = azureNode.CreatedBy,
-                // IsClosed = 
+                IsClosed = ConvertIsClosed(azureNode),
                 Title = azureNode.Title,
                 Milestone = ConvertMilestone(azureNode),
                 Priority = ConvertPriority(azureNode.Priority),
@@ -313,6 +313,12 @@ namespace ThemesOfDotNet.Data
             }
 
             return result.ToArray();
+        }
+
+        private static bool ConvertIsClosed(AzureWorkItem azureNode)
+        {
+            var closedStates = new[] { "Cut", "Completed" };
+            return closedStates.Any(s => string.Equals(azureNode.State, s, StringComparison.OrdinalIgnoreCase));
         }
 
         private static TreeNodeKind ConvertKind(string type)
