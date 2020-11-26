@@ -499,7 +499,7 @@ namespace ThemesOfDotNet.Pages
                 return false;
 
             return node.Descendants().Any(n => !SkipNode(n) && IsDirectlyVisible(n)) ||
-                   node.Ancestors().Any(n => !SkipNode(n) && IsDirectlyVisible(n));
+                   !(ShowOpen && node.IsClosed) && node.Ancestors().Any(n => !SkipNode(n) && IsDirectlyVisible(n));
         }
 
         private bool SkipNode(TreeNode node)
