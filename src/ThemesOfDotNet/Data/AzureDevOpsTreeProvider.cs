@@ -183,7 +183,7 @@ namespace ThemesOfDotNet.Data
                 CreatedBy = azureNode.CreatedBy,
                 // IsClosed = 
                 Title = azureNode.Title,
-                Milestone = azureNode.Milestone,
+                Milestone = ConvertMilestone(azureNode),
                 Priority = ConvertPriority(azureNode.Priority),
                 Cost = ConvertCost(azureNode.Cost),
                 Assignees = string.IsNullOrEmpty(azureNode.AssignedTo) 
@@ -349,14 +349,39 @@ namespace ThemesOfDotNet.Data
 
         private static string ConvertRelease(AzureWorkItem azureNode)
         {
-            var train = azureNode.Release;
-            if (train != null)
+            // Release      : Dev16
+            // Milestone    : 16.8
+            //
+            // --->
+            //
+            // VS 16.8
+
+            var release = azureNode.Release;
+            if (release != null)
             {
-                if (train.StartsWith("Dev", StringComparison.OrdinalIgnoreCase))
-                    train = "VS";
-                else if (train.StartsWith("NET", StringComparison.OrdinalIgnoreCase) || train.StartsWith(".NET", StringComparison.OrdinalIgnoreCase))
-                    train = ".NET SDK";
+                if (release.StartsWith("Dev", StringComparison.OrdinalIgnoreCase))
+                    release = "VS";
+                else if (release.StartsWith("NET", StringComparison.OrdinalIgnoreCase) || release.StartsWith(".NET", StringComparison.OrdinalIgnoreCase))
+                    release = ".NET SDK";
             }
+
+            var milestone = azureNode.Milestone;
+
+            var result = string.Join(" ", release, milestone).Trim();
+            if (result.Length == 0)
+                return null;
+
+            return result;
+        }
+
+        private static string ConvertMilestone(AzureWorkItem azureNode)
+        {
+            // Milestone    : 16.8
+            // Target       : Preview 2
+            //
+            // --->
+            //
+            // 16.8 P2
 
             var milestone = azureNode.Milestone;
 
@@ -368,7 +393,7 @@ namespace ThemesOfDotNet.Data
                                .Replace("Preview", "P", StringComparison.OrdinalIgnoreCase);
             }
 
-            var result = string.Join(" ", train, milestone, target).Trim();
+            var result = string.Join(" ", milestone, target).Trim();
             if (result.Length == 0)
                 return null;
 
