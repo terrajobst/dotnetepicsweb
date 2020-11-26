@@ -91,13 +91,13 @@ namespace ThemesOfDotNet.Data
 
         private async Task<Tree> LoadTree(bool force, CancellationToken cancellationToken)
         {
-            if (force || !_environment.IsDevelopment())
+            if (!_environment.IsDevelopment())
             {
                 return await LoadTreeFromProvidersAsync(cancellationToken);
             }
             else
             {
-                var tree = await LoadTreeFromCacheAsync();
+                var tree = force ? null : await LoadTreeFromCacheAsync();
                 if (tree == null)
                     tree = await LoadTreeFromProvidersAsync(cancellationToken);
                 await SaveTreeToCacheAsync(tree);
