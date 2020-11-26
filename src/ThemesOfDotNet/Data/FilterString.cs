@@ -233,13 +233,13 @@ namespace ThemesOfDotNet.Data
 
         private static FilterStringToken CreateSeparator()
         {
-            return CreateToken(" ");
+            return new FilterStringToken(" ", string.Empty, " ");
         }
 
         private static string Escape(string value)
         {
             var escapedValue = value;
-            if (!string.IsNullOrWhiteSpace(value) && value.Any(c => char.IsWhiteSpace(c)))
+            if (string.IsNullOrWhiteSpace(value) || value.Any(c => char.IsWhiteSpace(c)))
                 escapedValue = "\"" + value + "\"";
             return escapedValue;
         }
