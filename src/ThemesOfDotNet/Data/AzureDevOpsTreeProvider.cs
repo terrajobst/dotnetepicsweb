@@ -53,6 +53,15 @@ namespace ThemesOfDotNet.Data
                 if (item.Fields.TryGetValue<string>("Microsoft.DevDiv.TshirtCosting", out var cost))
                     workItem.Cost = cost;
 
+                if (item.Fields.TryGetValue<string>("Microsoft.eTools.Bug.Release", out var release))
+                    workItem.Release = release;
+
+                if (item.Fields.TryGetValue<string>("Microsoft.DevDiv.Target", out var target))
+                    workItem.Target = target;
+
+                if (item.Fields.TryGetValue<string>("Microsoft.DevDiv.Milestone", out var milestone))
+                    workItem.Milestone = milestone;
+
                 if (item.Fields.TryGetValue<IdentityRef>("System.AssignedTo", out var assignedTo))
                     workItem.AssignedTo = GetAlias(assignedTo);
 
@@ -174,7 +183,7 @@ namespace ThemesOfDotNet.Data
                 CreatedBy = azureNode.CreatedBy,
                 // IsClosed = 
                 Title = azureNode.Title,
-                // Milestone =
+                Milestone = azureNode.Milestone,
                 Priority = ConvertPriority(azureNode.Priority),
                 Cost = ConvertCost(azureNode.Cost),
                 Assignees = string.IsNullOrEmpty(azureNode.AssignedTo) 
@@ -182,7 +191,10 @@ namespace ThemesOfDotNet.Data
                                 : new[] { azureNode.AssignedTo },
                 Labels = CreateLabels(azureNode),
                 Kind = ConvertKind(azureNode.Type),
-                ReleaseInfo = new TreeNodeStatus { Status = azureNode.State },
+                ReleaseInfo = new TreeNodeStatus { 
+                    Release = ConvertRelease(azureNode),
+                    Status = azureNode.State
+                },
                 Url = azureNode.Url
             };
             return treeNode;
@@ -335,6 +347,34 @@ namespace ThemesOfDotNet.Data
                 return null;
         }
 
+        private static string ConvertRelease(AzureWorkItem azureNode)
+        {
+            var train = azureNode.Release;
+            if (train != null)
+            {
+                if (train.StartsWith("Dev", StringComparison.OrdinalIgnoreCase))
+                    train = "VS";
+                else if (train.StartsWith("NET", StringComparison.OrdinalIgnoreCase) || train.StartsWith(".NET", StringComparison.OrdinalIgnoreCase))
+                    train = ".NET SDK";
+            }
+
+            var milestone = azureNode.Milestone;
+
+            var target = azureNode.Target;
+            if (target != null)
+            {
+                target = target.Replace(".NET", "", StringComparison.OrdinalIgnoreCase)
+                               .Replace("Preview ", "P", StringComparison.OrdinalIgnoreCase)
+                               .Replace("Preview", "P", StringComparison.OrdinalIgnoreCase);
+            }
+
+            var result = string.Join(" ", train, milestone, target).Trim();
+            if (result.Length == 0)
+                return null;
+
+            return result;
+        }
+
         private static string GetAlias(IdentityRef identityRef)
         {
             var email = identityRef.UniqueName;
@@ -352,6 +392,9 @@ namespace ThemesOfDotNet.Data
             public string State { get; set; }
             public long? Priority { get; set; }
             public string Cost { get; set; }
+            public string Milestone { get; set; }
+            public string Target { get; set; }
+            public string Release { get; set; }
             public DateTime CreatedAt { get; set; }
             public string CreatedBy { get; set; }
             public string AssignedTo { get; set; }
