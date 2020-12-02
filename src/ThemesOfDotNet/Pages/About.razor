@@ -49,3 +49,90 @@
     referencing the issue inside a task list. The task list item is meant to be
     marked when the referenced issue is completed.
 </p>
+
+<h3>How does the web site find issues?</h3>
+
+<p>
+    <em>
+        Note: This guide is intended for members of the .NET product team. The community should generally
+        not file themes, epics, or user stories as they represent our planning. However, based on your feedback
+        we might end up creating corresponding items or just mark yours as a user story.
+    </em>
+</p>
+
+<ul>
+    <li>This site looks for issues labelled <code>Theme</code>, <code>Epic</code>, or <code>User story</code> from a specific set of root repos</li>
+    <li>
+        For each issue it finds, it parses the Markdown to find linked issues:<ul>
+            <li>For each issue it finds, it recursively finds it children</li>
+            <li>
+                Links are considered children when they appear in a <a href="https://github.github.com/gfm/#task-list-items-extension-">Task List</a>.
+                All normal linking methods are recognized (raw URL, <code>#id</code>, <code>org/repo#id</code>, etc)
+            </li>
+            <li>Links are considered parents when they are outside of a task list and the link is in the form of <code>[Parent](url)</code></li>
+            <li>You only use a parent link if you need link an issue in a private repo to an issue in a public repo. Otherwise you just use child links.</li>
+            <li>An issue can be linked from multiple parents and the UI will show the issue in multiple places. However, cycles aren&#39;t allowed (and will be detected and broken)</li>
+        </ul>
+    </li>
+    <li>
+        We review themes, epics, user stories with the .NET directors:
+        <ul>
+            <li>You should generally not add new themes</li>
+            <li>You can add new epics and user stories, but you need parent them accordingly under existing themes or epics</li>
+            <li>
+                We generally don&#39;t want to bottom up work (i.e. feature work driven by the engineering team) to show when reviewing the plan with the directors.
+                However, do we want the ability to see all feature work, regardless of whether they came from the top down planning or via bottom up planning.
+                The compromise is that we mark bottom up work with the label <code>bottom up work</code> which hides them by default.
+            </li>
+        </ul>
+    </li>
+    <li>
+        To indicate cost, use these labels:
+        <ul>
+            <li><code>Cost:S</code></li>
+            <li><code>Cost:M</code></li>
+            <li><code>Cost:L</code></li>
+            <li><code>Cost:XL</code></li>
+        </ul>
+    </li>
+    <li>
+        To indicate priority, use these labels:
+        <ul>
+            <li><code>Priority:0</code></li>
+            <li><code>Priority:1</code></li>
+            <li><code>Priority:2</code></li>
+            <li><code>Priority:3</code></li>
+        </ul>
+    </li>
+    <li>
+        To indicate the release, such as .NET 6.0, add it to the corresponding project:
+        <ul>
+            <li>You do this by clicking on the gear icon in the project area of your issue on the right hand side</li>
+            <li>After a few seconds, you&#39;re able to select a status. You generally want to start in <code>Proposed</code>.</li>
+        </ul>
+    </li>
+    <li>
+        You can add a team marker so that you can filter the list to items relevant to your team
+        <ul>
+            <li>You do this by applying a label such as <code>Theme:Libraries</code> or <code>Theme:Runtime</code>. Feel free to create new team labels as necessary.</li>
+            <li>You can mark issues marked with other teams. This isn&#39;t mean to indicate ownership but &quot;I want this issue to show up in my team specific view&quot;.</li>
+            <li>You don&#39;t need to mark all parents for an issue to show up in your team view; just mark the leaves you care about.</li>
+        </ul>
+    </li>
+    <li>The latency between editing GitHub and <code>themesof.net</code> is about ~10 seconds.</li>
+</ul>
+
+<h3 id="guidelines">Guidelines</h3>
+
+<ul>
+    <li><strong>Do not</strong> add new <em>themes</em></li>
+    <li><strong>Do</strong> parent <em>epics</em> under themes or epics</li>
+    <li><strong>Do</strong> parent <em>user stories</em> under epics or user stories</li>
+    <li><strong>Do</strong> add all themes, epics, and user stories to the .NET 6.0 project</li>
+    <li><strong>Do</strong> mark bottom up work by applying a label <code>bottom up work</code></li>
+    <li><strong>Do</strong> track progress of items you own by changing the project status to <code>in progress</code> or <code>completed</code></li>
+    <li><strong>Do</strong> mark items that need director review by setting the status to <code>proposed</code></li>
+    <li><strong>Do not</strong> set the status to <code>committed</code> unless we reviewed &amp; approved it with the directors (marking bottom up items as committed is fine of course)</li>
+    <li><strong>Avoid</strong> setting the status to <code>cut</code> outside of a director review</li>
+    <li><strong>Do</strong> try to add cost and priority information prior to a director review</li>
+</ul>
