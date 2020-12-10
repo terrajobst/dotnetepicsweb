@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
+using Octokit;
+
 namespace ThemesOfDotNet.Data
 {
     public sealed class TreeService
@@ -59,12 +61,23 @@ namespace ThemesOfDotNet.Data
                 try
                 {
                     _tree = await _treeTask;
-                    _stopwatch.Stop();
                     return true;
                 }
                 catch (TaskCanceledException)
                 {
                     return false;
+                }
+                catch (RateLimitExceededException)
+                {
+                    // TODO: We need to figure out a better strategy here. Ideally, we'd use ex.Reset
+                    //       and schedule a retry later when our quota resets.
+                    _tree = _oldTree ?? Tree.Empty;
+                    return false;
+                }
+                // TODO: We should add an unhandled exception logger
+                finally
+                {
+                    _stopwatch.Stop();
                 }
             }
 
