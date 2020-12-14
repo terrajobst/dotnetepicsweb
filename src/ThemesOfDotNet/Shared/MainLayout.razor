@@ -1,6 +1,6 @@
 ﻿@inherits LayoutComponentBase
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dotnet">
     <a class="navbar-brand" href="/">Themes of .NET</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -8,10 +8,10 @@
     <div class="collapse navbar-collapse" id="navbarText">
         <ul class="navbar-nav mr-auto">
             <NavLink class="nav-link" href="about">
-                About
+                <span class="oi oi-info pr-1"></span> About
             </NavLink>
             <NavLink class="nav-link" href="https://github.com/terrajobst/themesof.net">
-                Source
+                <span class="oi oi-code pr-1"></span> Source
             </NavLink>
         </ul>
         <ul class="navbar-nav">
@@ -39,7 +39,7 @@
                     </div>
                 </Authorized>
                 <NotAuthorized>
-                    <a class="btn btn-dark" href="signin">Sign in</a>
+                    <a class="btn btn-" href="signin">Sign in</a>
                 </NotAuthorized>
             </AuthorizeView>
         </ul>
