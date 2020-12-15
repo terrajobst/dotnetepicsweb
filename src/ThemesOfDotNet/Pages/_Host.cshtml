@@ -12,9 +12,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Themes of .NET</title>
     <base href="~/" />
-    <link rel="icon" type="image/png" href="favicon.png">   
+    <link rel="icon" type="image/png" href="favicon.png">
     <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
-    <link href="css/site.css" rel="stylesheet" />
+    <link href="css/site.css" rel="stylesheet" asp-append-version="true" />
 </head>
 <body>
     <app>
@@ -38,7 +38,7 @@
 
     <script>
         window.changeUrl = function(url){
-           history.pushState(null, '', url);   
+           history.pushState(null, '', url);
         }
     </script>
 </body>

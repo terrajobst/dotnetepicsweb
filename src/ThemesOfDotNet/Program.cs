@@ -1,20 +1,20 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using System.Threading.Tasks;
 
 namespace ThemesOfDotNet
 {
-    public class Program
+    class Program
     {
-        public static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
-        }
+            using var host =
+                Host.CreateDefaultBuilder(args)
+                    .ConfigureWebHostDefaults(
+                        webBuilder => webBuilder.UseStartup<Startup>())
+                    .Build();
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
+            await host.RunAsync();
+        }
     }
 }

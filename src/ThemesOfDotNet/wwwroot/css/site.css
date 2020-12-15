@@ -19,7 +19,7 @@
 }
 
 .bg-dotnet {
-    background-color: !important var(--dotnet-purple);
+    background-color: var(--dotnet-purple) !important;
 }
 
 .btn-dotnet {
