@@ -1,5 +1,11 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
+:root {
+    --dotnet-purple: #512bd4;
+    --dotnet-purple-hover: #4411BB;
+    --dotnet-purple-border-hover: #3311BB;
+}
+
 .valid.modified:not([type=checkbox]) {
     outline: 1px solid #26b050;
 }
@@ -10,6 +16,27 @@
 
 .validation-message {
     color: red;
+}
+
+.bg-dotnet {
+    background-color: var(--dotnet-purple) !important;
+}
+
+.btn-dotnet {
+    color: #fff;
+    background-color: var(--dotnet-purple);
+    border-color: var(--dotnet-purple);
+}
+
+    .btn-dotnet:hover {
+        color: #fff;
+        background-color: var(--dotnet-purple-hover);
+        border-color: var(--dotnet-purple-border-hover);
+    }
+
+.dropdown-menu {
+    max-height: 80vh;
+    overflow-y: auto;
 }
 
 #blazor-error-ui {
