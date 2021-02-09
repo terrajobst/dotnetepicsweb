@@ -108,9 +108,8 @@ namespace ThemesOfDotNet.Data
                         }
                     }
 
-                    if (addIssue)
+                    if (addIssue && issueById.TryAdd(linkedId, linkedIssue))
                     {
-                        issueById.Add(linkedId, linkedIssue);
                         issues.Add(linkedIssue);
                         nextBatch.Add(linkedIssue);
                     }
