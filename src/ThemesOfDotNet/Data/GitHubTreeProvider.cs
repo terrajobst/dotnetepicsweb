@@ -264,7 +264,9 @@ namespace ThemesOfDotNet.Data
 
             while (remainingIds.Any())
             {
-                var batchTasks = remainingIds.Take(BatchSize).Select(id => (IssuedId: id, Task: GetIssueAsync(client, repoCache, id))).ToArray();
+                var batchTasks = remainingIds.Take(BatchSize)
+                                             .Select(id => (IssuedId: id, Task: GetIssueAsync(client, repoCache, id)))
+                                             .ToArray();
 
                 await Task.WhenAll(batchTasks.Select(t => t.Task));
                 result.AddRange(batchTasks.Select(t => (t.IssuedId, t.Task.Result)));
