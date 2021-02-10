@@ -186,6 +186,7 @@ namespace ThemesOfDotNet.Data
                 Milestone = ConvertMilestone(azureNode),
                 Priority = ConvertPriority(azureNode.Priority),
                 Cost = ConvertCost(azureNode.Cost),
+                Teams = ConvertTeams(azureNode.Tags),
                 Assignees = string.IsNullOrEmpty(azureNode.AssignedTo) 
                                 ? Array.Empty<string>()
                                 : new[] { azureNode.AssignedTo },
@@ -351,6 +352,35 @@ namespace ThemesOfDotNet.Data
                 return TreeNodeCost.ExtraLarge;
             else
                 return null;
+        }
+
+        private static IReadOnlyList<string> ConvertTeams(string[] tags)
+        {
+            var result = (List<string>)null;
+
+            foreach (var tag in tags)
+            {
+                var parts = tag.Split(':');
+                if (parts.Length != 2)
+                    continue;
+
+                var key = parts[0].Trim();
+                var value = parts[1].Trim();
+
+                if (!string.Equals(key, "Team", StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                if (result == null)
+                    result = new List<string>();
+
+                result.Add(value);
+            }
+
+            if (result == null)
+                return Array.Empty<string>();
+
+            result.Sort();
+            return result;
         }
 
         private static string ConvertRelease(AzureWorkItem azureNode)
