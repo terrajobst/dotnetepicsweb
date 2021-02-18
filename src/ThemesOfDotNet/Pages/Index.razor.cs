@@ -245,8 +245,6 @@ namespace ThemesOfDotNet.Pages
             var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
             CanSeePrivateIssues = state.User.IsInRole(ThemesOfDotNetConstants.ProductTeamRole);
 
-            await LoadCollapsedIds();
-
             TreeService.Changed += TreeChanged;
 
             var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
@@ -272,6 +270,12 @@ namespace ThemesOfDotNet.Pages
             }
 
             RebuildPageTree();
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            await LoadCollapsedIds();
+            await base.OnAfterRenderAsync(firstRender);
         }
 
         public void Dispose()
