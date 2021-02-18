@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
-
+using Microsoft.Extensions.Logging;
 using Octokit;
 
 namespace ThemesOfDotNet.Data
@@ -19,13 +19,15 @@ namespace ThemesOfDotNet.Data
         private readonly IWebHostEnvironment _environment;
         private readonly GitHubTreeProvider _githubTreeProvider;
         private readonly AzureDevOpsTreeProvider _azureTreeProvider;
+        private readonly ILogger _logger;
         private LoadTreeJob _loadTreeJob;
 
-        public TreeService(IWebHostEnvironment environment, GitHubTreeProvider gitHubTreeProvider, AzureDevOpsTreeProvider azureTreeProvider)
+        public TreeService(IWebHostEnvironment environment, GitHubTreeProvider gitHubTreeProvider, AzureDevOpsTreeProvider azureTreeProvider, ILogger<TreeService> logger)
         {
             _environment = environment;
             _githubTreeProvider = gitHubTreeProvider;
             _azureTreeProvider = azureTreeProvider;
+            _logger = logger;
         }
 
         public Tree Tree => _loadTreeJob?.Tree;
@@ -42,13 +44,13 @@ namespace ThemesOfDotNet.Data
             private readonly Task<Tree> _treeTask;
             private Tree _tree;
 
-            public LoadTreeJob(Tree oldTree, Func<CancellationToken, Task<Tree>> treeLoader)
+            public LoadTreeJob(Tree oldTree, DateTimeOffset? lastLoadDateTime, Func<CancellationToken, Task<Tree>> treeLoader)
             {
                 _oldTree = oldTree;
+                LoadDateTime = lastLoadDateTime;
                 _cancellationTokenSource = new CancellationTokenSource();
                 _stopwatch = Stopwatch.StartNew();
                 _treeTask = treeLoader(_cancellationTokenSource.Token);
-                LoadDateTime = DateTimeOffset.Now;
             }
 
             public void Cancel()
@@ -61,6 +63,7 @@ namespace ThemesOfDotNet.Data
                 try
                 {
                     _tree = await _treeTask;
+                    LoadDateTime = DateTimeOffset.Now;
                     return true;
                 }
                 catch (TaskCanceledException)
@@ -74,14 +77,13 @@ namespace ThemesOfDotNet.Data
                     _tree = _oldTree ?? Tree.Empty;
                     return false;
                 }
-                // TODO: We should add an unhandled exception logger
                 finally
                 {
                     _stopwatch.Stop();
                 }
             }
 
-            public DateTimeOffset LoadDateTime { get; }
+            public DateTimeOffset? LoadDateTime { get; private set; }
 
             public TimeSpan? LoadDuration => _treeTask.IsCompleted ? _stopwatch.Elapsed : (TimeSpan?) null;
 
@@ -91,15 +93,21 @@ namespace ThemesOfDotNet.Data
         public async Task InvalidateAsync(bool force = false)
         {
             var oldJob = _loadTreeJob;
-            var newJob = new LoadTreeJob(Tree, ct => LoadTree(force, ct));
+            var newJob = new LoadTreeJob(Tree, oldJob?.LoadDateTime, ct => LoadTree(force, ct));
 
-            if (oldJob != null)
-                oldJob.Cancel();
+            oldJob?.Cancel();
 
             Interlocked.CompareExchange(ref _loadTreeJob, newJob, oldJob);
 
-            if (await newJob.WaitForLoad())
-                Changed?.Invoke(this, EventArgs.Empty);
+            try
+            {
+                if (await newJob.WaitForLoad())
+                    Changed?.Invoke(this, EventArgs.Empty);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+            }
         }
 
         private async Task<Tree> LoadTree(bool force, CancellationToken cancellationToken)
