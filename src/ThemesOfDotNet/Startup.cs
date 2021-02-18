@@ -15,6 +15,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Net.Http.Headers;
 
 using ThemesOfDotNet.Data;
+using ThemesOfDotNet.Middleware;
 
 namespace ThemesOfDotNet
 {
@@ -105,6 +106,7 @@ namespace ThemesOfDotNet
             });
 
             app.UseHttpsRedirection();
+            app.UsePrecompressedStaticFiles();
             app.UseStaticFiles();
 
             app.UseRouting();

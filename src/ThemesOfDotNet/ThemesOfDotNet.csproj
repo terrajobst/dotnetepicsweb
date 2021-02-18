@@ -18,4 +18,19 @@
     <PackageReference Include="GitHubJwt" Version="0.0.4" />
   </ItemGroup>
 
+  <Target Name="ScriptCssBuild"
+          BeforeTargets="BeforeBuild">
+    <Exec Command="npm run build" />
+  </Target>
+  <PropertyGroup>
+    <!-- File with mtime of last successful npm install -->
+    <NpmInstallStampFile>node_modules/.install-stamp</NpmInstallStampFile>
+  </PropertyGroup>
+  <Target Name="NpmInstall"
+          BeforeTargets="ScriptCssBuild"
+          Inputs="package.json"
+          Outputs="$(NpmInstallStampFile)">
+    <Exec Command="npm install" />
+    <Touch Files="$(NpmInstallStampFile)" AlwaysCreate="true" />
+  </Target>
 </Project>

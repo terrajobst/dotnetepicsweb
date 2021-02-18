@@ -1,4 +1,4 @@
-@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
+@import url('../fonts/open-iconic-bootstrap.min.css');
 
 :root {
     --dotnet-purple: #512bd4;
@@ -12,6 +12,12 @@
 
 .invalid {
     outline: 1px solid red;
+}
+.dropdown-toggle:focus ~ .dropdown-menu {
+    display: block;
+}
+.dropdown-menu:hover {
+    display: block;
 }
 
 .validation-message {
