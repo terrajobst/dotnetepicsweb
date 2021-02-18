@@ -75,6 +75,7 @@
     border: 1px solid transparent;
     display: inline-block;
     vertical-align: top;
+    margin: 0 2px;
 }
 
 .gh-details-cell {
