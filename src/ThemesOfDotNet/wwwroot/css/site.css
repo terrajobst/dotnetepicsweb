@@ -118,19 +118,19 @@
     .gh-issue-kind-header.bottom-up {
         border-left-style: dashed;
     }
-
+/*! purgecss ignore */
     .gh-issue-kind-header.theme {
         border-color: purple;
     }
-
+/*! purgecss ignore */
     .gh-issue-kind-header.epic {
         border-color: #c6415a;
     }
-
+/*! purgecss ignore */
     .gh-issue-kind-header.userstory {
         border-color: #0e8a16;
     }
-
+/*! purgecss ignore */
     .gh-issue-kind-header.issue {
         border-color: darkgray;
     }
