@@ -274,7 +274,8 @@ namespace ThemesOfDotNet.Pages
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            await LoadCollapsedIds();
+            await LoadOpenIds();
+            await ChangeTree();
             await base.OnAfterRenderAsync(firstRender);
         }
 
@@ -285,7 +286,12 @@ namespace ThemesOfDotNet.Pages
 
         private async void TreeChanged(object sender, EventArgs e)
         {
-            await InvokeAsync(() =>
+            await ChangeTree();
+        }
+
+        private Task ChangeTree()
+        {
+            return InvokeAsync(() =>
             {
                 RebuildPageTree();
 
@@ -533,14 +539,14 @@ namespace ThemesOfDotNet.Pages
             if (_nodeStates.TryGetValue(node.TreeNode.Id, out var state))
                 return state;
 
-            return true;
+            return false;
         }
 
         public void ToggleNode(PageNode node)
         {
             _nodeStates[node.TreeNode.Id] = !IsExpanded(node);
 
-            SaveCollapsedIds();
+            SaveOpenIds();
         }
 
         public void ExpandAll()
@@ -548,7 +554,7 @@ namespace ThemesOfDotNet.Pages
             foreach (var issueId in GetAllIssueIds())
                 _nodeStates[issueId] = true;
 
-            SaveCollapsedIds();
+            SaveOpenIds();
         }
 
         public void CollapseAll()
@@ -556,22 +562,24 @@ namespace ThemesOfDotNet.Pages
             foreach (var issueId in GetAllIssueIds())
                 _nodeStates[issueId] = false;
 
-            SaveCollapsedIds();
+            SaveOpenIds();
         }
 
-        private async Task LoadCollapsedIds()
+        private async Task LoadOpenIds()
         {
-            var collapsedIds = await LocalStorageService.GetItemAsync<string[]>("collapsedIds") ?? Array.Empty<string>();
-            foreach (var id in collapsedIds)
-                _nodeStates[id] = false;
+            var openIds = await LocalStorageService.GetItemAsync<string[]>("openIds") ?? Array.Empty<string>();
+            foreach (var id in openIds)
+            {
+                _nodeStates[id] = true;
+            }
         }
 
-        private void SaveCollapsedIds()
+        private void SaveOpenIds()
         {
-            var collapsedIds = _nodeStates.Where(kv => kv.Value == false)
+            var openIds = _nodeStates.Where(kv => kv.Value == true)
                                           .Select(kv => kv.Key.ToString())
                                           .ToArray();
-            LocalStorageService.SetItemAsync("collapsedIds", collapsedIds);
+            LocalStorageService.SetItemAsync("openIds", openIds);
         }
     }
 }
