@@ -23,7 +23,13 @@ namespace ThemesOfDotNet.Data
 
         private async Task<IReadOnlyList<AzureWorkItem>> GetWorkItemRootsAsync()
         {
-            var url = new Uri(_configuration["AzureDevOpsUrl"]);
+            var azureDevOpsUrl = _configuration["AzureDevOpsUrl"];
+            if (string.IsNullOrEmpty(azureDevOpsUrl))
+            {
+                return new List<AzureWorkItem>();
+            }
+
+            var url = new Uri(azureDevOpsUrl);
             var token = _configuration["AzureDevOpsToken"];
             var connection = new VssConnection(url, new VssBasicCredential(string.Empty, token));
             var client = connection.GetClient<WorkItemTrackingHttpClient>();
@@ -156,7 +162,7 @@ namespace ThemesOfDotNet.Data
 
             ConvertNodes(themeNode.Children, workItemRoots);
 
-            themeNode.CreatedAt = themeNode.Descendants().DefaultIfEmpty().Select(n => n.CreatedAt).Min();
+            themeNode.CreatedAt = themeNode.Descendants().DefaultIfEmpty().Select(n => n?.CreatedAt ?? DateTimeOffset.UtcNow).Min();
 
             return new Tree(new[] { themeNode });
         }

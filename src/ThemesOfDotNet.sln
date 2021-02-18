@@ -5,6 +5,17 @@ VisualStudioVersion = 16.0.30509.233
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThemesOfDotNet", "ThemesOfDotNet\ThemesOfDotNet.csproj", "{BF56BC1B-DBB1-4BAA-BCCD-76DDBBC64CEE}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Repo", "Repo", "{B455B254-52B2-494F-AB88-FD2DAC584CA5}"
+	ProjectSection(SolutionItems) = preProject
+		..\README.md = ..\README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workflow", "Workflow", "{77662DEB-3DF9-4198-A6E0-FA8FF97BF2B8}"
+	ProjectSection(SolutionItems) = preProject
+		..\.github\workflows\cd.yml = ..\.github\workflows\cd.yml
+		..\.github\workflows\ci.yml = ..\.github\workflows\ci.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,6 +29,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{77662DEB-3DF9-4198-A6E0-FA8FF97BF2B8} = {B455B254-52B2-494F-AB88-FD2DAC584CA5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FE7A5CA6-8E29-4C02-AC01-BDAA1EEBA707}

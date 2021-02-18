@@ -4,8 +4,7 @@
 @{
     Layout = null;
 }
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -13,12 +12,12 @@
     <title>Themes of .NET</title>
     <base href="~/" />
     <link rel="icon" type="image/png" href="favicon.png">
-    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
-    <link href="css/site.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/css/themesof.net.bundle.css" rel="stylesheet" asp-append-version="true" />
+    <meta name="description" content="Tracking Themes, Epics, User stories and Issues for the next phase of .NET runtime development"/>
 </head>
 <body>
     <app>
-        <component type="typeof(App)" render-mode="Server" />
+        <component type="typeof(App)" render-mode="ServerPrerendered" />
     </app>
 
     <div id="blazor-error-ui">
@@ -28,18 +27,11 @@
         <environment include="Development">
             An unhandled exception has occurred. See browser dev tools for details.
         </environment>
-        <a href="" class="reload">Reload</a>
-        <a class="dismiss">🗙</a>
+        <a href="/" class="reload" rel="nofollow">Reload</a>
+        <a href="#" class="dismiss" rel="nofollow">🗙</a>
     </div>
 
-    <script src="_framework/blazor.server.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="~/js/bootstrap.bundle.min.js"></script>
-
-    <script>
-        window.changeUrl = function(url){
-           history.pushState(null, '', url);
-        }
-    </script>
+    <script src="_framework/blazor.server.js" async></script>
+    <script src="~/js/themesof.net.bundle.js" async asp-append-version="true"></script>
 </body>
 </html>
