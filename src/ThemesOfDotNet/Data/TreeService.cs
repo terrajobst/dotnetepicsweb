@@ -70,13 +70,6 @@ namespace ThemesOfDotNet.Data
                 {
                     return false;
                 }
-                catch (RateLimitExceededException)
-                {
-                    // TODO: We need to figure out a better strategy here. Ideally, we'd use ex.Reset
-                    //       and schedule a retry later when our quota resets.
-                    _tree = _oldTree ?? Tree.Empty;
-                    return false;
-                }
                 finally
                 {
                     _stopwatch.Stop();
