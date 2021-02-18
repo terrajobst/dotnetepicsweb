@@ -88,7 +88,22 @@ namespace ThemesOfDotNet.Data
             var oldJob = _loadTreeJob;
             var newJob = new LoadTreeJob(Tree, oldJob?.LoadDateTime, ct => LoadTree(force, ct));
 
-            oldJob?.Cancel();
+            // If we have a job pending, cancel it but wait for it to finish
+            // so we don't accidentally trigger an abuse detection because of
+            // too many pending async calls against the GitHub API.
+
+            if (oldJob != null)
+            {
+                oldJob.Cancel();
+                try
+                {
+                    await oldJob.WaitForLoad();
+                }
+                catch
+                {
+                    // Ignore
+                }
+            }
 
             Interlocked.CompareExchange(ref _loadTreeJob, newJob, oldJob);
 
