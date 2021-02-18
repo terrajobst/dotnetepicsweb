@@ -31,6 +31,7 @@ namespace ThemesOfDotNet
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages();
+            services.AddApplicationInsightsTelemetry(Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"]);
             services.AddServerSideBlazor();
             services.AddControllers();
             services.AddHostedService<TreeServiceWarmUp>();
