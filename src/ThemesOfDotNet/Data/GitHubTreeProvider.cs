@@ -256,7 +256,7 @@ namespace ThemesOfDotNet.Data
 
         private async Task<IReadOnlyList<(GitHubIssueId IssueId, GitHubIssue Issue)>> GetIssuesBatchedAsync(GitHubClient client, RepoCache repoCache, IEnumerable<GitHubIssueId> ids)
         {
-            const int BatchSize = 20;
+            const int BatchSize = 1;
 
             var result = new List<(GitHubIssueId IssueId, GitHubIssue Issue)>();
             var remainingIds = ids.ToList();
