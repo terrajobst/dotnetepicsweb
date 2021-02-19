@@ -274,8 +274,12 @@ namespace ThemesOfDotNet.Pages
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            await LoadOpenIds();
-            await ChangeTree();
+            if (firstRender)
+            {
+                await LoadOpenIds();
+                await ChangeTree();
+            }
+
             await base.OnAfterRenderAsync(firstRender);
         }
 
