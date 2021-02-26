@@ -32,7 +32,12 @@ namespace ThemesOfDotNet
         {
             services.AddRazorPages();
             services.AddApplicationInsightsTelemetry(Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"]);
-            services.AddServerSideBlazor();
+            services.AddServerSideBlazor()
+                .AddHubOptions(options =>
+                {
+                    // Increase the limits to 256 kB
+                    options.MaximumReceiveMessageSize = 262144;
+                });
             services.AddControllers();
             services.AddHostedService<TreeServiceWarmUp>();
             services.AddSingleton<GitHubClientFactory>();
