@@ -117,7 +117,12 @@ namespace ThemesOfDotNet
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapBlazorHub();
+                endpoints.MapBlazorHub(options => 
+                {
+                    // Increase the limits to 256 kB
+                    options.ApplicationMaxBufferSize = 262144;
+                    options.TransportMaxBufferSize = 262144;
+                });
                 endpoints.MapDefaultControllerRoute();
                 endpoints.MapFallbackToPage("/_Host");
             });
