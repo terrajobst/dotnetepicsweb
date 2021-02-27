@@ -9,8 +9,15 @@
 .tree-toggle:before {
     display: inline-block;
 }
+.tree-toggle:focus {
+    outline: none;
+}
 .tree-toggle.oi-plus:focus:before {
     content: '\e08c';
+    color: darkgreen;
+    font-size: 1.4em;
+    font-weight: bold;
+    margin: -.1em 0 0 -.1em;
     animation: rotation 1.5s linear infinite;
 }
 
