@@ -30,6 +30,29 @@
         transform: rotate(-359deg);
     }
 }
+/*! purgecss ignore */
+.node-closed {
+    max-height: 102px;
+    overflow: hidden;
+}
+/*! purgecss ignore */
+.node-open {
+    max-height: unset;
+    animation: expand 0.5s ease-out;
+    overflow: hidden;
+}
+@keyframes expand {
+    0% {
+        max-height: 102px;
+    }
+    99% {
+        max-height: 600px;
+    }
+    100% {
+        max-height: unset;
+    }
+}
+
 .valid.modified:not([type=checkbox]) {
     outline: 1px solid #26b050;
 }
@@ -104,7 +127,7 @@
 
 .gh-details-cell {
     margin-top: 2px;
-    line-height: 1.25 !important;
+    line-height: 1.9 !important;
     font-size: 12px !important;
     color: #586069 !important;
 }
@@ -207,7 +230,6 @@
     border: 2px solid #ccc;
     border-radius: 4px;
     color: #ccc;
-    margin-left: -5px;
     margin-right: 5px;
     padding: 2px;
     font-size: 11px;
