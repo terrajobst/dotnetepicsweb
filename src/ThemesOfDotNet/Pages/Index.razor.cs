@@ -12,6 +12,10 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.JSInterop;
+using System.IO.Compression;
+using System.Text.Json;
+using System.IO;
+using System.Text;
 
 namespace ThemesOfDotNet.Pages
 {
@@ -571,7 +575,26 @@ namespace ThemesOfDotNet.Pages
 
         private async Task LoadOpenIds()
         {
-            var openIds = await LocalStorageService.GetItemAsync<string[]>("openIds") ?? Array.Empty<string>();
+            var openIds = Array.Empty<string>();
+            try
+            {
+                var base64 = await LocalStorageService.GetItemAsync<string>("openIds");
+                var input = new MemoryStream(Convert.FromBase64String(base64));
+                var output = new MemoryStream();
+                using (var bzStream = new BrotliStream(input, CompressionMode.Decompress))
+                {
+                    bzStream.CopyTo(output);
+                }
+                output.Position = 0;
+                var csv = Encoding.UTF8.GetString(output.ToArray());
+                openIds = csv.Split(',');
+            }
+            catch (Exception)
+            {
+                // Previous format
+                openIds = await LocalStorageService.GetItemAsync<string[]>("openIds") ?? Array.Empty<string>();
+            }
+
             foreach (var id in openIds)
             {
                 _nodeStates[id] = true;
@@ -583,7 +606,19 @@ namespace ThemesOfDotNet.Pages
             var openIds = _nodeStates.Where(kv => kv.Value == true)
                                           .Select(kv => kv.Key.ToString())
                                           .ToArray();
-            LocalStorageService.SetItemAsync("openIds", openIds);
+
+            // Save storage as base64 encoded brotli compressed csv; which saves 86% vs Json
+            var csv = string.Join(',', openIds);
+            var input = Encoding.UTF8.GetBytes(csv);
+            var output = new MemoryStream();
+            using (var bzStream = new BrotliStream(output, CompressionLevel.Optimal, leaveOpen: true))
+            {
+                bzStream.Write(input);
+            }
+            output.Position = 0;
+            var base64 = Convert.ToBase64String(output.ToArray());
+
+            LocalStorageService.SetItemAsync("openIds", base64);
         }
     }
 }
