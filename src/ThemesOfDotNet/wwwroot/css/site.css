@@ -6,6 +6,23 @@
     --dotnet-purple-border-hover: #3311BB;
 }
 
+.tree-toggle:before {
+    display: inline-block;
+}
+.tree-toggle.oi-plus:focus:before {
+    content: '\e08c';
+    animation: rotation 1.5s linear infinite;
+}
+
+@keyframes rotation {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(-359deg);
+    }
+}
 .valid.modified:not([type=checkbox]) {
     outline: 1px solid #26b050;
 }

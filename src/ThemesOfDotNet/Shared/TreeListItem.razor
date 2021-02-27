@@ -13,8 +13,9 @@
                         var visibleClass = node.Children.Count == 0 ? "invisible" : "";
                         var bottomUpClass = treeNode.IsBottomUp ? "bottom-up" : "";
                         var glyph = Owner.IsExpanded(node) ? "oi-minus" : "oi-plus";
+                        var allowFocus = !Owner.IsExpanded(node) ? "0" : null;
                     }
-                    <span class="oi @glyph tree-toggle @visibleClass" @onclick="() => Owner.ToggleNode(node)"></span>
+                    <span tabIndex="@allowFocus" class="oi @glyph tree-toggle @visibleClass" @onclick="() => Owner.ToggleNode(node)"></span>
                     <div class="gh-issue-kind-header @treeNode.Kind.ToString().ToLower() @bottomUpClass" />
                     <div>
                         <div>
