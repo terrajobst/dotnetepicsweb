@@ -33,13 +33,11 @@
 /*! purgecss ignore */
 .node-closed {
     max-height: 102px;
-    overflow: hidden;
 }
 /*! purgecss ignore */
 .node-open {
     max-height: unset;
     animation: expand 0.5s ease-out;
-    overflow: hidden;
 }
 @keyframes expand {
     0% {

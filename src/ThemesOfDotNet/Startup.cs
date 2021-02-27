@@ -119,7 +119,10 @@ namespace ThemesOfDotNet
                     // Apply some security headers...
                     var response = context.Response;
                     // Would need to expand this if using a CDN
-                    response.Headers[HeaderNames.ContentSecurityPolicy] = "default-src 'self';style-src 'self' 'unsafe-inline'";
+                    response.Headers[HeaderNames.ContentSecurityPolicy] = 
+                        "default-src 'self';" +
+                        "style-src 'self' 'unsafe-inline';" +
+                        "img-src 'self' data: https://avatars.githubusercontent.com/";
                     response.Headers[HeaderNames.XFrameOptions] = "DENY";
                     response.Headers["X-Content-Type-Options"] = "nosniff";
                     response.Headers["X-XSS-Protection"] = "1";
