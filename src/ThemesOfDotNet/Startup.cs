@@ -46,6 +46,12 @@ namespace ThemesOfDotNet
             services.AddSingleton<GitHubTreeProvider>();
 
             services.AddBlazoredLocalStorage();
+            services.AddResponseCompression(options => {
+                // State changes are sent via WebSockets not via request or cookie values
+                options.EnableForHttps = true;
+                // Only compress text/html
+                options.MimeTypes = new[] { "text/html" };
+            });
 
             services.AddAuthentication(options =>
                     {
@@ -108,10 +114,23 @@ namespace ThemesOfDotNet
                     return;
                 }
 
+                if (context.Request.Path == "/")
+                {
+                    // Apply some security headers...
+                    var response = context.Response;
+                    // Would need to expand this if using a CDN
+                    response.Headers[HeaderNames.ContentSecurityPolicy] = "default-src 'self';style-src 'self' 'unsafe-inline'";
+                    response.Headers[HeaderNames.XFrameOptions] = "DENY";
+                    response.Headers["X-Content-Type-Options"] = "nosniff";
+                    response.Headers["X-XSS-Protection"] = "1";
+                }
+
                 await next();
             });
 
             app.UseHttpsRedirection();
+            // Compress the root text/html page
+            app.UseResponseCompression();
             app.UsePrecompressedStaticFiles();
             app.UseStaticFiles();
 
