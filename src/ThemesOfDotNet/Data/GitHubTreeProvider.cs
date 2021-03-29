@@ -462,6 +462,19 @@ namespace ThemesOfDotNet.Data
 
         private async Task<IReadOnlyList<GitHubIssue>> GetIssuesAsync(GitHubClient client, RepoCache repoCache, GitHubRepoId repoId, string label)
         {
+            // NOTE: There is a bug in GitHub where if you ask for a non-existing label,
+            //       it will return all issues. So let's first make sure the label exists.
+
+            try
+            {
+                await client.Issue.Labels.Get(repoId.Owner, repoId.Name, label);
+            }
+            catch (NotFoundException)
+            {
+                _logger.LogDebug($"Repo {repoId} doesn't contain label {label}, returning an empty set");
+                return Array.Empty<GitHubIssue>();
+            }
+
             var repository = await repoCache.GetRepoAsync(repoId);
 
             var issueRequest = new RepositoryIssueRequest();
