@@ -12,7 +12,7 @@ using Microsoft.VisualStudio.Services.WebApi;
 
 namespace ThemesOfDotNet.Data
 {
-    public sealed class AzureDevOpsTreeProvider
+    public sealed class AzureDevOpsTreeProvider : TreeProvider
     {
         private readonly IConfiguration _configuration;
 
@@ -141,7 +141,7 @@ namespace ThemesOfDotNet.Data
             yield return list.ToArray();
         }
 
-        public async Task<Tree> GetTreeAsync(CancellationToken cancellationToken)
+        public override async Task<Tree> GetTreeAsync(CancellationToken cancellationToken)
         {
             var workItemRoots = await GetWorkItemRootsAsync();
             var themeNode = new TreeNode

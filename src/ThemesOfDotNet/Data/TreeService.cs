@@ -17,16 +17,14 @@ namespace ThemesOfDotNet.Data
     public sealed class TreeService
     {
         private readonly IWebHostEnvironment _environment;
-        private readonly GitHubTreeProvider _githubTreeProvider;
-        private readonly AzureDevOpsTreeProvider _azureTreeProvider;
+        private readonly TreeProvider[] _treeProviders;
         private readonly ILogger _logger;
         private LoadTreeJob _loadTreeJob;
 
         public TreeService(IWebHostEnvironment environment, GitHubTreeProvider gitHubTreeProvider, AzureDevOpsTreeProvider azureTreeProvider, ILogger<TreeService> logger)
         {
             _environment = environment;
-            _githubTreeProvider = gitHubTreeProvider;
-            _azureTreeProvider = azureTreeProvider;
+            _treeProviders = new TreeProvider[] { gitHubTreeProvider, azureTreeProvider };
             _logger = logger;
         }
 
@@ -136,10 +134,54 @@ namespace ThemesOfDotNet.Data
 
         private async Task<Tree> LoadTreeFromProvidersAsync(CancellationToken cancellationToken)
         {
-            var gitHubTreeTask = _githubTreeProvider.GetTreeAsync(cancellationToken);
-            var azureTreeTask = _azureTreeProvider.GetTreeAsync(cancellationToken);
-            await Task.WhenAll(gitHubTreeTask, azureTreeTask);
-            return SortTree(MergeTrees(gitHubTreeTask.Result, azureTreeTask.Result));
+            var treeTasks = new List<Task<Tree>>();
+
+            foreach (var provider in _treeProviders)
+            {
+                var task = provider.GetTreeAsync(cancellationToken);
+                treeTasks.Add(task);
+            }
+
+            try
+            {
+                await Task.WhenAll(treeTasks);
+            }
+            catch
+            {
+                // Ignore any errors, those are handled below
+            }
+
+            var trees = new List<Tree>();
+
+            for (var i = 0; i < treeTasks.Count; i++)
+            {
+                var name = _treeProviders[i].Name;
+                var task = treeTasks[i];
+
+                if (task.IsFaulted)
+                {
+                    _logger.LogError(task.Exception, $"Error loading data from {name}: {task.Exception.Message}");
+                }
+                else
+                {
+                    trees.Add(task.Result);
+                }
+            }
+
+            if (trees.Count == 0)
+                return Tree.Empty;
+
+            while (trees.Count > 1)
+            {
+                var first = trees[0];
+                var second = trees[1];
+                var merged = MergeTrees(first, second);
+                trees.RemoveAt(1);
+                trees[0] = merged;
+            }
+
+            var result = trees[0];
+            return SortTree(result);
         }
 
         private async Task<Tree> LoadTreeFromCacheAsync()
@@ -166,19 +208,19 @@ namespace ThemesOfDotNet.Data
             return Path.Combine(Path.GetDirectoryName(GetType().Assembly.Location), "tree.json");
         }
 
-        private Tree MergeTrees(Tree result1, Tree result2)
+        private static Tree MergeTrees(Tree result1, Tree result2)
         {
             return new Tree(result1.Roots.Concat(result2.Roots));
         }
 
-        private Tree SortTree(Tree tree)
+        private static Tree SortTree(Tree tree)
         {
             var roots = tree.Roots.ToList();
             SortNodes(roots);
             return new Tree(roots);
         }
 
-        private void SortNodes(List<TreeNode> nodes)
+        private static void SortNodes(List<TreeNode> nodes)
         {
             nodes.Sort();
 

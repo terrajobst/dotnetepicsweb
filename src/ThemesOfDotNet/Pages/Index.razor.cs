@@ -575,7 +575,7 @@ namespace ThemesOfDotNet.Pages
 
         private async Task LoadOpenIds()
         {
-            var openIds = Array.Empty<string>();
+            string[] openIds;
             try
             {
                 var base64 = await LocalStorageService.GetItemAsync<string>("openIds");

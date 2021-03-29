@@ -18,7 +18,7 @@ using Octokit;
 
 namespace ThemesOfDotNet.Data
 {
-    public sealed class GitHubTreeProvider
+    public sealed class GitHubTreeProvider : TreeProvider
     {
         private readonly GitHubRepoId[] _repos;
         private readonly GitHubClientFactory _gitHubClientFactory;
@@ -30,7 +30,7 @@ namespace ThemesOfDotNet.Data
             _gitHubClientFactory = gitHubClientFactory;
         }
 
-        public async Task<Tree> GetTreeAsync(CancellationToken cancellationToken)
+        public override async Task<Tree> GetTreeAsync(CancellationToken cancellationToken)
         {
             var client = await _gitHubClientFactory.CreateAsync();
             var repoCache = new RepoCache(client);
