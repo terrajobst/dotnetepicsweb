@@ -13,6 +13,7 @@ using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
 
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 using Octokit;
 
@@ -20,24 +21,31 @@ namespace ThemesOfDotNet.Data
 {
     public sealed class GitHubTreeProvider : TreeProvider
     {
+        private readonly ILogger<GitHubTreeProvider> _logger;
         private readonly GitHubRepoId[] _repos;
         private readonly GitHubClientFactory _gitHubClientFactory;
 
-        public GitHubTreeProvider(IConfiguration configuration,
+        public GitHubTreeProvider(ILogger<GitHubTreeProvider> logger,
+                                  IConfiguration configuration,
                                   GitHubClientFactory gitHubClientFactory)
         {
             _repos = configuration["Repos"].Split(",").Select(GitHubRepoId.Parse).ToArray();
+            _logger = logger;
             _gitHubClientFactory = gitHubClientFactory;
         }
 
         public override async Task<Tree> GetTreeAsync(CancellationToken cancellationToken)
         {
+            _logger.LogDebug($"Loading GitHub tree for repos {string.Join(",", _repos)}");
+
             var client = await _gitHubClientFactory.CreateAsync();
             var repoCache = new RepoCache(client);
 
             var cardsTask = GetIssueCardsAsync(client, cancellationToken);
 
             // Get root issues
+
+            _logger.LogDebug($"Loading GitHub root issues...");
 
             var startingIssueTasks = new List<Task<IReadOnlyList<GitHubIssue>>>();
 
@@ -55,6 +63,8 @@ namespace ThemesOfDotNet.Data
             await Task.WhenAll(startingIssueTasks);
 
             // Now parse all issue bodies to find children
+
+            _logger.LogDebug($"Loading GitHub issue details...");
 
             var startingIssues = startingIssueTasks.SelectMany(t => t.Result).ToArray();
             var issueQueue = new Queue<GitHubIssue[]>();
@@ -90,6 +100,8 @@ namespace ThemesOfDotNet.Data
 
                     if (linkedIssue.Id != linkedId)
                     {
+                        _logger.LogDebug($"GitHub issue was transferred from {linkedIssue.Id} to {linkedId}.");
+
                         // That means the issue got transferred. Let's try again with the new id.
 
                         if (!issueById.TryGetValue(linkedIssue.Id, out var existingIssue))
@@ -448,7 +460,7 @@ namespace ThemesOfDotNet.Data
             return issueCards.ToArray();
         }
 
-        private static async Task<IReadOnlyList<GitHubIssue>> GetIssuesAsync(GitHubClient client, RepoCache repoCache, GitHubRepoId repoId, string label)
+        private async Task<IReadOnlyList<GitHubIssue>> GetIssuesAsync(GitHubClient client, RepoCache repoCache, GitHubRepoId repoId, string label)
         {
             var repository = await repoCache.GetRepoAsync(repoId);
 
@@ -465,13 +477,27 @@ namespace ThemesOfDotNet.Data
                     continue;
 
                 var gitHubIssue = CreateGitHubIssue(repository.Private, issue);
-                result.Add(gitHubIssue);
+
+                // If an issue was transferred, we don't want to include it here.
+                //
+                // We can tell it was transferred if the returned issue number,
+                // repo name or org name is different from the one we started
+                // with.
+
+                var wasTransferred = gitHubIssue.Id.Number != issue.Number ||
+                                     !string.Equals(gitHubIssue.Id.Owner, repoId.Owner, StringComparison.OrdinalIgnoreCase) ||
+                                     !string.Equals(gitHubIssue.Id.Repo, repoId.Name, StringComparison.OrdinalIgnoreCase);
+
+                if (!wasTransferred)
+                    result.Add(gitHubIssue);
+                else
+                    _logger.LogDebug($"Not including issue {repoId}#{issue.Number} in root set because it was transferred to {gitHubIssue.Id}.");
             }
 
             return result;
         }
 
-        private static async Task<GitHubIssue> GetIssueAsync(GitHubClient client, RepoCache repoCache, GitHubIssueId id)
+        private async Task<GitHubIssue> GetIssueAsync(GitHubClient client, RepoCache repoCache, GitHubIssueId id)
         {
             try
             {
@@ -483,8 +509,9 @@ namespace ThemesOfDotNet.Data
                 var repo = await repoCache.GetRepoAsync(new GitHubRepoId(effectiveIssueId.Owner, effectiveIssueId.Repo));
                 return CreateGitHubIssue(repo.Private, issue);
             }
-            catch (NotFoundException)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, $"Error loading issue {id}: {ex.Message}");
                 return null;
             }
         }

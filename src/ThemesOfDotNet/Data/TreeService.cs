@@ -138,7 +138,24 @@ namespace ThemesOfDotNet.Data
 
             foreach (var provider in _treeProviders)
             {
-                var task = provider.GetTreeAsync(cancellationToken);
+                var func = new Func<Task<Tree>>(async () =>
+                {
+                    var stopwatch = Stopwatch.StartNew();
+                    var succeeded = false;
+                    try
+                    {
+                        var result = await provider.GetTreeAsync(cancellationToken);
+                        succeeded = true;
+                        return result;
+                    }
+                    finally
+                    {
+                        var status = succeeded ? "completed" : "failed";
+                        _logger.LogDebug($"Tree provider {provider.Name} {status} in {stopwatch.Elapsed}.");
+                    }
+                });
+
+                var task = func();                    
                 treeTasks.Add(task);
             }
 
