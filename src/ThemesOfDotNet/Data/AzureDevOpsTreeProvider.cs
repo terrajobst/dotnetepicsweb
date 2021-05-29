@@ -155,7 +155,7 @@ namespace ThemesOfDotNet.Data
                     new TreeNodeLabel
                     {
                         Name = "Theme",
-                        BackgroundColor = "800080"
+                        Color = "800080"
                     }
                 }
             };
@@ -226,7 +226,7 @@ namespace ThemesOfDotNet.Data
                 result.Add(new TreeNodeLabel
                 {
                     Name = "Epic",
-                    BackgroundColor = "c6415a",
+                    Color = "c6415a",
                 });
             }
             else if (kind == TreeNodeKind.UserStory)
@@ -234,7 +234,7 @@ namespace ThemesOfDotNet.Data
                 result.Add(new TreeNodeLabel
                 {
                     Name = "User Story",
-                    BackgroundColor = "0e8a16",
+                    Color = "0e8a16",
                 });
             }
 
@@ -245,7 +245,7 @@ namespace ThemesOfDotNet.Data
                 result.Add(new TreeNodeLabel
                 {
                     Name = $"Priority:0",
-                    BackgroundColor = "b60205",
+                    Color = "b60205",
                 });
             }
             else if (azureNode.Priority == 1)
@@ -253,7 +253,7 @@ namespace ThemesOfDotNet.Data
                 result.Add(new TreeNodeLabel
                 {
                     Name = $"Priority:1",
-                    BackgroundColor = "d93f0b",
+                    Color = "d93f0b",
                 });
             }
             else if (azureNode.Priority == 2)
@@ -261,7 +261,7 @@ namespace ThemesOfDotNet.Data
                 result.Add(new TreeNodeLabel
                 {
                     Name = $"Priority:2",
-                    BackgroundColor = "e99695",
+                    Color = "e99695",
                 });
             }
             else if (azureNode.Priority == 3)
@@ -269,7 +269,7 @@ namespace ThemesOfDotNet.Data
                 result.Add(new TreeNodeLabel
                 {
                     Name = $"Priority:3",
-                    BackgroundColor = "f9d0c4",
+                    Color = "f9d0c4",
                 });
             }
 
@@ -280,7 +280,7 @@ namespace ThemesOfDotNet.Data
                 result.Add(new TreeNodeLabel
                 {
                     Name = $"Cost:S",
-                    BackgroundColor = "bfdadc",
+                    Color = "bfdadc",
                 });
             }
             else if (cost == TreeNodeCost.Medium)
@@ -288,7 +288,7 @@ namespace ThemesOfDotNet.Data
                 result.Add(new TreeNodeLabel
                 {
                     Name = $"Cost:M",
-                    BackgroundColor = "c2e0c6",
+                    Color = "c2e0c6",
                 });
             }
             else if (cost == TreeNodeCost.Large)
@@ -296,7 +296,7 @@ namespace ThemesOfDotNet.Data
                 result.Add(new TreeNodeLabel
                 {
                     Name = $"Cost:L",
-                    BackgroundColor = "0e8a16",
+                    Color = "0e8a16",
                 });
             }
             else if (cost == TreeNodeCost.ExtraLarge)
@@ -304,7 +304,7 @@ namespace ThemesOfDotNet.Data
                 result.Add(new TreeNodeLabel
                 {
                     Name = $"Cost:XL",
-                    BackgroundColor = "006b75",
+                    Color = "006b75",
                 });
             }
 
@@ -315,7 +315,7 @@ namespace ThemesOfDotNet.Data
                 result.Add(new TreeNodeLabel
                 {
                     Name = tag,
-                    BackgroundColor = "c5def5",
+                    Color = "c5def5",
                 });
             }
 

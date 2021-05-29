@@ -11,7 +11,8 @@ const PurgecssPlugin = require("purgecss-webpack-plugin");
 var config = {
     entry: {
         js: "./wwwroot/js/index.js",
-        css: "./wwwroot/css/index.js"
+        css: "./wwwroot/css/index.js",
+        css_dark: "./wwwroot/css/index-dark.js"
     },
     optimization: {
         minimize: true,
@@ -33,12 +34,24 @@ var config = {
     },
     output: {
         filename: (pathData) => {
-            return pathData.runtime === "js" ? "js/themesof.net.bundle.js" : `css/css.js`;
+            if (pathData.runtime == "js")
+                return "js/themesof.net.bundle.js";
+            else if (pathData.runtime == "css")
+                return `css/css.js`;
+            else
+                return `css/css-dark.js`;
         },
         path: path.resolve(__dirname, "wwwroot/")
     },
     plugins: [
-        new MiniCssExtractPlugin({ filename: "css/themesof.net.bundle.css" }),
+        new MiniCssExtractPlugin({
+            filename: (pathData) => {
+                if (pathData.chunk.runtime == "css")
+                    return "css/themesof.net.bundle.css";
+                else
+                    return "css/themesof.net.bundle-dark.css";
+            }
+        }),
         new PurgecssPlugin({
             paths: glob.sync([
                 "**/*.razor",
@@ -72,7 +85,10 @@ var config = {
             },
             after: {
                 root: path.resolve(__dirname, "wwwroot/"),
-                include: ["css/css.js", "css/css.js.gz", "css/css.js.br"]
+                include: [
+                    "css/css.js", "css/css.js.gz", "css/css.js.br",
+                    "css/css-dark.js", "css/css-dark.js.gz", "css/css-dark.js.br"
+                ]
             }
         })
     ],

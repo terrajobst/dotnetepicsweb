@@ -33,7 +33,7 @@
                                 @foreach (var label in treeNode.Labels)
                                 {
                                     <span class="gh-label"
-                                          style="background: @("#" + label.BackgroundColor); color: @label.ForegroundColor">@label.Name</span>
+                                          style="@label.GetStyle()">@label.Name</span>
                                 }
                             </span>
                         </div>

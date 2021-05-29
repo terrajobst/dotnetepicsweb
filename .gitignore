@@ -434,4 +434,5 @@ $RECYCLE.BIN/
 
 ## Generated css + js
 **/wwwroot/css/themesof.net.bundle.css*
+**/wwwroot/css/themesof.net.bundle-dark.css*
 **/wwwroot/js/themesof.net.bundle.js*

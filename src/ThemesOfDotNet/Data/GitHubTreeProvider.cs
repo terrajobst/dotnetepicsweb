@@ -576,7 +576,7 @@ namespace ThemesOfDotNet.Data
         {
             var result = new TreeNodeLabel();
             result.Name = label.Name;
-            result.BackgroundColor = label.Color;
+            result.Color = label.Color;
             return result;
         }
 

@@ -23,6 +23,7 @@
     "webpack-cli": "^4.5.0"
   },
   "dependencies": {
+    "@forevolve/bootstrap-dark": "^1.0.0",
     "bootstrap": "^4.6.0"
   }
 }

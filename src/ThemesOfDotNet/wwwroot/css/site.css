@@ -109,9 +109,39 @@
         top: 0.5rem;
     }
 
+/* Bootstrap extensions */
+
+.btn-muted {
+    color: #212529;
+    background-color: #f8f9fa;
+    border-color: #f8f9fa;
+}
+
+    .btn-muted:hover {
+        color: #212529;
+        background-color: #e2e6ea;
+        border-color: #dae0e5;
+    }
+
+@media (prefers-color-scheme: dark) {
+
+    .btn-muted {
+        color: #ced4da;
+        background-color: #343a40;
+        border-color: #343a40;
+    }
+
+        .btn-muted:hover {
+            color: #ced4da;
+            background-color: #23272b;
+            border-color: #1d2124;
+        }
+}
+
 /* GitHub styling */
 
 .gh-label {
+    margin: 0 2px;
     padding: 0 7px;
     font-size: 12px;
     font-weight: 500;
@@ -120,7 +150,14 @@
     border: 1px solid transparent;
     display: inline-block;
     vertical-align: top;
-    margin: 0 2px;
+    --perceived-lightness: calc((var(--label-r)*0.2126 + var(--label-g)*0.7152 + var(--label-b)*0.0722)/255);
+    --lightness-switch: max(0,min(calc((var(--perceived-lightness) - var(--lightness-threshold))*-1000),1));
+    --lightness-threshold: 0.453;
+    --border-threshold: 0.96;
+    --border-alpha: max(0,min(calc((var(--perceived-lightness) - var(--border-threshold))*100),1));
+    background: rgb(var(--label-r),var(--label-g),var(--label-b));
+    color: hsl(0,0%,calc(var(--lightness-switch)*100%));
+    border-color: hsla(var(--label-h),calc(var(--label-s)*1%),calc((var(--label-l) - 25)*1%),var(--border-alpha));
 }
 
 .gh-details-cell {
@@ -136,7 +173,7 @@
     color: dimgray;
     border-radius: 4px;
     margin-right: 0.25rem;
-    padding: 2px;
+    padding: 2px 7px;
 }
 
 .gh-issue {
@@ -148,9 +185,9 @@
     }
 
 .gh-issue-title {
-    font-weight: bold;
     text-decoration: none !important;
-    color: black;
+    color: var(--color-text-primary);
+    font-weight: bold;
 }
 
 .gh-issue-kind-header {
@@ -180,6 +217,29 @@
     .gh-issue-kind-header.issue {
         border-color: darkgray;
     }
+
+@media (prefers-color-scheme: dark) {
+
+    a:hover {
+        color: rgb(88, 166, 255);
+    }
+
+    .gh-label {
+        --lightness-threshold: 0.6;
+        --background-alpha: 0.18;
+        --border-alpha: 0.3;
+        --lighten-by: calc((var(--lightness-threshold) - var(--perceived-lightness))*100*var(--lightness-switch));
+        background: rgba(var(--label-r),var(--label-g),var(--label-b),var(--background-alpha));
+        color: hsl(var(--label-h),calc(var(--label-s)*1%),calc((var(--label-l) + var(--lighten-by))*1%));
+        border-color: hsla(var(--label-h),calc(var(--label-s)*1%),calc((var(--label-l) + var(--lighten-by))*1%),var(--border-alpha));
+    }
+
+    .gh-project-status {
+        background-color: rgba(104, 191, 28, 0.18);
+        border-color: rgba(104, 191, 28, 0.3);
+        color: rgb(104, 191, 28);
+    }
+}
 
 /* Tree */
 
@@ -240,3 +300,25 @@
         border-color: darkgray;
         color: darkgray;
     }
+
+@media (prefers-color-scheme: dark) {
+
+    .tree li::before {
+        border-left-color: var(--dark);
+        border-bottom-color: var(--dark);
+    }
+
+    .tree li::after {
+        border-left-color: var(--dark);
+    }
+
+    .tree-toggle {
+        border-color: var(--dark);
+        color: var(--dark);
+    }
+
+        .tree-toggle:hover {
+            border-color: lightslategray;
+            color: lightslategray;
+        }
+}

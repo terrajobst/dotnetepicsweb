@@ -10,8 +10,7 @@
 else
 {
     <div class="form-group row mb-3">
-        <label for="filter" class="col-sm-1 col-form-label" style="white-space: nowrap;max-width: 80px;min-width: 80px;">Text filter:</label>
-        <div class="col-sm-11">
+        <div class="col">
             <input id="filter" class="form-control" type="text" placeholder="Filter" @bind="Filter" @bind:event="oninput">
         </div>
     </div>
@@ -44,7 +43,7 @@ else
         </div>
 
         <div class="dropdown col-auto">
-            <button class="btn @(SelectedRelease == null ? "btn-light" : "btn-info") btn-sm dropdown-toggle" type="button" id="releasesDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <button class="btn @(SelectedRelease == null ? "btn-muted" : "btn-info") btn-sm dropdown-toggle" type="button" id="releasesDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Release
             </button>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="releasesDropdown">
@@ -67,7 +66,7 @@ else
         </div>
 
         <div class="dropdown col-auto">
-            <button class="btn @(SelectedState == null ? "btn-light" : "btn-info") btn-sm dropdown-toggle" type="button" id="statesDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <button class="btn @(SelectedState == null ? "btn-muted" : "btn-info") btn-sm dropdown-toggle" type="button" id="statesDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 State
             </button>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="statesDropdown">
@@ -90,7 +89,7 @@ else
         </div>
 
         <div class="dropdown col-auto">
-            <button class="btn @(SelectedAssignee == null ? "btn-light" : "btn-info") btn-sm dropdown-toggle" type="button" id="assigneeDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <button class="btn @(SelectedAssignee == null ? "btn-muted" : "btn-info") btn-sm dropdown-toggle" type="button" id="assigneeDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Assignee
             </button>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="assigneeDropdown">
@@ -113,7 +112,7 @@ else
         </div>
 
         <div class="dropdown col-auto">
-            <button class="btn @(SelectedMilestone == null ? "btn-light" : "btn-info") btn-sm dropdown-toggle" type="button" id="milestonesDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <button class="btn @(SelectedMilestone == null ? "btn-muted" : "btn-info") btn-sm dropdown-toggle" type="button" id="milestonesDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Milestone
             </button>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="milestonesDropdown">
@@ -136,7 +135,7 @@ else
         </div>
 
         <div class="dropdown col-auto">
-            <button class="btn @(SelectedPriority == null ? "btn-light" : "btn-info") btn-sm dropdown-toggle" type="button" id="prioritiesDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <button class="btn @(SelectedPriority == null ? "btn-muted" : "btn-info") btn-sm dropdown-toggle" type="button" id="prioritiesDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Priority
             </button>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="prioritiesDropdown">
@@ -159,7 +158,7 @@ else
         </div>
 
         <div class="dropdown col-auto">
-            <button class="btn @(SelectedCost == null ? "btn-light" : "btn-info") btn-sm dropdown-toggle" type="button" id="costsDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <button class="btn @(SelectedCost == null ? "btn-muted" : "btn-info") btn-sm dropdown-toggle" type="button" id="costsDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Cost
             </button>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="costsDropdown">
@@ -182,7 +181,7 @@ else
         </div>
 
         <div class="dropdown col-auto">
-            <button class="btn @(SelectedTeam == null ? "btn-light" : "btn-info") btn-sm dropdown-toggle" type="button" id="teamDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <button class="btn @(SelectedTeam == null ? "btn-muted" : "btn-info") btn-sm dropdown-toggle" type="button" id="teamDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Teams
             </button>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="teamDropdown">
