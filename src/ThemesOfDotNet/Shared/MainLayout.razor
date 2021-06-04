@@ -1,51 +1,64 @@
 ﻿@inherits LayoutComponentBase
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dotnet">
+<nav class="navbar navbar-expand-sm navbar-dark bg-dotnet">
     <a class="navbar-brand" href="/">Themes of .NET</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" @onclick="ToggleNavMenu" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarText">
+    <div class="navbar-collapse @NavMenuCssClass" id="navbarText">
         <ul class="navbar-nav mr-auto">
-            <NavLink class="nav-link" href="about">
-                <span class="oi oi-info pr-1"></span> About
-            </NavLink>
-            <NavLink class="nav-link" href="https://github.com/terrajobst/themesof.net">
-                <span class="oi oi-code pr-1"></span> Source
-            </NavLink>
+            <li class="nav-item">
+                <NavLink class="nav-link" href="about">
+                    <span class="oi oi-info pr-1"></span> About
+                </NavLink>
+            </li>
+            <li class="nav-item">
+                <NavLink class="nav-link" href="https://github.com/terrajobst/themesof.net">
+                    <span class="oi oi-code pr-1"></span> Source
+                </NavLink>
+            </li>
         </ul>
-        <ul class="navbar-nav">
-            <AuthorizeView>
-                <Authorized>
-                    <div class="dropdown">
-                        <button class="btn btn-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            @{
-                                var avatarUrl = context.User.FindFirst("avatar_url");
-                                if (avatarUrl != null)
-                                {
-                                    <img src="@avatarUrl.Value"
-                                         class="mr-1"
-                                         alt="@context.User.Identity.Name"
-                                         style="border-radius: 50%"
-                                         width="20"
-                                         height="20" />
-                                }
+        <AuthorizeView>
+            <Authorized>
+                <div class="dropdown">
+                    <button class="btn btn-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        @{
+                            var avatarUrl = context.User.FindFirst("avatar_url");
+                            if (avatarUrl != null)
+                            {
+                                <img src="@avatarUrl.Value"
+                                     class="mr-1"
+                                     alt="@context.User.Identity.Name"
+                                     style="border-radius: 50%"
+                                     width="20"
+                                     height="20" />
                             }
-                            @context.User.Identity.Name
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="signout">Sign out</a>
-                        </div>
+                        }
+                        @context.User.Identity.Name
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="signout">Sign out</a>
                     </div>
-                </Authorized>
-                <NotAuthorized>
-                    <a class="btn btn-dotnet" href="signin">Sign in</a>
-                </NotAuthorized>
-            </AuthorizeView>
-        </ul>
+                </div>
+            </Authorized>
+            <NotAuthorized>
+                <a class="btn btn-dotnet" href="signin">Sign in</a>
+            </NotAuthorized>
+        </AuthorizeView>
     </div>
 </nav>
 
 <main class="container-fluid mt-3">
     @Body
 </main>
+
+@code {
+    private bool _collapseNavMenu = true;
+
+    private string NavMenuCssClass => _collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        _collapseNavMenu = !_collapseNavMenu;
+    }
+}
