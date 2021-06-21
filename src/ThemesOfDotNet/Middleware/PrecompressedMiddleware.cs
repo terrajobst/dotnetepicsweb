@@ -34,9 +34,8 @@ namespace ThemesOfDotNet.Middleware
 
         public Task InvokeAsync(HttpContext context)
         {
-
             var request = context.Request;
-            var path = request.Path.Value;
+            var path = request.Path.Value ?? string.Empty;
 
             if (path == "/")
             {
@@ -44,7 +43,7 @@ namespace ThemesOfDotNet.Middleware
                 headers["Link"] = FontLink;
             }
             else if (path.EndsWith(".js", StringComparison.Ordinal) ||
-                path.EndsWith(".css", StringComparison.Ordinal))
+                     path.EndsWith(".css", StringComparison.Ordinal))
             {
                 return ApplyPrecompressionAsync(context);
             }
@@ -55,7 +54,7 @@ namespace ThemesOfDotNet.Middleware
         public async Task ApplyPrecompressionAsync(HttpContext context)
         {
             var request = context.Request;
-            var path = request.Path.Value;
+            var path = request.Path.Value ?? string.Empty;
             var extraExtension = string.Empty;
 
             var response = context.Response;
@@ -120,7 +119,7 @@ namespace ThemesOfDotNet.Middleware
                 }
             }
             else if (path.EndsWith(".js", StringComparison.Ordinal) ||
-                path.EndsWith(".css", StringComparison.Ordinal))
+                     path.EndsWith(".css", StringComparison.Ordinal))
             {
                 extraExtension = GetCompressionExtension(acceptEncoding);
             }
