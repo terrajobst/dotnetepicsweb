@@ -90,7 +90,7 @@ namespace ThemesOfDotNet.Data
 
                 var newIssues = await GetIssuesBatchedAsync(client, repoCache, unknownIssueIds);
 
-                foreach (var (linkedId, issue) in newIssues)
+                foreach (var (referencedId, issue) in newIssues)
                 {
                     var linkedIssue = issue;
                     if (linkedIssue == null)
@@ -98,9 +98,9 @@ namespace ThemesOfDotNet.Data
 
                     var addIssue = true;
 
-                    if (linkedIssue.Id != linkedId)
+                    if (linkedIssue.Id != referencedId)
                     {
-                        _logger.LogDebug($"GitHub issue was transferred from {linkedIssue.Id} to {linkedId}.");
+                        _logger.LogDebug($"GitHub issue was transferred from {referencedId} to {linkedIssue.Id}.");
 
                         // That means the issue got transferred. Let's try again with the new id.
 
@@ -114,13 +114,13 @@ namespace ThemesOfDotNet.Data
                         {
                             // OK, we already fetched the issue. Now let's just associate the old id
                             // with the existing issue and not add the issue we just retrieved.
-                            issueById.Add(linkedId, existingIssue);
+                            issueById.Add(referencedId, existingIssue);
                             linkedIssue = existingIssue;
                             addIssue = false;
                         }
                     }
 
-                    if (addIssue && issueById.TryAdd(linkedId, linkedIssue))
+                    if (addIssue && issueById.TryAdd(referencedId, linkedIssue))
                     {
                         issues.Add(linkedIssue);
                         nextBatch.Add(linkedIssue);
@@ -145,6 +145,10 @@ namespace ThemesOfDotNet.Data
                             }
 
                             children.Add(child);
+                        }
+                        else
+                        {
+                            _logger.LogDebug($"Can't find linked issue {linkedId}.");
                         }
                     }
                 }
@@ -207,10 +211,10 @@ namespace ThemesOfDotNet.Data
             {
                 ancestors.Clear();
                 ancestors.Add(issue);
-                EnsureNoCycles(issue, issueChildren, ancestors);
+                EnsureNoCycles(_logger, issue, issueChildren, ancestors);
             }
 
-            static void EnsureNoCycles(GitHubIssue issue, Dictionary<string, List<GitHubIssue>> issueChildren, HashSet<GitHubIssue> ancestors)
+            static void EnsureNoCycles(ILogger logger, GitHubIssue issue, Dictionary<string, List<GitHubIssue>> issueChildren, HashSet<GitHubIssue> ancestors)
             {
                 var myChildren = issueChildren[issue.Id.ToString()];
                 for (var i = myChildren.Count - 1; i >= 0; i--)
@@ -218,11 +222,12 @@ namespace ThemesOfDotNet.Data
                     var myChild = myChildren[i];
                     if (!ancestors.Add(myChild))
                     {
+                        logger.LogDebug($"Cycle detected: Issue {myChild.Id} can't be a child of {issue.Id} because it's already an ancestor.");
                         myChildren.RemoveAt(i);
                     }
                     else
                     {
-                        EnsureNoCycles(myChild, issueChildren, ancestors);
+                        EnsureNoCycles(logger, myChild, issueChildren, ancestors);
                         ancestors.Remove(myChild);
                     }
                 }
@@ -243,6 +248,7 @@ namespace ThemesOfDotNet.Data
                     foreach (var closedParent in closedParents)
                     {
                         var children = issueChildren[closedParent.Id.ToString()];
+                        _logger.LogDebug($"Removing {openChild.Id} from parent {closedParent.Id} because the parent is closed.");
                         children.Remove(openChild);
                     }
                 }
