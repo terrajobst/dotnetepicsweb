@@ -512,6 +512,8 @@ namespace ThemesOfDotNet.Data
 
         private async Task<GitHubIssue> GetIssueAsync(GitHubClient client, RepoCache repoCache, GitHubIssueId id)
         {
+            var remainingRetryCount = 3;
+        Retry:
             try
             {
                 var issue = await client.Issue.Get(id.Owner, id.Repo, id.Number);
@@ -522,9 +524,21 @@ namespace ThemesOfDotNet.Data
                 var repo = await repoCache.GetRepoAsync(new GitHubRepoId(effectiveIssueId.Owner, effectiveIssueId.Repo));
                 return CreateGitHubIssue(repo.Private, issue);
             }
+            catch (NotFoundException)
+            {
+                return null;
+            }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error loading issue {id}: {ex.Message}");
+                _logger.LogError(ex, $"Error loading issue {id} ({remainingRetryCount} retries): {ex.Message}");
+
+                remainingRetryCount--;
+                if (remainingRetryCount >= 0)
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(10));
+                    goto Retry;
+                }
+
                 return null;
             }
         }
