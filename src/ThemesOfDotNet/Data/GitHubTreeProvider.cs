@@ -71,7 +71,7 @@ namespace ThemesOfDotNet.Data
             issueQueue.Enqueue(startingIssues);
             var issueById = startingIssues.ToDictionary(i => i.Id);
             var issues = new List<GitHubIssue>(startingIssues);
-            var issueChildren = new Dictionary<string, List<GitHubIssue>>();
+            var issueChildren = new Dictionary<string, List<GitHubIssue>>(StringComparer.OrdinalIgnoreCase);
 
             while (issueQueue.Count > 0)
             {

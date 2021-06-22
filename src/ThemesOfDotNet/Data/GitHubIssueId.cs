@@ -77,14 +77,18 @@ namespace ThemesOfDotNet.Data
 
         public bool Equals(GitHubIssueId other)
         {
-            return Owner == other.Owner &&
-                   Repo == other.Repo &&
+            return string.Equals(Owner, other.Owner, StringComparison.OrdinalIgnoreCase) &&
+                   string.Equals(Repo, other.Repo, StringComparison.OrdinalIgnoreCase) &&
                    Number == other.Number;
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Owner, Repo, Number);
+            var code = new HashCode();
+            code.Add(Owner, StringComparer.OrdinalIgnoreCase);
+            code.Add(Repo, StringComparer.OrdinalIgnoreCase);
+            code.Add(Number);
+            return code.ToHashCode();
         }
 
         public static bool operator ==(GitHubIssueId left, GitHubIssueId right)
@@ -99,8 +103,7 @@ namespace ThemesOfDotNet.Data
 
         public override string ToString()
         {
-            return $"{ Owner}/{Repo}#{Number}";
+            return $"{Owner}/{Repo}#{Number}";
         }
     }
-
 }
